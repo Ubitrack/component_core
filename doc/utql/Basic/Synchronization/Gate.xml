@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
+    
+    <Pattern name="PoseGate" displayName="Gate (Pose)">
+    	<Description><h:p>The gate component has a data input and a signal input. For each signal event, the gate
+    	lets exactly one data event pass. The <h:code>Gate Type</h:code> attribute is used to configure if
+    	the previous or the next event is passed.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+            <Edge name="Input" source="A" destination="B" displayName="Data Input">
+            	<Description><h:p>The input pose</h:p></Description>
+                <Predicate>type=='6D'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="Signal" source="Event" destination="EventSpace" displayName="Trigger Input">
+            	<Description><h:p>The trigger input signal</h:p></Description>
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Gated Pose">
+            	<Description><h:p>The gated pose</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseGate"/>
+            <Attribute name="button" xsi:type="StringAttributeReferenceType"/>
+            <Attribute name="gateType" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="ErrorPoseGate" displayName="Gate (Pose+Error)">
+    	<Description><h:p>The gate component has a data input and a signal input. For each signal event, the gate
+    	lets exactly one data event pass. The <h:code>Gate Type</h:code> attribute is used to configure if
+    	the previous or the next event is passed.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+            <Edge name="Input" source="A" destination="B" displayName="Data Input">
+            	<Description><h:p>The input pose (with covariance)</h:p></Description>
+                <Predicate>type=='6DError'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="Signal" source="Event" destination="EventSpace" displayName="Trigger Input">
+            	<Description><h:p>The trigger input signal</h:p></Description>
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Gated Pose">
+            	<Description><h:p>The gated pose with error</h:p></Description>
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="ErrorPoseGate"/>
+            <Attribute name="button" xsi:type="StringAttributeReferenceType"/>
+            <Attribute name="gateType" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+	<Pattern name="Position2DGate" displayName="Gate (2D Position)">
+    	<Description><h:p>The gate component has a data input and a signal input. For each signal event, the gate
+    	lets exactly one data event pass. The <h:code>Gate Type</h:code> attribute is used to configure if
+    	the previous or the next event is passed.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+            <Edge name="Input" source="A" destination="B" displayName="Data Input">
+            	<Description><h:p>The 2D input position</h:p></Description>
+                <Predicate>type=='2DPosition'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="Signal" source="Event" destination="EventSpace" displayName="Trigger Input">
+            	<Description><h:p>The trigger input signal</h:p></Description>
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Gated 2D Position">
+            	<Description><h:p>The gated 2D position</h:p></Description>
+                <Attribute name="type" value="2DPosition" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="Position2DGate"/>
+            <Attribute name="button" xsi:type="StringAttributeReferenceType"/>
+            <Attribute name="gateType" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+    <Pattern name="PositionGate" displayName="Gate (3D Position)">
+    	<Description><h:p>The gate component has a data input and a signal input. For each signal event, the gate
+    	lets exactly one data event pass. The <h:code>Gate Type</h:code> attribute is used to configure if
+    	the previous or the next event is passed.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+            <Edge name="Input" source="A" destination="B" displayName="Data Input">
+            	<Description><h:p>The 3D input position</h:p></Description>
+                <Predicate>type=='3DPosition'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="Signal" source="Event" destination="EventSpace" displayName="Trigger Input">
+            	<Description><h:p>The trigger input signal</h:p></Description>
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Gated 3D Position">
+            	<Description><h:p>The gated 3D position</h:p></Description>
+                <Attribute name="type" value="3DPosition" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionGate"/>
+            <Attribute name="button" xsi:type="StringAttributeReferenceType"/>
+            <Attribute name="gateType" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+    <Pattern name="RotationGate" displayName="Gate (3D Rotation)">
+    	<Description><h:p>The gate component has a data input and a signal input. For each signal event, the gate
+    	lets exactly one data event pass. The <h:code>Gate Type</h:code> attribute is used to configure if
+    	the previous or the next event is passed.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+            <Edge name="Input" source="A" destination="B" displayName="Data Input">
+            	<Description><h:p>The input rotation</h:p></Description>
+                <Predicate>type=='3DRotation'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="Signal" source="Event" destination="EventSpace" displayName="Trigger Input">
+            	<Description><h:p>The trigger input signal</h:p></Description>
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Gated Rotation">
+            	<Description><h:p>The gated rotation</h:p></Description>
+                <Attribute name="type" value="3DRotation" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="RotationGate"/>
+            <Attribute name="button" xsi:type="StringAttributeReferenceType"/>
+            <Attribute name="gateType" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+	<Pattern name="ButtonGate" displayName="Gate (Button)">
+    	<Description><h:p>The gate component has a data input and a signal input. For each signal event, the gate
+    	lets exactly one data event pass. The <h:code>Gate Type</h:code> attribute is used to configure if
+    	the previous or the next event is passed.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+            <Edge name="Input" source="A" destination="B" displayName="Data Input">
+            	<Description><h:p>The input button</h:p></Description>
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="Signal" source="Event" destination="EventSpace" displayName="Trigger Input">
+            	<Description><h:p>The trigger input signal</h:p></Description>
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Gated Button">
+            	<Description><h:p>The gated distance</h:p></Description>
+                <Attribute name="type" value="Button" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="ButtonGate"/>
+            <Attribute name="button" xsi:type="StringAttributeReferenceType"/>
+            <Attribute name="gateType" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+    <Pattern name="DistanceGate" displayName="Gate (Distance)">
+    	<Description><h:p>The gate component has a data input and a signal input. For each signal event, the gate
+    	lets exactly one data event pass. The <h:code>Gate Type</h:code> attribute is used to configure if
+    	the previous or the next event is passed.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+            <Edge name="Input" source="A" destination="B" displayName="Data Input">
+            	<Description><h:p>The input distance</h:p></Description>
+                <Predicate>type=='Distance'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="Signal" source="Event" destination="EventSpace" displayName="Trigger Input">
+            	<Description><h:p>The trigger input signal</h:p></Description>
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Gated Distance">
+            	<Description><h:p>The gated distance</h:p></Description>
+                <Attribute name="type" value="Distance" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="DistanceGate"/>
+            <Attribute name="button" xsi:type="StringAttributeReferenceType"/>
+            <Attribute name="gateType" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="PoseListGate" displayName="Gate (Pose List)">
+    	<Description><h:p>The gate component has a data input and a signal input. For each signal event, the gate
+    	lets exactly one data event pass. The <h:code>Gate Type</h:code> attribute is used to configure if
+    	the previous or the next event is passed.</h:p></Description>
+
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+            <Edge name="Input" source="A" destination="B" displayName="Data Input">
+            	<Description><h:p>The input position list</h:p></Description>
+                <Predicate>type=='PoseList'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="Signal" source="Event" destination="EventSpace" displayName="Trigger Input">
+            	<Description><h:p>The trigger input signal</h:p></Description>
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Gated PositionList">
+            	<Description><h:p>The gated position list</h:p></Description>
+                <Attribute name="type" value="PoseList" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseListGate"/>
+            <Attribute name="button" xsi:type="StringAttributeReferenceType"/>
+            <Attribute name="gateType" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="CloudGate" displayName="Gate (3D Position List)">
+    	<Description><h:p>The gate component has a data input and a signal input. For each signal event, the gate
+    	lets exactly one data event pass. The <h:code>Gate Type</h:code> attribute is used to configure if
+    	the previous or the next event is passed.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+            <Edge name="Input" source="A" destination="B" displayName="Data Input">
+            	<Description><h:p>The input position list</h:p></Description>
+                <Predicate>type=='3DPositionList'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="Signal" source="Event" destination="EventSpace" displayName="Trigger Input">
+            	<Description><h:p>The trigger input signal</h:p></Description>
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Gated PositionList">
+            	<Description><h:p>The gated position list</h:p></Description>
+                <Attribute name="type" value="3DPositionList" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="CloudGate"/>
+            <Attribute name="button" xsi:type="StringAttributeReferenceType"/>
+            <Attribute name="gateType" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="PositionList2Gate" displayName="Gate (2D Position List)">
+    	<Description><h:p>The gate component has a data input and a signal input. For each signal event, the gate
+    	lets exactly one data event pass. The <h:code>Gate Type</h:code> attribute is used to configure if
+    	the previous or the next event is passed.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+            <Edge name="Input" source="A" destination="B" displayName="Data Input">
+            	<Description><h:p>The input position list</h:p></Description>
+                <Predicate>type=='2DPositionList'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="Signal" source="Event" destination="EventSpace" displayName="Trigger Input">
+            	<Description><h:p>The trigger input signal</h:p></Description>
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Gated PositionList">
+            	<Description><h:p>The gated position list</h:p></Description>
+                <Attribute name="type" value="2DPositionList" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionList2Gate"/>
+            <Attribute name="button" xsi:type="StringAttributeReferenceType"/>
+            <Attribute name="gateType" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="MatrixGate" displayName="Gate (4x4 Matrix)">
+    	<Description><h:p>The gate component has a data input and a signal input. For each signal event, the gate
+    	lets exactly one data event pass. The <h:code>Gate Type</h:code> attribute is used to configure if
+    	the previous or the next event is passed.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+            <Edge name="Input" source="A" destination="B" displayName="Data Input">
+            	<Description><h:p>The input matrix</h:p></Description>
+                <Predicate>type=='4x4Matrix'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="Signal" source="Event" destination="EventSpace" displayName="Trigger Input">
+            	<Description><h:p>The trigger input signal</h:p></Description>
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Gated Matrix">
+            	<Description><h:p>The gated matrix</h:p></Description>
+                <Attribute name="type" value="4x4Matrix" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="MatrixGate"/>
+            <Attribute name="button" xsi:type="StringAttributeReferenceType"/>
+            <Attribute name="gateType" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/4)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/5)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/6)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/7)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/8)"/>
+    </GlobalEdgeAttributeDeclarations> 
+
+    <GlobalDataflowAttributeDeclarations>
+        <!-- Unfortunately, the xpointer used in Xinclude is currently restricted to the element scheme and absolute element indices in Xerces (and thus XMLBeans) -->
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/2)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/3)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/4)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/5)"/>
+
+        <Attribute name="gateType" displayName="Gate type" default="0" xsi:type="EnumAttributeDeclarationType">
+            <Description>
+                <h:p>If this attribute is either
+                    <h:code>Immediate</h:code> or
+                    <h:code>Immediate (Sync)</h:code>, the gate will immediately send the last data event when a signal event is
+            	received. In the latter case, the measurement pushed on 
+                    <h:code>Output</h:code> has the timestamp associated
+                with 
+                    <h:code>Signal</h:code>, otherwise it has the timestamp associated with 
+                    <h:code>Input</h:code>. If this attribute is set to
+                    <h:code>Wait</h:code>, the component will push the next incoming data event.
+                </h:p>
+            </Description>
+            <EnumValue name="1" displayName="Wait"/>
+            <EnumValue name="2" displayName="Immediate (Sync)"/>
+            <EnumValue name="0" displayName="Immediate"/>
+        </Attribute>
+    </GlobalDataflowAttributeDeclarations>
+</UTQLPatternTemplates>

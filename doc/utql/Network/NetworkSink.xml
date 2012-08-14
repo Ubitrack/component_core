@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../schema/utql_templates.xsd'>
+    
+    <Pattern name="NetworkSinkPose" displayName="Network Sink (Pose)">
+        <Description><h:p>This pattern transmits pose data via UDP to a NetworkSourePose having the same ID.</h:p></Description>
+        
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input">
+                <Description><h:p>The pose received via network</h:p></Description>
+                <Predicate>type=='6D'&amp;&amp;mode=='push'</Predicate>
+
+            </Edge>
+        </Input>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="NetworkPoseSink"/>
+            <Attribute name="networkDestination" displayName="Network Destination" default="127.0.0.1" xsi:type="StringAttributeDeclarationType">
+            </Attribute>
+            <Attribute name="networkPort" displayName="Network Port" default="21844" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="NetworkSinkErrorPose" displayName="Network Sink (ErrorPose)">
+        <Description><h:p>This pattern transmits a pose and its covariance data via UDP to a NetworkSoureErrorPose having the same ID.</h:p></Description>
+        
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input">
+                <Description><h:p>The errorpose received via network</h:p></Description>
+                <Predicate>type=='6DError'&amp;&amp;mode=='push'</Predicate>
+
+            </Edge>
+        </Input>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="NetworkErrorPoseSink"/>
+            <Attribute name="networkDestination" displayName="Network Destination" default="127.0.0.1" xsi:type="StringAttributeDeclarationType">
+            </Attribute>
+            <Attribute name="networkPort" displayName="Network Port" default="21844" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="NetworkSinkErrorRotation" displayName="Network Sink (Rotation)">
+        <Description><h:p>This pattern transmits a rotation data via UDP to a NetworkSoureRotation having the same ID.</h:p></Description>
+        
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input">
+                <Description><h:p>The rotation received via network</h:p></Description>
+                <Predicate>type=='3DRotation'&amp;&amp;mode=='push'</Predicate>
+
+            </Edge>
+        </Input>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="NetworkErrorRotationSink"/>
+            <Attribute name="networkDestination" displayName="Network Destination" default="127.0.0.1" xsi:type="StringAttributeDeclarationType">
+            </Attribute>
+            <Attribute name="networkPort" displayName="Network Port" default="21844" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="NetworkSinkPosition" displayName="Network Sink (Position)">
+        <Description><h:p>This pattern transmits position data via UDP to a NetworkSoureErrorPose having the same ID.</h:p></Description>
+        
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input">
+                <Description><h:p>The position received via network</h:p></Description>
+                <Predicate>type=='3DPosition'&amp;&amp;mode=='push'</Predicate>
+
+            </Edge>
+        </Input>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="NetworkPositionSink"/>
+            <Attribute name="networkDestination" displayName="Network Destination" default="127.0.0.1" xsi:type="StringAttributeDeclarationType">
+            </Attribute>
+            <Attribute name="networkPort" displayName="Network Port" default="21844" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="NetworkSinkPoseList" displayName="Network Sink (PoseList)">
+        <Description><h:p>This pattern transmits poselists data via UDP to a NetworkSourePoseList having the same ID.</h:p></Description>
+        
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input">
+                <Description><h:p>The pose received via network</h:p></Description>
+                <Predicate>type=='PoseList'&amp;&amp;mode=='push'</Predicate>
+
+            </Edge>
+        </Input>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="NetworkPoseListSink"/>
+            <Attribute name="networkDestination" displayName="Network Destination" default="127.0.0.1" xsi:type="StringAttributeDeclarationType">
+            </Attribute>
+            <Attribute name="networkPort" displayName="Network Port" default="21844" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="NetworkSinkPositionList" displayName="Network Sink (PositionList)">
+        <Description><h:p>This pattern transmits a list of positions data via UDP to a NetworkSourePositionList having the same ID.</h:p></Description>
+        
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input">
+                <Description><h:p>The positionlist received via network</h:p></Description>
+                <Predicate>type=='3DPositionList'&amp;&amp;mode=='push'</Predicate>
+
+            </Edge>
+        </Input>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="NetworkPositionListSink"/>
+            <Attribute name="networkDestination" displayName="Network Destination" default="127.0.0.1" xsi:type="StringAttributeDeclarationType">
+            </Attribute>
+            <Attribute name="networkPort" displayName="Network Port" default="21844" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="NetworkSink2DPositionList" displayName="Network Sink (2DPositionList)">
+        <Description><h:p>This pattern transmits a list of 2D positions data via UDP to a NetworkSourePosition2List having the same ID.</h:p></Description>
+        
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input">
+                <Description><h:p>The 2D positionlist received via network</h:p></Description>
+                <Predicate>type=='2DPositionList'&amp;&amp;mode=='push'</Predicate>
+
+            </Edge>
+        </Input>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="NetworkPositionList2Sink"/>
+            <Attribute name="networkDestination" displayName="Network Destination" default="127.0.0.1" xsi:type="StringAttributeDeclarationType">
+            </Attribute>
+            <Attribute name="networkPort" displayName="Network Port" default="21844" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+    
+	<Pattern name="NetworkSinkEvent" displayName="Network Sink (Event)">
+        <Description><h:p>This pattern transmits a button event via UDP to a NetworkSourePosition2List having the same ID.</h:p></Description>
+        
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input">
+                <Description><h:p>The button event received via network</h:p></Description>
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+
+            </Edge>
+        </Input>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="NetworkEventSink"/>
+            <Attribute name="networkDestination" displayName="Network Destination" default="127.0.0.1" xsi:type="StringAttributeDeclarationType">
+            </Attribute>
+            <Attribute name="networkPort" displayName="Network Port" default="21844" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="NetworkSinkImage" displayName="Network Sink (Image)">
+        <Description><h:p>This pattern transmits a Image via UDP to a NetworkSoureImage having the same ID.</h:p></Description>
+        
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input">
+                <Description><h:p>The Image received via network</h:p></Description>
+                <Predicate>type=='Image'&amp;&amp;mode=='push'</Predicate>
+
+            </Edge>
+        </Input>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="NetworkImageSink"/>
+            <Attribute name="networkDestination" displayName="Network Destination" default="127.0.0.1" xsi:type="StringAttributeDeclarationType">
+            </Attribute>
+            <Attribute name="networkPort" displayName="Network Port" default="21844" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/4)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/5)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/6)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/7)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/8)"/>
+    </GlobalEdgeAttributeDeclarations> 
+    
+    <GlobalDataflowAttributeDeclarations>
+        <!-- Unfortunately, the xpointer used in Xinclude is currently restricted to the element scheme and absolute element indices in Xerces (and thus XMLBeans) -->
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/2)"/>
+    </GlobalDataflowAttributeDeclarations>
+    
+</UTQLPatternTemplates>

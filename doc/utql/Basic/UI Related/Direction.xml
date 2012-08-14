@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
+    
+    <Pattern name="PositionDirection" displayName="Target Position Direction">
+    	<Description>
+            <h:p>The component calculates the rotation needed to orient <h:code>Object</h:code> towards a given <h:code>Target Position</h:code>.</h:p>
+        </Description>
+    	
+        <Input>
+            <Node name="A" displayName="Object">
+            	<Description><h:p>Coordinated frame of object to be oriented towards <h:code>Target Position</h:code></h:p></Description>
+                <GuiPos x="50" y="0"/>
+            </Node>
+            <Node name="B" displayName="Reference Frame">
+            	<Description><h:p>Reference frame where the <h:code>Target Position</h:code> is known</h:p></Description>
+                <GuiPos x="0" y="0"/>
+            </Node>
+            <Node name="C" displayName="Target Position">
+            	<Description><h:p>Position towards which <h:code>Object</h:code> shall be oriented</h:p></Description>
+                <GuiPos x="0" y="50"/>
+            </Node>
+            <Node name="D" displayName="Tip">
+            	<Description><h:p>The tip of the object that shall be directed towards <h:code>Target Position</h:code> </h:p></Description>
+                <GuiPos x="50" y="50"/>
+            </Node>
+            <Node name="E" displayName="Directed Object">
+            	<Description><h:p>The <h:code>Object</h:code> after having been directed properly</h:p></Description>
+                <GuiPos x="30" y="20"/>
+            </Node>
+            <Edge name="AB" source="A" destination="B" displayName="Input Pose">
+            	<Description><h:p>Pose of the <h:code>Reference Frame</h:code> with respect to misoriented object</h:p></Description>
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="Target Offset">
+            	<Description><h:p>Offset of the <h:code>Target Position</h:code> with respect to the reference frame</h:p></Description>
+                <Predicate>type=='3DPosition'</Predicate>
+            </Edge>
+            <Edge name="AD" source="A" destination="D" displayName="Tip Direction">
+            	<Description><h:p>Offset of the <h:code>Target Position</h:code> with respect to the reference frame</h:p></Description>
+                <Predicate>type=='3DPosition'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="AE" source="A" destination="E" displayName="Object Orientation">
+            	<Description><h:p>Resulting orientation which directs <h:code>Object</h:code> towards the <h:code>Target Position</h:code></h:p></Description>
+                <Attribute name="type" value="3DRotation" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+            <TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AE"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionDirection"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+    </GlobalEdgeAttributeDeclarations>
+    
+    <GlobalDataflowAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+    </GlobalDataflowAttributeDeclarations>
+    
+</UTQLPatternTemplates>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../schema/utql_templates.xsd'>
+    
+    
+    <Pattern name="InsideInOrientationCorrectionOrthogonal" displayName="Inside-In Orientation Correction (one 3D reference point)">
+        <Description><p xmlns="http://www.w3.org/1999/xhtml">Assuming that <em>Misoriented Frame</em> and <em>Corrected Frame</em> share the same 
+                coordinate system origin and differ just by a rotation, a rotational correction is computed based on two measurements of one
+                common reference point.<br/>
+                <br/>
+                This correction yields correct results only if the reference
+                point direction (as seen from the common origin of <em>Misoriented Frame</em> and <em>Corrected Frame</em>) is orthogonal to the 
+                direction of the correctional rotation axis.<br/>
+                <br/>
+                Note that if <em>Misoriented Frame</em> represents a tracking-target, it should coincide with the center-of-gravity of this target, 
+                not with the vendor-specific origin which might be arbitrary. The offset can be obtained from the vendor-specific body calibration procedure.
+                Insert a static translation from the vendor coordinate frame given by the corresponding tracker pattern to <em>Misoriented Frame</em>, 
+                in this case.
+        </p></Description>
+        <Input>
+            <Node name="MisorientedFrame" displayName="Misoriented Frame"/>
+            <Node name="CorrectedFrame" displayName="Corrected Frame"/>
+            <Node name="RefPoint" displayName="Reference Point"/>
+            <Edge name="RefMeasurement" source="CorrectedFrame" destination="RefPoint" displayName="Reference Measurement">
+                <Predicate>type=='3DPosition'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="ErrMeasurement" source="MisorientedFrame" destination="RefPoint" displayName="Misoriented Measurement">
+                <Predicate>type=='3DPosition'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        <Output>
+            <Edge name="OrientationCorrection" source="MisorientedFrame" destination="CorrectedFrame" displayName="Orientational Correction">
+                <Attribute name="type" value="3DRotation" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        <DataflowConfiguration>
+            <UbitrackLib class="RotationCorrectionOrthogonal"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="InsideInOrientationCorrectionFull" displayName="Inside-In Orientation Correction (two 3D reference points)">
+        <Description><p xmlns="http://www.w3.org/1999/xhtml">Assuming that <em>Misoriented Frame</em> and <em>Corrected Frame</em> share the same 
+                coordinate system origin and differ just by a rotation, a rotational correction is computed based on two measurements of one
+                common reference point.<br/>
+                <br/>
+                This mechanism always yields correct results as long as the distance of the two reference points does not
+                become too small (degenerate configuration).<br/>
+                <br/>
+                Note that if <em>Misoriented Frame</em> represents a tracking-target, it should coincide with the center-of-gravity of this target, 
+                not with the vendor-specific origin which is arbitrary. The offset can be obtained from the vendor-specific body calibration procedure.
+                Insert a static translation from the vendor coordinate frame given by the corresponding tracker pattern to <em>Misoriented Frame</em>, 
+                in this case.
+        </p></Description>
+        <Input>
+            <Node name="MisorientedFrame" displayName="Misoriented Frame"/>
+            <Node name="CorrectedFrame" displayName="Corrected Frame"/>
+            <Node name="RefPointA" displayName="Reference Point A"/>
+            <Node name="RefPointB" displayName="Reference Point B"/>
+            <Edge name="RefMeasurementA" source="CorrectedFrame" destination="RefPointA" displayName="Reference Measurement A">
+                <Predicate>type=='3DPosition'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="ErrMeasurementA" source="MisorientedFrame" destination="RefPointA" displayName="Misoriented Measurement A">
+                <Predicate>type=='3DPosition'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="RefMeasurementB" source="CorrectedFrame" destination="RefPointB" displayName="Reference Measurement B">
+                <Predicate>type=='3DPosition'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="ErrMeasurementB" source="MisorientedFrame" destination="RefPointB" displayName="Misoriented Measurement B">
+                <Predicate>type=='3DPosition'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        <Output>
+            <Edge name="OrientationCorrection" source="MisorientedFrame" destination="CorrectedFrame" displayName="Orientational Correction">
+                <Attribute name="type" value="3DRotation" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        <DataflowConfiguration>
+            <UbitrackLib class="RotationCorrectionFull"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+    </GlobalEdgeAttributeDeclarations>
+    
+    <GlobalDataflowAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+    </GlobalDataflowAttributeDeclarations>
+    
+</UTQLPatternTemplates>

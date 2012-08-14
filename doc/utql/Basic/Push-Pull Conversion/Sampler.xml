@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
+    
+    <Pattern name="PoseSampler" displayName="Sampler (Pose)">
+    	<Description><h:p>Queries the pull input in constant time intervals and sends the result to push receivers.
+    	Sampling frequency and time offset can be configured.
+		</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Pull Input">
+            	<Description><h:p>Pull input to be sampled. By default, measurements for the the current time 
+            	will be queried, however an offset can be added to this, e.g. to perform prediction.</h:p></Description>
+                <Predicate>type=='6D'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Push Output">
+            	<Description><h:p>Sampled measurements.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseSampler"/>
+            <Attribute name="frequency" displayName="sampling frequency (Hz)" default="10" min="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>Number of samples per second. Values less than one are supported.</h:p></Description>
+            </Attribute>
+            <Attribute name="offset" displayName="clock offset (s)" default="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>A clock offset in seconds to add to the query time. Values greater than 0 mean prediction.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+     <Pattern name="FrameSampler" displayName="Sampler (Image)">
+    	<Description><h:p>Queries the pull input in constant time intervals and sends the result to push receivers.
+    	Sampling frequency and time offset can be configured.
+		</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Pull Input">
+            	<Description><h:p>Pull input to be sampled. By default, measurements for the the current time 
+            	will be queried, however an offset can be added to this, e.g. to perform prediction.</h:p></Description>
+                <Predicate>type=='Image'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Push Output">
+            	<Description><h:p>Sampled measurements.</h:p></Description>
+                <Attribute name="type" value="Image" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="FrameSampler"/>
+            <Attribute name="frequency" displayName="sampling frequency (Hz)" default="10" min="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>Number of samples per second. Values less than one are supported.</h:p></Description>
+            </Attribute>
+            <Attribute name="offset" displayName="clock offset (s)" default="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>A clock offset in seconds to add to the query time. Values greater than 0 mean prediction.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+    <Pattern name="ErrorPoseSampler" displayName="Sampler (Pose+Error)">
+    	<Description><h:p>Queries the pull input in constant time intervals and sends the result to push receivers.
+    	Sampling frequency and time offset can be configured.
+		</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Pull Input">
+            	<Description><h:p>Pull input to be sampled. By default, measurements for the the current time 
+            	will be queried, however an offset can be added to this, e.g. to perform prediction.</h:p></Description>
+                <Predicate>type=='6DError'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Push Output">
+            	<Description><h:p>Sampled measurements.</h:p></Description>
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="ErrorPoseSampler"/>
+            <Attribute name="frequency" displayName="sampling frequency (Hz)" default="10" min="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>Number of samples per second. Values less than one are supported.</h:p></Description>
+            </Attribute>
+            <Attribute name="offset" displayName="clock offset (s)" default="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>A clock offset in seconds to add to the query time. Values greater than 0 mean prediction.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="ErrorPositionSampler" displayName="Sampler (Position+Error)">
+    	<Description><h:p>Queries the pull input in constant time intervals and sends the result to push receivers.
+    	Sampling frequency and time offset can be configured.
+		</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Pull Input">
+            	<Description><h:p>Pull input to be sampled. By default, measurements for the the current time 
+            	will be queried, however an offset can be added to this, e.g. to perform prediction.</h:p></Description>
+                <Predicate>type=='3DPositionError'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Push Output">
+            	<Description><h:p>Sampled measurements.</h:p></Description>
+                <Attribute name="type" value="3DPositionError" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="ErrorPositionSampler"/>
+            <Attribute name="frequency" displayName="sampling frequency (Hz)" default="10" min="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>Number of samples per second. Values less than one are supported.</h:p></Description>
+            </Attribute>
+            <Attribute name="offset" displayName="clock offset (s)" default="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>A clock offset in seconds to add to the query time. Values greater than 0 mean prediction.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="RotationSampler" displayName="Sampler (3D Rotation)">
+    	<Description><h:p>Queries the pull input in constant time intervals and sends the result to push receivers.
+    	Sampling frequency and time offset can be configured.
+		</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Pull Input">
+            	<Description><h:p>Pull input to be sampled. By default, measurements for the the current time 
+            	will be queried, however an offset can be added to this, e.g. to perform prediction.</h:p></Description>
+                <Predicate>type=='3DRotation'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Push Output">
+            	<Description><h:p>Sampled measurements.</h:p></Description>
+                <Attribute name="type" value="3DRotation" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="RotationSampler"/>
+            <Attribute name="frequency" displayName="sampling frequency (Hz)" default="10" min="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>Number of samples per second. Values less than one are supported.</h:p></Description>
+            </Attribute>
+            <Attribute name="offset" displayName="clock offset (s)" default="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>A clock offset in seconds to add to the query time. Values greater than 0 mean prediction.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="PositionSampler" displayName="Sampler (3D Position)">
+    	<Description><h:p>Queries the pull input in constant time intervals and sends the result to push receivers.
+    	Sampling frequency and time offset can be configured.
+		</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Pull Input">
+            	<Description><h:p>Pull input to be sampled. By default, measurements for the the current time 
+            	will be queried, however an offset can be added to this, e.g. to perform prediction.</h:p></Description>
+                <Predicate>type=='3DPosition'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Push Output">
+            	<Description><h:p>Sampled measurements.</h:p></Description>
+                <Attribute name="type" value="3DPosition" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionSampler"/>
+            <Attribute name="frequency" displayName="sampling frequency (Hz)" default="10" min="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>Number of samples per second. Values less than one are supported.</h:p></Description>
+            </Attribute>
+            <Attribute name="offset" displayName="clock offset (s)" default="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>A clock offset in seconds to add to the query time. Values greater than 0 mean prediction.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="Matrix3x3Sampler" displayName="Sampler (3x3 Matrix)">
+    	<Description><h:p>Queries the pull input in constant time intervals and sends the result to push receivers.
+    	Sampling frequency and time offset can be configured.
+		</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Pull Input">
+            	<Description><h:p>Pull input to be sampled. By default, measurements for the the current time 
+            	will be queried, however an offset can be added to this, e.g. to perform prediction.</h:p></Description>
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Push Output">
+            	<Description><h:p>Sampled measurements.</h:p></Description>
+                <Attribute name="type" value="3x3Matrix" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="Matrix3x3Sampler"/>
+            <Attribute name="frequency" displayName="sampling frequency (Hz)" default="10" min="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>Number of samples per second. Values less than one are supported.</h:p></Description>
+            </Attribute>
+            <Attribute name="offset" displayName="clock offset (s)" default="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>A clock offset in seconds to add to the query time. Values greater than 0 mean prediction.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="Matrix3x4Sampler" displayName="Sampler (3x4 Matrix)">
+    	<Description><h:p>Queries the pull input in constant time intervals and sends the result to push receivers.
+    	Sampling frequency and time offset can be configured.
+		</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Push Input">
+            	<Description><h:p>Pull input to be sampled. By default, measurements for the the current time 
+            	will be queried, however an offset can be added to this, e.g. to perform prediction.</h:p></Description>
+                <Predicate>type=='3x4Matrix'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Push Output">
+            	<Description><h:p>Sampled measurements.</h:p></Description>
+                <Attribute name="type" value="3x4Matrix" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="Matrix3x4Sampler"/>
+            <Attribute name="frequency" displayName="sampling frequency (Hz)" default="10" min="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>Number of samples per second. Values less than one are supported.</h:p></Description>
+            </Attribute>
+            <Attribute name="offset" displayName="clock offset (s)" default="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>A clock offset in seconds to add to the query time. Values greater than 0 mean prediction.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+    
+	<Pattern name="ButtonSampler" displayName="Sampler (Button)">
+    	<Description><h:p>Queries the pull input in constant time intervals and sends the result to push receivers.
+    	Sampling frequency and time offset can be configured.
+		</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Pull Input">
+            	<Description><h:p>Pull input to be sampled. By default, measurements for the the current time 
+            	will be queried, however an offset can be added to this, e.g. to perform prediction.</h:p></Description>
+                <Predicate>type=='Button'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Push Output">
+            	<Description><h:p>Sampled measurements.</h:p></Description>
+                <Attribute name="type" value="Button" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="ButtonSampler"/>
+            <Attribute name="frequency" displayName="sampling frequency (Hz)" default="10" min="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>Number of samples per second. Values less than one are supported.</h:p></Description>
+            </Attribute>
+            <Attribute name="offset" displayName="clock offset (s)" default="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>A clock offset in seconds to add to the query time. Values greater than 0 mean prediction.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+    <Pattern name="PositionList2Sampler" displayName="Sampler (2D Position List)">
+    	<Description><h:p>Queries the pull input in constant time intervals and sends the result to push receivers.
+    	Sampling frequency and time offset can be configured.
+		</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Push Input">
+            	<Description><h:p>Pull input to be sampled. By default, measurements for the the current time 
+            	will be queried, however an offset can be added to this, e.g. to perform prediction.</h:p></Description>
+                <Predicate>type=='2DPositionList'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Push Output">
+            	<Description><h:p>Sampled measurements.</h:p></Description>
+                <Attribute name="type" value="2DPositionList" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionList2Sampler"/>
+            <Attribute name="frequency" displayName="sampling frequency (Hz)" default="10" min="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>Number of samples per second. Values less than one are supported.</h:p></Description>
+            </Attribute>
+            <Attribute name="offset" displayName="clock offset (s)" default="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>A clock offset in seconds to add to the query time. Values greater than 0 mean prediction.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="PositionListSampler" displayName="Sampler (3D Position List)">
+    	<Description><h:p>Queries the pull input in constant time intervals and sends the result to push receivers.
+    	Sampling frequency and time offset can be configured.
+		</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Push Input">
+            	<Description><h:p>Pull input to be sampled. By default, measurements for the the current time 
+            	will be queried, however an offset can be added to this, e.g. to perform prediction.</h:p></Description>
+                <Predicate>type=='3DPositionList'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Push Output">
+            	<Description><h:p>Sampled measurements.</h:p></Description>
+                <Attribute name="type" value="3DPositionList" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionListSampler"/>
+            <Attribute name="frequency" displayName="sampling frequency (Hz)" default="10" min="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>Number of samples per second. Values less than one are supported.</h:p></Description>
+            </Attribute>
+            <Attribute name="offset" displayName="clock offset (s)" default="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>A clock offset in seconds to add to the query time. Values greater than 0 mean prediction.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="PoseListSampler" displayName="Sampler (PoseList)">
+    	<Description><h:p>Queries the pull input in constant time intervals and sends the result to push receivers.
+    	Sampling frequency and time offset can be configured.
+		</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Push Input">
+            	<Description><h:p>Pull input to be sampled. By default, measurements for the the current time 
+            	will be queried, however an offset can be added to this, e.g. to perform prediction.</h:p></Description>
+                <Predicate>type=='PoseList'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Push Output">
+            	<Description><h:p>Sampled measurements.</h:p></Description>
+                <Attribute name="type" value="PoseList" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseListSampler"/>
+            <Attribute name="frequency" displayName="sampling frequency (Hz)" default="10" min="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>Number of samples per second. Values less than one are supported.</h:p></Description>
+            </Attribute>
+            <Attribute name="offset" displayName="clock offset (s)" default="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>A clock offset in seconds to add to the query time. Values greater than 0 mean prediction.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="Vector4DSampler" displayName="Sampler (4 Vector)">
+    	<Description><h:p>Queries the pull input in constant time intervals and sends the result to push receivers.
+    	Sampling frequency and time offset can be configured.
+		</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Pull Input">
+            	<Description><h:p>Pull input to be sampled. By default, measurements for the the current time 
+            	will be queried, however an offset can be added to this, e.g. to perform prediction.</h:p></Description>
+                <Predicate>type=='4DVector'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Push Output">
+            	<Description><h:p>Sampled measurements.</h:p></Description>
+                <Attribute name="type" value="4DVector" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="Vector4DSampler"/>
+            <Attribute name="frequency" displayName="sampling frequency (Hz)" default="10" min="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>Number of samples per second. Values less than one are supported.</h:p></Description>
+            </Attribute>
+            <Attribute name="offset" displayName="clock offset (s)" default="0" xsi:type="DoubleAttributeDeclarationType">
+            	<Description><h:p>A clock offset in seconds to add to the query time. Values greater than 0 mean prediction.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+    </GlobalEdgeAttributeDeclarations>
+    
+    <GlobalDataflowAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+    </GlobalDataflowAttributeDeclarations>
+ 
+    
+</UTQLPatternTemplates>

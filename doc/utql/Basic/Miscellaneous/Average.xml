@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
+    
+	 <Pattern name="PoseAverage" displayName="Pose Average (6D Pose, time-expansion)">
+    	<Description><h:p>This class calculates the average of 6D pose measurements.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input Poses">
+            	<Description><h:p>The input poses.</h:p></Description>
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Average Pose">
+            	<Description><h:p>The averaged pose</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+		
+		<Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="Input"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseListAverage"/>
+			
+			 <!-- remove when expansion works... -->
+            <Attribute name="expansion" value="time" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="PoseAverageError" displayName="Pose Average (6D Pose, time-expansion)">
+    	<Description><h:p>This class calculates the average of 6D pose measurements.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input Poses">
+            	<Description><h:p>The input poses.</h:p></Description>
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Averaged Pose with Error">
+            	<Description><h:p>The averaged pose with covariance</h:p></Description>
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+		
+		<Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="Input"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseListAverageError"/>
+			
+			 <!-- remove when expansion works... -->
+            <Attribute name="expansion" value="time" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+	
+	<Pattern name="PoseListAverage" displayName="PoseList Average (6D Pose, space-expansion)">
+    	<Description><h:p>This class calculates the average of a PoseList measurement.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input Pose List">
+            	<Description><h:p>The input poses.</h:p></Description>
+                <Predicate>type=='PoseList'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+			<Edge name="Output" source="A" destination="B" displayName="Average Pose">
+            	<Description><h:p>The averaged pose</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+		
+		<Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="Input"/>
+				<Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseListAverage"/>
+			
+			 <!-- remove when expansion works... -->
+            <Attribute name="expansion" value="space" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="PoseListAverageError" displayName="PoseList Average (6D Pose, space-expansion)">
+    	<Description><h:p>This class calculates the average of a PoseList measurement.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input Pose List">
+            	<Description><h:p>The input poses.</h:p></Description>
+                <Predicate>type=='PoseList'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Average Pose with Error">
+            	<Description><h:p>The averaged pose with covariance.</h:p></Description>
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+		
+		<Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="Input"/>
+				<Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseListAverageError"/>
+			
+			 <!-- remove when expansion works... -->
+            <Attribute name="expansion" value="space" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+    <Pattern name="PositionListAverageError" displayName="3D Position  List Average (3D Position, space-expansion)">
+    	<Description><h:p>This class calculates the average of a PositionList measurement.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input Position List">
+            	<Description><h:p>The input positions.</h:p></Description>
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Average Position">
+            	<Description><h:p>The averaged position with covariance</h:p></Description>
+                <Attribute name="type" value="3DPositionError" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+		
+		<Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="Input"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionListAverageError"/>
+			
+			<!-- remove when expansion works... -->
+            <Attribute name="expansion" value="space" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="PositionListAverage" displayName="3D Position List Average (3D Position, space-expansion)">
+    	<Description><h:p>This class calculates the average of a PositionList measurement.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input Position List">
+            	<Description><h:p>The input positions.</h:p></Description>
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Average Position">
+            	<Description><h:p>The averaged position</h:p></Description>
+                <Attribute name="type" value="3DPosition" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+		
+		<Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="Input"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionListAverage"/>
+			
+			<!-- remove when expansion works... -->
+            <Attribute name="expansion" value="space" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	 <Pattern name="PositionAverage" displayName="3D Position  Average (3D Position, time-expansion)">
+    	<Description><h:p>This class calculates the average of 3D Position measurements.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input Position List">
+            	<Description><h:p>The input positions.</h:p></Description>
+                <Predicate>type=='3DPosition'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Average Position">
+            	<Description><h:p>The averaged position.</h:p></Description>
+                <Attribute name="type" value="3DPosition" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+		
+		<Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="Input"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionListAverage"/>
+			
+			<!-- remove when expansion works... -->
+            <Attribute name="expansion" value="time" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="PositionAverageError" displayName="3D Position Average (3D Position, time-expansion)">
+    	<Description><h:p>This class calculates the average of 3D position measurements.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input 3D Positions ">
+            	<Description><h:p>The input positions.</h:p></Description>
+                <Predicate>type=='3DPosition'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Average Position">
+            	<Description><h:p>The averaged position with covariance.</h:p></Description>
+                <Attribute name="type" value="3DPositionError" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+		
+		<Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="Input"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionListAverageError"/>
+			
+			<!-- remove when expansion works... -->
+            <Attribute name="expansion" value="time" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="PositionList2DAverage" displayName="2D Position List Average (2D Position, space-expansion)">
+    	<Description><h:p>This class calculates the average of a PositionList2D measurement.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input Position List">
+            	<Description><h:p>The input 2D positions.</h:p></Description>
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Average Position">
+            	<Description><h:p>The averaged position</h:p></Description>
+                <Attribute name="type" value="2DPosition" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+		
+		<Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="Input"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionList2DAverage"/>
+			
+			<!-- remove when expansion works... -->
+            <Attribute name="expansion" value="space" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="Position2DAverage" displayName="2D Position Average (2D Position, time-expansion)">
+    	<Description><h:p>This class calculates the average of 2D position measurements.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input 2D Positions">
+            	<Description><h:p>The input 2D positions.</h:p></Description>
+                <Predicate>type=='2DPosition'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Average Position">
+            	<Description><h:p>The averaged position</h:p></Description>
+                <Attribute name="type" value="2DPosition" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+		
+		<Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="Input"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionList2DAverage"/>
+			
+			<!-- remove when expansion works... -->
+            <Attribute name="expansion" value="time" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="DistanceListAverage" displayName="DistanceList Average (Distance, space-expansion)">
+    	<Description><h:p>This class calculates the average of a DistanceList measurement.</h:p></Description>
+
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input Distance List">
+            	<Description><h:p>The scalar input values.</h:p></Description>
+                <Predicate>type=='DistanceList'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Average Distance">
+            	<Description><h:p>The averaged scalar distance value</h:p></Description>
+                <Attribute name="type" value="Distance" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+		
+		<Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="Input"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="DistanceListAverage"/>
+			
+			<!-- remove when expansion works... -->
+            <Attribute name="expansion" value="space" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="DistanceAverage" displayName="Distance Average (Distance, time-expansion)">
+    	<Description><h:p>This class calculates the average of distance measurements.</h:p></Description>
+
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input Distances">
+            	<Description><h:p>The scalar input values.</h:p></Description>
+                <Predicate>type=='Distance'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Average Distance">
+            	<Description><h:p>The averaged scalar distance value</h:p></Description>
+                <Attribute name="type" value="Distance" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+		
+		<Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="Input"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="DistanceListAverage"/>
+			
+			<!-- remove when expansion works... -->
+            <Attribute name="expansion" value="time" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+    </GlobalEdgeAttributeDeclarations>
+    
+    <GlobalDataflowAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+		<xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/2)"/>
+    </GlobalDataflowAttributeDeclarations>
+ 
+    
+</UTQLPatternTemplates>

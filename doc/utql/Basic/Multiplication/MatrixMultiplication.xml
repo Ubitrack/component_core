@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
+    
+    <Pattern name="MatrixMultiplication" displayName="Matrix Multiplication (4x4-Matrix * 3DPosition)">
+    	<Description><h:p>The component multiplies the homogeneous matrix <h:code>4x4-Matrix</h:code> with the (inhomogeneous) 3-Vector <h:code>Input Vector</h:code>, resulting in the inhomogeneous vector <h:code>Result Vector</h:code></h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="AB" source="A" destination="B" displayName="4x4-Matrix">
+            	<Description><h:p>The matrix input.</h:p></Description>
+                <Predicate>type=='4x4Matrix'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="Input Vector">
+            	<Description><h:p>The inhomogeneous input vector.</h:p></Description>
+                <Predicate>type=='3DPosition'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="AC" source="A" destination="C" displayName="Result Vector">
+            	<Description><h:p>The resulting inhomogeneous 3-vector.</h:p></Description>
+                <Attribute name="type" value="3DPosition" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+            <TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="MatrixMultiplication"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="MatrixListMultiplication" displayName="Matrix Multiplication (4x4-Matrix * 3DPositionList)">
+    	<Description><h:p>The component multiplies the homogeneous matrix <h:code>4x4-Matrix</h:code> with the list of (inhomogeneous) 3-vectors resulting in an inhomogeneous list of 3-vectors.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="AB" source="A" destination="B" displayName="4x4-Matrix">
+            	<Description><h:p>The matrix input.</h:p></Description>
+                <Predicate>type=='4x4Matrix'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="Input list of positions">
+            	<Description><h:p>The input list of inhomogeneous 3-vectors</h:p></Description>
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="AC" source="A" destination="C" displayName="Resulting list of positions">
+            	<Description><h:p>The resulting list of inhomogeneous 3-vectors.</h:p></Description>
+                <Attribute name="type" value="3DPositionList" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+            <TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="MatrixListMultiplication"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="MatrixList2Multiplication" displayName="Matrix Multiplication (3x3-Matrix * 2DPositionList)">
+    	<Description><h:p>The component multiplies the homogeneous matrix <h:code>3x3-Matrix</h:code> with the list of (inhomogeneous) 2-vectors resulting in an inhomogeneous list of 2-vectors.</h:p></Description>
+
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="AB" source="A" destination="B" displayName="3x3-Matrix">
+            	<Description><h:p>The matrix input.</h:p></Description>
+                <Predicate>type=='3x3Matrix'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="Input list of positions">
+            	<Description><h:p>The input list of inhomogeneous 3-vectors</h:p></Description>
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="AC" source="A" destination="C" displayName="Resulting list of positions">
+            	<Description><h:p>The resulting list of inhomogeneous 2-vectors.</h:p></Description>
+                <Attribute name="type" value="2DPositionList" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <Constraints>
+            <TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="MatrixList2Multiplication"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="MatrixProjection" displayName="Matrix Projection (3x4-Matrix * 3DPosition)">
+    	<Description><h:p>The component multiplies the homogeneous projection <h:code>3x4-Matrix</h:code> with the (inhomogeneous) 3-vector <h:code>Input Vector</h:code>, resulting in the inhomogeneous 2-vector <h:code>Result Vector</h:code></h:p></Description>
+
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="AB" source="A" destination="B" displayName="3x4-Matrix">
+            	<Description><h:p>The matrix input.</h:p></Description>
+                <Predicate>type=='3x4Matrix'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="Input Vector">
+            	<Description><h:p>The inhomogeneous input vector.</h:p></Description>
+                <Predicate>type=='3DPosition'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="AC" source="A" destination="C" displayName="Result Vector">
+            	<Description><h:p>The resulting inhomogeneous 2-vector.</h:p></Description>
+                <Attribute name="type" value="2DPosition" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <Constraints>
+            <TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="MatrixProjection"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+
+    <Pattern name="MatrixListProjection" displayName="Matrix Projection (3x4-Matrix * 3DPositionList)">
+    	<Description><h:p>The component multiplies the homogeneous projection <h:code>3x4-Matrix</h:code> with the list of (inhomogeneous) 3-vectors resulting in an inhomogeneous list of 2-vectors.</h:p></Description>
+
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="AB" source="A" destination="B" displayName="3x4-Matrix">
+            	<Description><h:p>The matrix input.</h:p></Description>
+                <Predicate>type=='3x4Matrix'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="Input list of positions">
+            	<Description><h:p>The input list of inhomogeneous 3-vectors</h:p></Description>
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="AC" source="A" destination="C" displayName="Resulting list of positions">
+            	<Description><h:p>The resulting list of inhomogeneous 2-vectors</h:p></Description>
+                <Attribute name="type" value="2DPositionList" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <Constraints>
+            <TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="MatrixListProjection"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+    </GlobalEdgeAttributeDeclarations>
+    
+    <GlobalDataflowAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+    </GlobalDataflowAttributeDeclarations>
+ 
+    
+</UTQLPatternTemplates>

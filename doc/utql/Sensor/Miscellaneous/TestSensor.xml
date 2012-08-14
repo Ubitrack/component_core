@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
+    
+    <Pattern name="PoseTestSensor" displayName="Test sensor (Pose)">
+        <Description><p xmlns="http://www.w3.org/1999/xhtml">Imaginary sensor which provides 6DOF pose test data without making real measurements.</p></Description>
+        <Output>
+            <Node name="Sensor" displayName="Imaginary sensor">
+                <Description><p xmlns="http://www.w3.org/1999/xhtml">Imaginary sensor</p></Description>
+            </Node>
+            <Node name="Object" displayName="Imaginary object">
+                <Description><p xmlns="http://www.w3.org/1999/xhtml">Imaginary Object</p></Description>
+            </Node>
+            <Edge name="Output" displayName="Imaginary Transformation" source="Sensor" destination="Object">
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        <DataflowConfiguration>
+            <UbitrackLib class="TestSourcePose"/>
+            <Attribute name="frequency" xsi:type="DoubleAttributeReferenceType"/>
+            <Attribute name="jerktime" xsi:type="DoubleAttributeReferenceType"/>
+            <Attribute name="posnoise" xsi:type="DoubleAttributeReferenceType"/>
+            <Attribute name="rotnoise" xsi:type="DoubleAttributeReferenceType"/>
+            <Attribute name="position" xsi:type="DoubleArrayAttributeReferenceType"/>
+            <Attribute name="rotation" xsi:type="DoubleArrayAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="PositionTestSensor" displayName="Test sensor (3D Position)">
+        <Description><p xmlns="http://www.w3.org/1999/xhtml">Imaginary sensor which provides 3D position test data without making real measurements.</p></Description>
+        <Output>
+            <Node name="Sensor" displayName="Imaginary sensor">
+                <Description><p xmlns="http://www.w3.org/1999/xhtml">Imaginary sensor</p></Description>
+            </Node>
+            <Node name="Object" displayName="Imaginary object">
+                <Description><p xmlns="http://www.w3.org/1999/xhtml">Imaginary Object</p></Description>
+            </Node>
+            <Edge name="Output" displayName="Imaginary Transformation" source="Sensor" destination="Object">
+                <Attribute name="type" value="3DPosition" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        <DataflowConfiguration>
+            <UbitrackLib class="TestSourcePosition"/>
+            <Attribute name="frequency" xsi:type="DoubleAttributeReferenceType"/>
+            <Attribute name="jerktime" xsi:type="DoubleAttributeReferenceType"/>
+            <Attribute name="posnoise" xsi:type="DoubleAttributeReferenceType"/>
+            <Attribute name="position" xsi:type="DoubleArrayAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="RotationTestSensor" displayName="Test sensor (3D Rotation)">
+        <Description><p xmlns="http://www.w3.org/1999/xhtml">Imaginary sensor which provides rotation test data without making real measurements.</p></Description>
+        <Output>
+            <Node name="Sensor" displayName="Imaginary sensor">
+                <Description><p xmlns="http://www.w3.org/1999/xhtml">Imaginary sensor</p></Description>
+            </Node>
+            <Node name="Object" displayName="Imaginary object">
+                <Description><p xmlns="http://www.w3.org/1999/xhtml">Imaginary Object</p></Description>
+            </Node>
+            <Edge name="Output" displayName="Imaginary Transformation" source="Sensor" destination="Object">
+                <Attribute name="type" value="3DRotation" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        <DataflowConfiguration>
+            <UbitrackLib class="TestSourceRotation"/>
+            <Attribute name="frequency" xsi:type="DoubleAttributeReferenceType"/>
+            <Attribute name="jerktime" xsi:type="DoubleAttributeReferenceType"/>
+            <Attribute name="rotnoise" xsi:type="DoubleAttributeReferenceType"/>
+            <Attribute name="rotation" xsi:type="DoubleArrayAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    
+    
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/4)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/5)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/6)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/7)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/8)"/>
+    </GlobalEdgeAttributeDeclarations> 
+    
+    <GlobalDataflowAttributeDeclarations>
+        <!-- Unfortunately, the xpointer used in Xinclude is currently restricted to the element scheme and absolute element indices in Xerces (and thus XMLBeans) -->
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/2)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/3)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/4)"/>
+        
+        <Attribute name="frequency" displayName="Frequency" min="1" default="30" xsi:type="DoubleAttributeDeclarationType">
+            <Description><p xmlns="http://www.w3.org/1999/xhtml">Number of events to generate per second</p></Description>
+        </Attribute>
+        
+        <Attribute name="jerktime" displayName="Jerk time" min="1" default="3000" xsi:type="DoubleAttributeDeclarationType">
+            <Description><p xmlns="http://www.w3.org/1999/xhtml">Time between direction changes in milliseconds</p></Description>
+        </Attribute>
+        
+        <Attribute name="posnoise" displayName="Position noise" default="0.1" xsi:type="DoubleAttributeDeclarationType">
+            <Description><p xmlns="http://www.w3.org/1999/xhtml">Maximum radius around the expected position in which to move</p></Description>                    
+        </Attribute>
+        
+        <Attribute name="rotnoise" displayName="Rotation noise" default="0.1" xsi:type="DoubleAttributeDeclarationType">
+            <Description><p xmlns="http://www.w3.org/1999/xhtml">Maximum sine of the angle around the expected orientation by which to rotate</p></Description>
+        </Attribute>
+    </GlobalDataflowAttributeDeclarations>
+    
+</UTQLPatternTemplates>

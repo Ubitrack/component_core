@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
+    
+    <Pattern name="PoseInversion" displayName="Inversion (Pose)">
+    	<Description><h:p>The component inverts pose events.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Input Pose">
+            	<Description><h:p>The input pose</h:p></Description>
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="BA" source="B" destination="A" displayName="Inverted Pose">
+            	<Description><h:p>The inverted pose</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BA"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseInversion"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="PositionInversion" displayName="Inversion (Position)">
+    	<Description><h:p>The component inverts position events.</h:p></Description>
+
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Input Pose">
+            	<Description><h:p>The input position</h:p></Description>
+                <Predicate>type=='3DPosition'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="BA" source="B" destination="A" displayName="Inverted Pose">
+            	<Description><h:p>The inverted position</h:p></Description>
+                <Attribute name="type" value="3DPosition" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BA"/>
+            </TriggerGroup>
+        </Constraints>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionInversion"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="PoseListInversion" displayName="Inversion (Pose List)">
+    	<Description><h:p>The component inverts a list of pose events.</h:p></Description>
+
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Input Pose">
+            	<Description><h:p>The list of input poses</h:p></Description>
+                <Predicate>type=='PoseList'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="BA" source="B" destination="A" displayName="Inverted Pose">
+            	<Description><h:p>The list of inverted poses</h:p></Description>
+                <Attribute name="type" value="PoseList" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BA"/>
+            </TriggerGroup>
+        </Constraints>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseListInversion"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="PositionListInversion" displayName="Inversion (Position List)">
+    	<Description><h:p>The component inverts a list of positions</h:p></Description>
+
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Input Pose">
+            	<Description><h:p>The list of input positions</h:p></Description>
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="BA" source="B" destination="A" displayName="Inverted Pose">
+            	<Description><h:p>The list of inverted positions</h:p></Description>
+                <Attribute name="type" value="3DPositionList" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BA"/>
+            </TriggerGroup>
+        </Constraints>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionListInversion"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="ErrorPoseInversion" displayName="Inversion (Pose+Error)">
+    	<Description><h:p>The component inverts pose events with propagation of 6D covariance.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Input Pose">
+            	<Description><h:p>The input pose</h:p></Description>
+                <Predicate>type=='6DError'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="BA" source="B" destination="A" displayName="Inverted Pose">
+            	<Description><h:p>The inverted pose</h:p></Description>
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BA"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="ErrorPoseInversion"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="RotationInversion" displayName="Inversion (3D Rotation)">
+    	<Description><h:p>The component inverts 3D rotation (quaternion) events.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Input Rotation">
+            	<Description><h:p>The input rotation</h:p></Description>
+                <Predicate>type=='3DRotation'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="BA" source="B" destination="A" displayName="Inverted Rotation">
+            	<Description><h:p>The inverted rotation</h:p></Description>
+                <Attribute name="type" value="3DRotation" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BA"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="RotationInversion"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+    </GlobalEdgeAttributeDeclarations>
+    
+    <GlobalDataflowAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+    </GlobalDataflowAttributeDeclarations>
+ 
+    
+</UTQLPatternTemplates>

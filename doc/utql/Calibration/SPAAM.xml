@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../schema/utql_templates.xsd'>
+    
+    <Pattern name="Spaam" displayName="3x4 Homogeneous Matrix Estimation (DLT)">
+    	<Description><h:p>For augmented reality applications, the projective properties of cameras and display device 
+    	have to be determined. In the simplest case this results in a 3x4 homogeneous matrix, which defines the 
+    	transformation of 3D points from the camera coordinate system onto the image plane. Having eleven degrees 
+    	of freedom, it is possible to compute the projection matrix from six corresponding measurements of a 
+    	feature whose position is known both in the camera image and in the external coordinate system.<h:br/>
+    	<h:b>Expansion in space:</h:b> In theory, a camera can be calibrated from a single image of a special 
+    	calibration pattern. In practice this is rarely done, as this requires a lot of features which cannot 
+    	lie in a single plane.<h:br/>
+		<h:b>Expansion in time:</h:b> Most algorithms for camera calibration require multiple images of a 
+		planar calibration pattern, which contains special features that can be detected by the camera. 
+		Often internal and external camera parameters are computed separately and non-linear distortion 
+		parameters are added, but without loss of generality, these can be modeled by a single edge in the 
+		spatial relationship graph.<h:br/>
+		Another interesting example is the SPAAM algorithm for calibration of optical see-through HMDs where 
+		the user repeatedly has to align a point on the screen with a known point in the world.
+    	</h:p></Description>
+			    	
+        <Input>
+            <Node name="ImagePlane" displayName="Image Plane"/>
+            <Node name="Camera" displayName="Camera"/>
+            <Node name="Feature" displayName="Feature"/>
+            <Edge name="Input2D" source="ImagePlane" destination="Feature" displayName="2D Points">
+                <Predicate>type=='2DPosition'</Predicate>
+            </Edge>
+            <Edge name="Input3D" source="Camera" destination="Feature" displayName="3D Points">
+                <Predicate>type=='3DPosition'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="Camera" destination="ImagePlane" displayName="Resulting Pose">
+                <Attribute name="type" value="3x4Matrix" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+            <Correspondence name="pointCorrespondences" minMultiplicity="6">
+                <Edge edge-ref="Input2D"/>
+                <Edge edge-ref="Input3D"/>
+            </Correspondence>
+
+            <TriggerGroup>
+                <Edge edge-ref="Input2D"/>
+                <Edge edge-ref="Input3D"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="Spaam"/>
+            
+            <!-- remove when expansion works... -->
+            <Attribute name="expansion" value="time" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/4)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/5)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/6)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/7)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/8)"/>
+    </GlobalEdgeAttributeDeclarations> 
+
+    <GlobalDataflowAttributeDeclarations>
+        <!-- Unfortunately, the xpointer used in Xinclude is currently restricted to the element scheme and absolute element indices in Xerces (and thus XMLBeans) -->
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/2)"/>
+    </GlobalDataflowAttributeDeclarations>
+    
+</UTQLPatternTemplates>

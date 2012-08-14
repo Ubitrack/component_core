@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
+    
+    <Pattern name="PoseCollector" displayName="Collector (Pose)">
+    	<Description><h:p>The component collects a measurements of type pose and adds them to a list.
+		In order to have a first (empty) list it makes sense to use this component with a Time-Space Converter.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="Input" source="A" destination="C" displayName="Single Measurement">
+            	<Description><h:p>The single measurement.</h:p></Description>
+                <Predicate>type=='6D'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="List" source="B" destination="C" displayName="List Measurement">
+            	<Description><h:p>The measurement list.</h:p></Description>
+                <Predicate>type=='PoseList'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+			<Node name="D" displayName="D"/>
+            <Edge name="Output" source="C" destination="D" displayName="Result">
+            	<Description><h:p>The resulting list of measurements.</h:p></Description>
+                <Attribute name="type" value="PoseList" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseCollector"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="PositionCollector" displayName="Collector (Position)">
+    	<Description><h:p>The component collects a measurements of type 3d position and adds them to a list.
+		In order to have a first (empty) list it makes sense to use this component with a Time-Space Converter.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="Input" source="A" destination="C" displayName="Single Measurement">
+            	<Description><h:p>The single measurement.</h:p></Description>
+                <Predicate>type=='3DPosition'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="List" source="B" destination="C" displayName="List Measurement">
+            	<Description><h:p>The measurement list.</h:p></Description>
+                <Predicate>type=='3DPositionList'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+			<Node name="D" displayName="D"/>
+            <Edge name="Output" source="C" destination="D" displayName="Result">
+            	<Description><h:p>The resulting list of measurements.</h:p></Description>
+                <Attribute name="type" value="3DPositionList" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionCollector"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="PositionCollector2D" displayName="Collector (Position2D)">
+    	<Description><h:p>The component collects a measurements of type 2d position and adds them to a list.
+		In order to have a first (empty) list it makes sense to use this component with a Time-Space Converter.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="Input" source="A" destination="C" displayName="Single Measurement">
+            	<Description><h:p>The single measurement.</h:p></Description>
+                <Predicate>type=='2DPosition'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="List" source="B" destination="C" displayName="List Measurement">
+            	<Description><h:p>The measurement list.</h:p></Description>
+                <Predicate>type=='2DPositionList'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+			<Node name="D" displayName="D"/>
+            <Edge name="Output" source="C" destination="D" displayName="Result">
+            	<Description><h:p>The resulting list of measurements.</h:p></Description>
+                <Attribute name="type" value="2DPositionList" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionCollector2D"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="DistanceCollector" displayName="Collector (Distance)">
+    	<Description><h:p>The component collects a measurements of type distance and adds them to a list.
+		In order to have a first (empty) list it makes sense to use this component with a Time-Space Converter.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="Input" source="A" destination="C" displayName="Single Measurement">
+            	<Description><h:p>The single measurement.</h:p></Description>
+                <Predicate>type=='Distance'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="List" source="B" destination="C" displayName="List Measurement">
+            	<Description><h:p>The measurement list.</h:p></Description>
+                <Predicate>type=='DistanceList'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+			<Node name="D" displayName="D"/>
+            <Edge name="Output" source="C" destination="D" displayName="Result">
+            	<Description><h:p>The resulting list of measurements.</h:p></Description>
+                <Attribute name="type" value="DistanceList" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="DistanceCollector"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+    </GlobalEdgeAttributeDeclarations>
+    
+    <GlobalDataflowAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+    </GlobalDataflowAttributeDeclarations>
+ 
+    
+</UTQLPatternTemplates>

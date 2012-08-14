@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../schema/utql_templates.xsd'>
+    
+    <Pattern name="2D3DPoseEstimationSpace2" displayName="2D-3D Pose Estimation (2 Markers)">
+        <Description>
+            <h:p> The component computes the 6D pose from corresponding 2D and 3D points. It first computes
+ 			a rough initial pose which is then refined by nonlinear optimization.
+                <h:br/>
+			Currently, the component has one drawback: for the first step (the initialization), the 
+			component assumes that the first 4 3D points lie on a plane, which in general is NOT the 
+			case! Therefore it is currently mostly suitable for square markers...
+            </h:p>
+        </Description>
+			    	
+        <Input>
+            <Node name="Camera" displayName="Camera"/>
+            <Node name="ImagePlane" displayName="Image Plane"/>
+            <Node name="Multimarker" displayName="Multimarker"/>
+            <Node name="Points1" displayName="Marker 1"/>
+            <Node name="Points2" displayName="Marker 2"/>
+            <Edge name="Intrinsics" source="Camera" destination="ImagePlane" displayName="Intrinsics">
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="Input2d" source="ImagePlane" destination="Points1" displayName="Input 2D (Dummy)">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input2d1" source="ImagePlane" destination="Points1" displayName="Input 2D Marker 1">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input2d2" source="ImagePlane" destination="Points2" displayName="Input 2D Marker 2">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d" source="Multimarker" destination="Points1" displayName="Input 3D (Dummy)">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d1" source="Multimarker" destination="Points1" displayName="Input 3D Marker 1">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d2" source="Multimarker" destination="Points2" displayName="Input 3D Marker 2">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="Camera" destination="Multimarker" displayName="Tracked Pose">
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+            <Correspondence name="pointCorrespondences" minMultiplicity="4">
+                <Edge edge-ref="Input2d1"/>
+                <Edge edge-ref="Input2d2"/>
+                <Edge edge-ref="Input3d1"/>
+                <Edge edge-ref="Input3d2"/>
+            </Correspondence>
+
+            <TriggerGroup>
+                <Edge edge-ref="Input2d"/>
+                <Edge edge-ref="Input2d1"/>
+                <Edge edge-ref="Input2d2"/>
+                <Edge edge-ref="Input3d"/>
+                <Edge edge-ref="Input3d1"/>
+                <Edge edge-ref="Input3d2"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="2D3DPoseEstimation"/>
+            <Attribute name="min2d3dCorresp" xsi:type="IntAttributeReferenceType"/>
+            <Attribute name="initPoseMethod" xsi:type="EnumAttributeReferenceType"/>
+            
+            <!-- remove when expansion works... -->
+            <Attribute name="expansion" value="space" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="2D3DPoseEstimationSpace5" displayName="2D-3D Pose Estimation (5 Markers)">
+        <Description>
+            <h:p> The component computes the 6D pose from corresponding 2D and 3D points. It first computes
+ 			a rough initial pose which is then refined by nonlinear optimization.
+                <h:br/>
+			Currently, the component has one drawback: for the first step (the initialization), the 
+			component assumes that the first 4 3D points lie on a plane, which in general is NOT the 
+			case! Therefore it is currently mostly suitable for square markers...
+            </h:p>
+        </Description>
+			    	
+        <Input>
+            <Node name="Camera" displayName="Camera"/>
+            <Node name="ImagePlane" displayName="Image Plane"/>
+            <Node name="Multimarker" displayName="Multimarker"/>
+            <Node name="Points1" displayName="Marker 1"/>
+            <Node name="Points2" displayName="Marker 2"/>
+            <Node name="Points3" displayName="Marker 3"/>
+            <Node name="Points4" displayName="Marker 4"/>
+            <Node name="Points5" displayName="Marker 5"/>
+            <Edge name="Intrinsics" source="Camera" destination="ImagePlane" displayName="Intrinsics">
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="Input2d" source="ImagePlane" destination="Points1" displayName="Input 2D (Dummy)">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input2d1" source="ImagePlane" destination="Points1" displayName="Input 2D Marker 1">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input2d2" source="ImagePlane" destination="Points2" displayName="Input 2D Marker 2">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input2d3" source="ImagePlane" destination="Points3" displayName="Input 2D Marker 3">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input2d4" source="ImagePlane" destination="Points4" displayName="Input 2D Marker 4">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input2d5" source="ImagePlane" destination="Points5" displayName="Input 2D Marker 5">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d" source="Multimarker" destination="Points1" displayName="Input 3D (Dummy)">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d1" source="Multimarker" destination="Points1" displayName="Input 3D Marker 1">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d2" source="Multimarker" destination="Points2" displayName="Input 3D Marker 2">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d3" source="Multimarker" destination="Points3" displayName="Input 3D Marker 3">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d4" source="Multimarker" destination="Points4" displayName="Input 3D Marker 4">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d5" source="Multimarker" destination="Points5" displayName="Input 3D Marker 5">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="Camera" destination="Multimarker" displayName="Tracked Pose">
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+            <Correspondence name="pointCorrespondences" minMultiplicity="4">
+                <Edge edge-ref="Input2d1"/>
+                <Edge edge-ref="Input2d2"/>
+                <Edge edge-ref="Input2d3"/>
+                <Edge edge-ref="Input2d4"/>
+                <Edge edge-ref="Input2d5"/>
+                <Edge edge-ref="Input3d1"/>
+                <Edge edge-ref="Input3d2"/>
+                <Edge edge-ref="Input3d3"/>
+                <Edge edge-ref="Input3d4"/>
+                <Edge edge-ref="Input3d5"/>
+            </Correspondence>
+
+            <TriggerGroup>
+                <Edge edge-ref="Input2d"/>
+                <Edge edge-ref="Input2d1"/>
+                <Edge edge-ref="Input2d2"/>
+                <Edge edge-ref="Input2d3"/>
+                <Edge edge-ref="Input2d4"/>
+                <Edge edge-ref="Input2d5"/>
+                <Edge edge-ref="Input3d"/>
+                <Edge edge-ref="Input3d1"/>
+                <Edge edge-ref="Input3d2"/>
+                <Edge edge-ref="Input3d3"/>
+                <Edge edge-ref="Input3d4"/>
+                <Edge edge-ref="Input3d5"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="2D3DPoseEstimation"/>
+            <Attribute name="min2d3dCorresp" xsi:type="IntAttributeReferenceType"/>
+            <Attribute name="initPoseMethod" xsi:type="EnumAttributeReferenceType"/>
+
+            <!-- remove when expansion works... -->
+            <Attribute name="expansion" value="space" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="2D3DPoseEstimation" displayName="2D-3D Pose Estimation">
+        <Description>
+            <h:p> The component computes the 6D pose from corresponding 2D and 3D points. It first computes
+ 			a rough initial pose which is then refined by nonlinear optimization.
+                <h:br/>
+			Currently, the component has one drawback: for the first step (the initialization), the
+			component assumes that the first 4 3D points lie on a plane, which in general is NOT the
+			case! Therefore it is currently mostly suitable for square markers...
+            </h:p>
+        </Description>
+
+        <Input>
+            <Node name="Camera" displayName="Camera"/>
+            <Node name="ImagePlane" displayName="Image Plane"/>
+            <Node name="Body" displayName="Body"/>
+            <Node name="Points" displayName="Points"/>
+            <Edge name="Intrinsics" source="Camera" destination="ImagePlane" displayName="Intrinsics">
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="Input2d" source="ImagePlane" destination="Points" displayName="Input 2D">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d" source="Body" destination="Points" displayName="Input 3D">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="Output" source="Camera" destination="Body" displayName="Body Pose">
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <Constraints>
+            <Correspondence name="pointCorrespondences" minMultiplicity="4">
+                <Edge edge-ref="Input2d"/>
+                <Edge edge-ref="Input3d"/>
+            </Correspondence>
+
+            <TriggerGroup>
+                <Edge edge-ref="Input2d"/>
+                <Edge edge-ref="Input3d"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="2D3DPoseEstimation"/>
+            <Attribute name="min2d3dCorresp" xsi:type="IntAttributeReferenceType"/>
+            <Attribute name="initPoseMethod" xsi:type="EnumAttributeReferenceType"/>
+
+            <!-- remove when expansion works... -->
+            <Attribute name="expansion" value="space" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="2D3DPoseEstimation12Marker" displayName="2D-3D Pose Estimation">
+    	<Description><h:p> The component computes the 6D pose from corresponding 2D and 3D points. It first computes
+ 			a rough initial pose which is then refined by nonlinear optimization.<h:br/>
+			Currently, the component has one drawback: for the first step (the initialization), the 
+			component assumes that the first 4 3D points lie on a plane, which in general is NOT the 
+			case! Therefore it is currently mostly suitable for square markers...</h:p></Description>
+			    	
+        <Input>
+            <Node name="Camera" displayName="Camera"/>
+            <Node name="ImagePlane" displayName="Image Plane"/>
+            <Node name="Body" displayName="Body"/>
+            <Node name="Points" displayName="Points"/>
+			<Node name="Points005A" displayName="Points005A"/>
+			<Node name="Points1C44" displayName="Points1C44"/>
+			<Node name="Points1228" displayName="Points1228"/>
+			<Node name="Points0272" displayName="Points0272"/>
+			<Node name="Points0B44" displayName="Points0B44"/>
+			<Node name="Points01A1" displayName="Points01A1"/>
+			<Node name="Points07A6" displayName="Points07A6"/>
+			<Node name="Points03E1" displayName="Points03E1"/>
+			<Node name="Points1631" displayName="Points1631"/>
+			<Node name="Points0F45" displayName="Points0F45"/>
+			<Node name="Points03C3" displayName="Points03C3"/>
+			
+            <Edge name="Intrinsics" source="Camera" destination="ImagePlane" displayName="Intrinsics">
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="Input2d" source="ImagePlane" destination="Points" displayName="Input 2D">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d" source="Body" destination="Points" displayName="Input 3D">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+			<Edge name="Input2d005A" source="ImagePlane" destination="Points005A" displayName="Input 2D">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d005A" source="Body" destination="Points005A" displayName="Input 3D">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+			
+			<Edge name="Input2d1C44" source="ImagePlane" destination="Points1C44" displayName="Input 2D">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d1C44" source="Body" destination="Points1C44" displayName="Input 3D">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+			
+			<Edge name="Input2d1228" source="ImagePlane" destination="Points1228" displayName="Input 2D">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d1228" source="Body" destination="Points1228" displayName="Input 3D">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+			
+			<Edge name="Input2d0272" source="ImagePlane" destination="Points0272" displayName="Input 2D">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d0272" source="Body" destination="Points0272" displayName="Input 3D">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+			
+			<Edge name="Input2d0B44" source="ImagePlane" destination="Points0B44" displayName="Input 2D">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d0B44" source="Body" destination="Points0B44" displayName="Input 3D">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+			
+			<Edge name="Input2d01A1" source="ImagePlane" destination="Points01A1" displayName="Input 2D">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d01A1" source="Body" destination="Points01A1" displayName="Input 3D">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+			
+			<Edge name="Input2d07A6" source="ImagePlane" destination="Points07A6" displayName="Input 2D">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d07A6" source="Body" destination="Points07A6" displayName="Input 3D">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+			
+			<Edge name="Input2d03E1" source="ImagePlane" destination="Points03E1" displayName="Input 2D">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d03E1" source="Body" destination="Points03E1" displayName="Input 3D">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+			
+			<Edge name="Input2d1631" source="ImagePlane" destination="Points1631" displayName="Input 2D">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d1631" source="Body" destination="Points1631" displayName="Input 3D">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+			
+			<Edge name="Input2d0F45" source="ImagePlane" destination="Points0F45" displayName="Input 2D">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d0F45" source="Body" destination="Points0F45" displayName="Input 3D">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+			
+			<Edge name="Input2d03C3" source="ImagePlane" destination="Points03C3" displayName="Input 2D">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d03C3" source="Body" destination="Points03C3" displayName="Input 3D">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+			
+			
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="Camera" destination="Body" displayName="Body Pose">
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+            <Correspondence name="pointCorrespondences" minMultiplicity="4">
+                <Edge edge-ref="Input2d"/>
+				<Edge edge-ref="Input2d005A"/>
+                <Edge edge-ref="Input3d"/>
+				<Edge edge-ref="Input3d005A"/>
+				
+				<Edge edge-ref="Input2d1C44"/>
+				<Edge edge-ref="Input3d1C44"/>
+				<Edge edge-ref="Input2d1228"/>
+				<Edge edge-ref="Input3d1228"/>
+				<Edge edge-ref="Input2d0272"/>
+				<Edge edge-ref="Input3d0272"/>
+				<Edge edge-ref="Input2d0B44"/>
+				<Edge edge-ref="Input3d0B44"/>
+				<Edge edge-ref="Input2d01A1"/>
+				<Edge edge-ref="Input3d01A1"/>
+				<Edge edge-ref="Input2d07A6"/>
+				<Edge edge-ref="Input3d07A6"/>
+				<Edge edge-ref="Input2d03E1"/>
+				<Edge edge-ref="Input3d03E1"/>
+				<Edge edge-ref="Input2d1631"/>
+				<Edge edge-ref="Input3d1631"/>
+				<Edge edge-ref="Input2d0F45"/>
+				<Edge edge-ref="Input3d0F45"/>
+				<Edge edge-ref="Input2d03C3"/>
+				<Edge edge-ref="Input3d03C3"/>
+			
+            </Correspondence>
+
+            <TriggerGroup>
+                <Edge edge-ref="Input2d"/>
+				<Edge edge-ref="Input2d005A"/>
+                <Edge edge-ref="Input3d"/>
+				<Edge edge-ref="Input3d005A"/>
+				
+				<Edge edge-ref="Input2d1C44"/>
+				<Edge edge-ref="Input3d1C44"/>
+				<Edge edge-ref="Input2d1228"/>
+				<Edge edge-ref="Input3d1228"/>
+				<Edge edge-ref="Input2d0272"/>
+				<Edge edge-ref="Input3d0272"/>
+				<Edge edge-ref="Input2d0B44"/>
+				<Edge edge-ref="Input3d0B44"/>
+				<Edge edge-ref="Input2d01A1"/>
+				<Edge edge-ref="Input3d01A1"/>
+				<Edge edge-ref="Input2d07A6"/>
+				<Edge edge-ref="Input3d07A6"/>
+				<Edge edge-ref="Input2d03E1"/>
+				<Edge edge-ref="Input3d03E1"/>
+				<Edge edge-ref="Input2d1631"/>
+				<Edge edge-ref="Input3d1631"/>
+				<Edge edge-ref="Input2d0F45"/>
+				<Edge edge-ref="Input3d0F45"/>
+				<Edge edge-ref="Input2d03C3"/>
+				<Edge edge-ref="Input3d03C3"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="2D3DPoseEstimation"/>
+            
+            <!-- remove when expansion works... -->
+            <Attribute name="expansion" value="space" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/4)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/5)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/6)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/7)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/8)"/>
+    </GlobalEdgeAttributeDeclarations>
+
+    <GlobalDataflowAttributeDeclarations>
+        <!-- Unfortunately, the xpointer used in Xinclude is currently restricted to the element scheme and absolute element indices in Xerces (and thus XMLBeans) -->
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/2)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/3)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/4)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/5)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/6)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/7)"/>
+
+        <Attribute name="min2d3dCorresp"  min="4" default="4" xsi:type="IntAttributeDeclarationType" displayName="Minimum correspondences">
+            <Description>
+                <h:p>Minimum amount of 2D-3D point correspondences required for the computation of the resulting pose. A minimum of four correspondences is mathematically required but you can specify more than that to reduce the maximum uncertainty in the estimated quantity.</h:p>
+            </Description>
+        </Attribute>
+        <Attribute name="initPoseMethod" displayName="Initial Pose Method" default="0" xsi:type="EnumAttributeDeclarationType">
+            <Description>
+                <p xmlns="http://www.w3.org/1999/xhtml">Method for the computation of an initial pose.
+                    <h:code>Planar Homography</h:code> assumes that the first 4 3D points are coplanar and computes an initial pose based on a 2D homography.
+                    <h:code>Non-Planar Projection assumes an arbitrary configuration of 3D points. Take care to avoid degenerate configurations (coplanar and/or colinear 3D points).</h:code>
+                </p>
+            </Description>
+            <EnumValue name="0" displayName="Planar Homography"/>
+            <EnumValue name="1" displayName="Non-Planar Projection"/>
+        </Attribute>
+    </GlobalDataflowAttributeDeclarations>
+    
+</UTQLPatternTemplates>

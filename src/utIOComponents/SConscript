@@ -1,0 +1,30 @@
+import sys
+import glob
+import os.path
+
+# import variables from other scons files
+Import( '*' )
+env = utComponentEnv.Clone()
+
+# create component libraries
+
+# automatically glob files from subdirectories
+comp_sources = globSourceFiles( '*.cpp' )
+
+# remove components that require a not present feature
+#if not have_lapack:
+	#for src in [ 'RotHecKalmanFilter.cpp', 'RotOnlyKalmanFilter.cpp', 'HomogeneousMatrixEstimation.cpp', 'DecomposeProjectionMatrix.cpp', 'SPAAM.cpp', 'AbsoluteOrientation.cpp', 'AbsoluteOrientationRANSAC.cpp', 'OnlineRotHec.cpp', '2D3DPoseEstimation.cpp', 'HandEyeCalibration.cpp', 'PoseKalmanFilter.cpp', 'TipCalibration.cpp', 'MultipleCameraPoseOptimization.cpp' ]:
+	#	comp_sources.remove( src );
+
+
+
+# setup environment
+
+env.AppendUnique( **mergeOptions( utvision_options, opencv_options ) )
+
+# compile components as shared libraries
+setupComponentBuild(env, comp_sources, 'utComponents')
+
+sources = globSourceFiles( '*.cpp' )
+headers = globSourceFiles( '*.h' )
+createVisualStudioProject(env, sources, headers, 'utIOComponents')

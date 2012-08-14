@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
+    
+    <Pattern name="StaticMatrix4x4" displayName="Static Measurement (4x4 Matrix)">
+        <Description><h:p>The component always returns the event configured in the XML configuration on	its 
+                pull port.<h:br/>
+                This is primarily useful for static offline calibration of certain spatial relationships or constant 
+        projecton matrices and the like.</h:p></Description>
+        
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Static Matrix">
+                <Description><h:p>The static measurement as pull port.</h:p></Description>
+                <Attribute name="type" value="4x4Matrix" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="staticMatrix4x4" xsi:type="DoubleArrayAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="StaticMatrix4x4"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="StaticMatrix3x4" displayName="Static Measurement (3x4 Matrix)">
+        <Description><h:p>The component always returns the event configured in the XML configuration on	its 
+                pull port.<h:br/>
+                This is primarily useful for static offline calibration of certain spatial relationships or constant 
+        projecton matrices and the like.</h:p></Description>
+        
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Static Matrix">
+                <Description><h:p>The static measurement as pull port.</h:p></Description>
+                <Attribute name="type" value="3x4Matrix" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="staticMatrix3x4" xsi:type="DoubleArrayAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="StaticMatrix3x4"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="StaticMatrix3x3" displayName="Static Measurement (3x3 Matrix)">
+        <Description><h:p>The component always returns the event configured in the XML configuration on	its 
+                pull port.<h:br/>
+                This is primarily useful for static offline calibration of certain spatial relationships or constant 
+        projecton matrices and the like.</h:p></Description>
+        
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Static Matrix">
+                <Description><h:p>The static measurement as pull port.</h:p></Description>
+                <Attribute name="type" value="3x3Matrix" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="staticMatrix3x3" xsi:type="DoubleArrayAttributeReferenceType">
+                    <Description><h:p>Contains the 3x3 matrix as a 9-element space-separated string with
+                    row-wise linearization.</h:p></Description>
+                </Attribute>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="StaticMatrix3x3"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="StaticPose" displayName="Static Measurement (Pose)">
+        <Description><h:p>The component always returns the event configured in the XML configuration on	its 
+                pull port.<h:br/>
+                This is primarily useful for static offline calibration of certain spatial relationships or constant 
+        projecton matrices and the like.</h:p></Description>
+        
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Static Pose">
+                <Description><h:p>The static measurement as pull port.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="staticPosition" xsi:type="DoubleArrayAttributeReferenceType">
+                    <Description><h:p>Contains the 3D position as a 3-element space-separated string.</h:p></Description>
+                </Attribute>
+                <Attribute name="staticRotation" xsi:type="DoubleArrayAttributeReferenceType">
+                    <Description><h:p>Contains the 3D orientation as a 4-element space-separated string containing a
+                    quaternion (xyzw-order).</h:p></Description>
+                </Attribute>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="StaticPose"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="StaticRotation" displayName="Static Measurement (3D Rotation)">
+        <Description><h:p>The component always returns the event configured in the XML configuration on	its 
+                pull port.<h:br/>
+                This is primarily useful for static offline calibration of certain spatial relationships or constant 
+        projecton matrices and the like.</h:p></Description>
+        
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Static Rotation">
+                <Description><h:p>The static measurement as pull port.</h:p></Description>
+                <Attribute name="type" value="3DRotation" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="staticRotation" xsi:type="DoubleArrayAttributeReferenceType">
+                    <Description><h:p>Contains the 3D orientation as a 4-element space-separated string containing a
+                    quaternion (xyzw-order).</h:p></Description>
+                </Attribute>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="StaticRotation"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="StaticPosition2D" displayName="Static Measurement (2D Position)">
+        <Description><h:p>The component always returns the event configured in the XML configuration on	its 
+                pull port.<h:br/>
+                This is primarily useful for static offline calibration of certain spatial relationships or constant 
+        projecton matrices and the like.</h:p></Description>
+        
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Static Position">
+                <Description><h:p>The static measurement as pull port.</h:p></Description>
+                <Attribute name="type" value="2DPosition" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="staticPosition2D" xsi:type="DoubleArrayAttributeReferenceType">
+                    <Description><h:p>Contains the 2D position as a 2-element space-separated string.</h:p></Description>
+                </Attribute>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="StaticPosition2D"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="StaticPosition" displayName="Static Measurement (3D Position)">
+        <Description><h:p>The component always returns the event configured in the XML configuration on	its 
+                pull port.<h:br/>
+                This is primarily useful for static offline calibration of certain spatial relationships or constant 
+        projecton matrices and the like.</h:p></Description>
+        
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Static Position">
+                <Description><h:p>The static measurement as pull port.</h:p></Description>
+                <Attribute name="type" value="3DPosition" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="staticPosition" xsi:type="DoubleArrayAttributeReferenceType">
+                    <Description><h:p>Contains the 3D position as a 3-element space-separated string.</h:p></Description>
+                </Attribute>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="StaticPosition"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="StaticVector4" displayName="Static Measurement (4 Vector)">
+        <Description><h:p>The component always returns the event configured in the XML configuration on	its 
+                pull port.<h:br/>
+                This is primarily useful for static offline calibration of certain spatial relationships or constant 
+        projecton matrices and the like.</h:p></Description>
+        
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Static 4 Vector">
+                <Description><h:p>The static measurement as pull port.</h:p></Description>
+                <Attribute name="type" value="4DVector" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="staticVector4" xsi:type="DoubleArrayAttributeReferenceType">
+                    <Description><h:p>Contains the 3D position as a 3-element space-separated string.</h:p></Description>
+                </Attribute>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="StaticVector4"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="StaticEvent" displayName="Static Measurement (Event)">
+        <Description><h:p>The component always returns the event configured in the XML configuration on	its 
+                pull port.</h:p>
+		</Description>
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Static Event">
+                <Description><h:p>The static measurement as pull port.</h:p></Description>
+                <Attribute name="type" value="Button" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="button" xsi:type="StringAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="StaticEvent"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="StaticPositionList" displayName="Static Measurement (3D Position List)">
+        <Description><h:p>The component always returns the event configured in the XML configuration on	its 
+                pull port. This particular version provides a list of 3D points, usually reference points for calibration.
+        </h:p></Description>
+        
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Static Position List">
+                <Description><h:p>The static measurement as pull port.</h:p></Description>
+                <Attribute name="type" value="3DPositionList" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="staticPositionList" displayName="Static position list" xsi:type="ListAttributeDeclarationType">
+                <Description><h:p>This attribute must contain a <h:code>&lt;Value&gt;</h:code> element, containing
+                        a sequence of <h:code>&lt;Attribute&gt;</h:code> elements. These elements must have <h:code>name=&quot;staticPosition&quot;</h:code>
+                and a value consisting of 3 numbers, that specify a single 3D position. </h:p></Description>
+                <Attribute name="staticPosition" displayName="Static position" xsi:type="DoubleArrayAttributeReferenceType"/>
+                </Attribute>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="StaticPositionList"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="StaticPositionList2" displayName="Static Measurement (2D Position List)">
+        <Description><h:p>The component always returns the event configured in the XML configuration on	its 
+                pull port. This particular version provides a list of 2D points, usually reference points for calibration.
+        </h:p></Description>
+        
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Static 2D Position List">
+                <Description><h:p>The static measurement as pull port.</h:p></Description>
+                <Attribute name="type" value="2DPositionList" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="staticPositionList" displayName="Static 2d position list" xsi:type="ListAttributeDeclarationType">
+                <Description><h:p>This attribute must contain a <h:code>&lt;Value&gt;</h:code> element, containing
+                        a sequence of <h:code>&lt;Attribute&gt;</h:code> elements. These elements must have <h:code>name=&quot;staticPosition&quot;</h:code>
+                and a value consisting of 2 numbers, that specify a single 2D position. </h:p></Description>
+                <Attribute name="staticPosition2D" displayName="Static 2d position" xsi:type="DoubleArrayAttributeReferenceType"/>
+                </Attribute>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="StaticPositionList2"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="StaticDistanceList" displayName="Static Measurement (Distance List)">
+        <Description><h:p>The component always returns the event configured in the XML configuration on	its
+                pull port. This particular version provides a list of 3D points, usually reference points for calibration.
+        </h:p></Description>
+
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Static Distance List">
+                <Description><h:p>The static measurement as pull port.</h:p></Description>
+                <Attribute name="type" value="DistanceList" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="staticDistanceList" displayName="Static distance list" xsi:type="ListAttributeDeclarationType">
+                <Description><h:p>This attribute must contain a <h:code>&lt;Value&gt;</h:code> element, containing
+                        a sequence of <h:code>&lt;Attribute&gt;</h:code> elements. These elements must have <h:code>name=&quot;staticDistance&quot;</h:code>
+                and a value consisting of one scalar distance value</h:p></Description>
+                <Attribute name="staticDistance" displayName="Static distance" xsi:type="DoubleArrayAttributeReferenceType"/>
+                </Attribute>
+            </Edge>
+        </Output>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="StaticDistanceList"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="StaticPoseList" displayName="Static Measurement (Pose List)">
+        <Description><h:p>The component always returns the event configured in the XML configuration on	its 
+                pull port. This particular version provides a list of 6D poses.
+        </h:p></Description>
+        
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Static Pose List">
+                <Description><h:p>The static measurement as pull port.</h:p></Description>
+                <Attribute name="type" value="PoseList" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="staticPoseList" displayName="Static pose list" xsi:type="ListAttributeDeclarationType">
+                <Description><h:p>This attribute must contain a <h:code>&lt;Value&gt;</h:code> element, containing
+                        a sequence of <h:code>&lt;Attribute&gt;</h:code> elements. These elements must have <h:code>name=&quot;staticPose&quot;</h:code>
+                and a value consisting of 7 numbers, that specify a single pose. </h:p></Description>
+                <Attribute name="staticPose" displayName="Static pose" xsi:type="DoubleArrayAttributeReferenceType"/>
+                </Attribute>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="StaticPoseList"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/4)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/5)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/6)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/7)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/8)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/9)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/10)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/11)"/>
+	<xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/12)"/>
+	<xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/13)"/>
+    </GlobalEdgeAttributeDeclarations> 
+    
+    <GlobalDataflowAttributeDeclarations>
+        <!-- Unfortunately, the xpointer used in Xinclude is currently restricted to the element scheme and absolute element indices in Xerces (and thus XMLBeans) -->
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/2)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/3)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/4)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/5)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/6)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/7)"/>
+    </GlobalDataflowAttributeDeclarations>
+    
+</UTQLPatternTemplates>

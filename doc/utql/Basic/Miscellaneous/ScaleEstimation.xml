@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
+    
+    <Pattern name="PoseScaleEstimation" displayName="Scale Estimation (Pose)">
+    	<Description><h:p>The component computes the scale factor relating the translational parts of two incoming/requested relative pose events. <h:code>norm(A) / norm(B)</h:code>.
+    	Only the position is taken into account for poses.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="RelA" source="A" destination="A" displayName="Relative Pose A">
+            	<Description><h:p>First relative input pose (only the position is used)</h:p></Description>
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+            <Edge name="RelB" source="B" destination="B" displayName="Relative Pose B">
+            	<Description><h:p>Second relative input pose (only the position is used)</h:p></Description>
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Scale" source="A" destination="B" displayName="Scale Factor">
+            	<Description><h:p>The scale factor relating the relative positional movements <h:code>Relative Pose A</h:code> and <h:code>Relative Pose B</h:code>.</h:p></Description>
+                <Attribute name="type" value="Distance" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="RelA"/>
+                <Edge edge-ref="RelB"/>
+                <Edge edge-ref="Scale"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseScaleEstimation"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="PositionScaleEstimation" displayName="Scale Estimation (3D Position)">
+    	<Description><h:p>The component computes the scale factor relating the two incoming/requested relative position events. <h:code>norm(A) / norm(B)</h:code>.
+    	</h:p></Description>
+
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="RelA" source="A" destination="A" displayName="Relative Position A">
+            	<Description><h:p>First relative position input</h:p></Description>
+                <Predicate>type=='3DPosition'</Predicate>
+            </Edge>
+            <Edge name="RelB" source="B" destination="B" displayName="Relative Position B">
+            	<Description><h:p>Second relative position input</h:p></Description>
+                <Predicate>type=='3DPosition'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="Scale" source="A" destination="B" displayName="Scale Factor">
+            	<Description><h:p>The scale factor relating the relative positional movements <h:code>Relative Position A</h:code> and <h:code>Relative Position B</h:code>.</h:p></Description>
+                <Attribute name="type" value="Distance" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="RelA"/>
+                <Edge edge-ref="RelB"/>
+                <Edge edge-ref="Scale"/>
+            </TriggerGroup>
+        </Constraints>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionScaleEstimation"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="DistanceScaleEstimation" displayName="Scale Estimation (Distance)">
+    	<Description><h:p>The component computes the scale factor relating the two incoming/requested relative distance events according to the formula <h:code>RelA / RelB</h:code>.
+    	</h:p></Description>
+
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="RelA" source="A" destination="A" displayName="Relative Distance A">
+            	<Description><h:p>First relative distance input</h:p></Description>
+                <Predicate>type=='Distance'</Predicate>
+            </Edge>
+            <Edge name="RelB" source="B" destination="B" displayName="Relative Distance B">
+            	<Description><h:p>Second relative distance input</h:p></Description>
+                <Predicate>type=='Distance'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="Scale" source="A" destination="B" displayName="Scale Factor">
+            	<Description><h:p>The scale factor relating the relative distances <h:code>Relative Distance A</h:code> and <h:code>Relative Distance B</h:code>.</h:p></Description>
+                <Attribute name="type" value="Distance" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="RelA"/>
+                <Edge edge-ref="RelB"/>
+                <Edge edge-ref="Scale"/>
+            </TriggerGroup>
+        </Constraints>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="DistanceScaleEstimation"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+    </GlobalEdgeAttributeDeclarations>
+    
+    <GlobalDataflowAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+    </GlobalDataflowAttributeDeclarations>
+ 
+    
+</UTQLPatternTemplates>

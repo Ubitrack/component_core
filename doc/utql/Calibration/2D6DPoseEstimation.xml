@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../schema/utql_templates.xsd'>
+    
+    <Pattern name="2D6DPoseEstimation" displayName="2D-6D Pose Estimation">
+    	<Description><h:p> The component computes the 6DoF pose from corresponding 2D and 3D measurements.
+        Currently, only a nonlinear optimization is performed, a rough initial pose has to be provided via the <h:code>Initial Pose Estimate</h:code> input.
+        </h:p>
+        </Description>
+			    	
+        <Input>
+            <Node name="World" displayName="World"/>
+            <Node name="Camera1" displayName="Camera 1"/>
+            <Node name="Camera2" displayName="Camera 2"/>
+            <Node name="ImagePlane1" displayName="Image Plane 1"/>
+            <Node name="ImagePlane2" displayName="Image Plane 2"/>
+            <Node name="Body" displayName="Body"/>
+            <Node name="Fiducials" displayName="Points"/>
+
+            <Edge name="InitialPose" source="World" destination="Body" displayName="Initial Pose">
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+            <Edge name="CameraPose" source="Camera1" destination="World" displayName="Extrinsics (Dummy)">
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+            <Edge name="CameraPose1" source="Camera1" destination="World" displayName="Extrinsics Camera 1">
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+            <Edge name="CameraPose2" source="Camera2" destination="World" displayName="Extrinsics Camera 2">
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+            <Edge name="Intrinsics" source="Camera1" destination="ImagePlane1" displayName="Intrinsics (Dummy)">
+                <Predicate>type=='3x3Matrix'</Predicate>
+            </Edge>
+            <Edge name="Intrinsics1" source="Camera1" destination="ImagePlane1" displayName="Intrinsics Camera 1">
+                <Predicate>type=='3x3Matrix'</Predicate>
+            </Edge>
+            <Edge name="Intrinsics2" source="Camera2" destination="ImagePlane2" displayName="Intrinsics Camera 2">
+                <Predicate>type=='3x3Matrix'</Predicate>
+            </Edge>
+            <Edge name="Weights" source="Camera1" destination="ImagePlane1" displayName="Weights (Dummy)">
+                <Predicate>type=='DistanceList'</Predicate>
+            </Edge>
+            <Edge name="Weights1" source="Camera1" destination="ImagePlane1" displayName="Weights Camera 1">
+                <Predicate>type=='DistanceList'</Predicate>
+            </Edge>
+            <Edge name="Weights2" source="Camera2" destination="ImagePlane2" displayName="Weights Camera 2">
+                <Predicate>type=='DistanceList'</Predicate>
+            </Edge>
+            <Edge name="Input2d" source="ImagePlane1" destination="Fiducials" displayName="2D Input (Dummy)">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input2d1" source="ImagePlane1" destination="Fiducials" displayName="2D Input Camera 1">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input2d2" source="ImagePlane2" destination="Fiducials" displayName="2D Input Camera 2">
+                <Predicate>type=='2DPositionList'</Predicate>
+            </Edge>
+            <Edge name="Input3d" source="Body" destination="Fiducials" displayName="3D Input">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="PoseEstimate" source="World" destination="Body" displayName="Refined Pose">
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+            <Edge name="PoseEstimateError" source="World" destination="Body" displayName="Refined Pose+Error">
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+            <Correspondence name="pointCorrespondences" minMultiplicity="4">
+                <Edge edge-ref="CameraPose1"/>
+                <Edge edge-ref="CameraPose2"/>
+                <Edge edge-ref="Intrinsics1"/>
+                <Edge edge-ref="Intrinsics2"/>
+                <Edge edge-ref="Weights1"/>
+                <Edge edge-ref="Weights2"/>
+                <Edge edge-ref="Input2d1"/>
+                <Edge edge-ref="Input2d2"/>
+                <Edge edge-ref="Input3d"/>
+            </Correspondence>
+
+            <TriggerGroup>
+                <Edge edge-ref="InitialPose"/>
+                <Edge edge-ref="CameraPose"/>
+                <Edge edge-ref="CameraPose1"/>
+                <Edge edge-ref="CameraPose2"/>
+                <Edge edge-ref="Intrinsics"/>
+                <Edge edge-ref="Intrinsics1"/>
+                <Edge edge-ref="Intrinsics2"/>
+                <Edge edge-ref="Weights"/>
+                <Edge edge-ref="Weights1"/>
+                <Edge edge-ref="Weights2"/>
+                <Edge edge-ref="Input2d"/>
+                <Edge edge-ref="Input2d1"/>
+                <Edge edge-ref="Input2d2"/>
+                <Edge edge-ref="Input3d"/>
+                <Edge edge-ref="PoseEstimate"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="2D6DPoseEstimation"/>
+            
+            <!-- remove when expansion works... -->
+            <Attribute name="expansion" value="space" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/4)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/5)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/6)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/7)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/8)"/>
+    </GlobalEdgeAttributeDeclarations> 
+
+    <GlobalDataflowAttributeDeclarations>
+        <!-- Unfortunately, the xpointer used in Xinclude is currently restricted to the element scheme and absolute element indices in Xerces (and thus XMLBeans) -->
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/2)"/>
+    </GlobalDataflowAttributeDeclarations> 
+    
+</UTQLPatternTemplates>

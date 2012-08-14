@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
+    
+    <Pattern name="PoseMultiplication" displayName="Multiplication (Pose * Pose)">
+    	<Description><h:p>The component multiplies two poses AB and BC, resulting in the product AC=AB*BC.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="AB" source="A" destination="B" displayName="First factor">
+            	<Description><h:p>The first input.</h:p></Description>
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="Second factor">
+            	<Description><h:p>The second input.</h:p></Description>
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="AC" source="A" destination="C" displayName="Product">
+            	<Description><h:p>The result computed as the product of AB and BC.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseMultiplication"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="ErrorPoseMultiplication" displayName="Multiplication (Pose+Error * Pose+Error)">
+    	<Description><h:p>The component multiplies two poses AB and BC, resulting in the product AC=AB*BC.
+    	The 6D error covariances of both input are propagated.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="AB" source="A" destination="B" displayName="First factor">
+            	<Description><h:p>The first input.</h:p></Description>
+                <Predicate>type=='6DError'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="Second factor">
+            	<Description><h:p>The second input.</h:p></Description>
+                <Predicate>type=='6DError'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="AC" source="A" destination="C" displayName="Product">
+            	<Description><h:p>The result computed as the product of AB and BC.</h:p></Description>
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="ErrorPoseMultiplication"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="PoseErrorPoseMultiplication" displayName="Multiplication (Pose * Pose+Error)">
+    	<Description><h:p>The component multiplies two poses AB and BC, resulting in the product AC=AB*BC.
+    	The 6D error covariance of the second factor is propagated to the result.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="AB" source="A" destination="B" displayName="First factor">
+            	<Description><h:p>The first input, assumed to be error-free.</h:p></Description>
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="Second factor">
+            	<Description><h:p>The second input with error described as a 6x6 covariance matrix.</h:p></Description>
+                <Predicate>type=='6DError'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="AC" source="A" destination="C" displayName="Product">
+            	<Description><h:p>The result computed as the product of AB and BC. Includes a 6x6 covariance matrix.</h:p></Description>
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseErrorPoseMultiplication"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="ErrorPosePoseMultiplication" displayName="Multiplication (Pose+Error * Pose)">
+    	<Description><h:p>The component multiplies two poses AB and BC, resulting in the product AC=AB*BC.
+    	The 6D error covariance of the first factor is propagated to the result.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="AB" source="A" destination="B" displayName="First factor">
+            	<Description><h:p>The first input with error described as a 6x6 covariance matrix.</h:p></Description>
+                <Predicate>type=='6DError'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="Second factor">
+            	<Description><h:p>The second input, assumed to be error-free.</h:p></Description>
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="AC" source="A" destination="C" displayName="Product">
+            	<Description><h:p>The result computed as the product of AB and BC. Includes a 6x6 covariance matrix.</h:p></Description>
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="ErrorPosePoseMultiplication"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="RotationMultiplication" displayName="Multiplication (3D Rotation * 3D Rotation)">
+    	<Description><h:p>The component multiplies two 3D rotations AB and BC, resulting in the product AC=AB*BC.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="AB" source="A" destination="B" displayName="First factor">
+            	<Description><h:p>The first input.</h:p></Description>
+                <Predicate>type=='3DRotation'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="Second factor">
+            	<Description><h:p>The second input.</h:p></Description>
+                <Predicate>type=='3DRotation'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="AC" source="A" destination="C" displayName="Product">
+            	<Description><h:p>The result computed as the product of AB and BC.</h:p></Description>
+                <Attribute name="type" value="3DRotation" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="RotationMultiplication"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="RotationVelocityMultiplication" displayName="Multiplication (Rotation * Rotation Velocity)">
+    	<Description><h:p>The component transforms the rotation velocity BC into a new coordinate frame AC.
+    	Note that the rotation AB is assumed to be static!</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="AB" source="A" destination="B" displayName="Rotation Input">
+            	<Description><h:p>The rotation describing the relationship between the two source coordinate frames.</h:p></Description>
+                <Predicate>type=='3DRotation'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="Rotation Velocity Input">
+            	<Description><h:p>The rotation velocity to be transformed.</h:p></Description>
+                <Predicate>type=='RotationVelocity'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="AC" source="A" destination="C" displayName="Transformed rotation velocity">
+            	<Description><h:p>The transformed rotation velocity.</h:p></Description>
+                <Attribute name="type" value="RotationVelocity" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="RotationVelocityMultiplication"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="RotationVelocityTransformation" displayName="Transformation  (Rotation * RotationVelocity)">
+    	<Description><h:p>The component transforms the rotation velocity into a new coordinate frame.
+    	Note that the rotation AC is assumed to be static!</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="D" displayName="D"/>
+            <Edge name="AB" source="D" destination="B" displayName="Rotation Input">
+            	<Description><h:p>The rotation describing the relationship between the two source coordinate frames.</h:p></Description>
+                <Predicate>type=='3DRotation'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="BC" source="A" destination="B" displayName="Rotation Velocity Input">
+            	<Description><h:p>The rotation velocity to be transformed.</h:p></Description>
+                <Predicate>type=='RotationVelocity'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Node name="C" displayName="C"/>
+            <Edge name="AC" source="C" destination="D" displayName="Transformed rotation velocity">
+            	<Description><h:p>The transformed rotation velocity.</h:p></Description>
+                <Attribute name="type" value="RotationVelocity" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="RotationVelocityTransformation"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    
+    <Pattern name="PosePositionMultiplication" displayName="Multiplication (Pose * 3D Position)">
+    	<Description><h:p>The component multiplies pose AB with vector BC, resulting in the vector AC=AB*BC.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="AB" source="A" destination="B" displayName="Pose">
+            	<Description><h:p>The pose input.</h:p></Description>
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="Vector">
+            	<Description><h:p>The vector to transform.</h:p></Description>
+                <Predicate>type=='3DPosition'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="AC" source="A" destination="C" displayName="Transformed vector">
+            	<Description><h:p>The result computed as the product of AB and BC.</h:p></Description>
+                <Attribute name="type" value="3DPosition" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PosePositionMultiplication"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="ErrorPosePositionMultiplication" displayName="Multiplication (Pose+Error * Position)">
+    	<Description><h:p>The component propagates the covariance of a pose to a point-of-interest (POI).</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="AB" source="A" destination="B" displayName="ErrorPose">
+            	<Description><h:p>The pose with covariance matrix.</h:p></Description>
+                <Predicate>type=='6DError'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="POI position">
+            	<Description><h:p>Position of the POI.</h:p></Description>
+                <Predicate>type=='3DPosition'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="AC" source="A" destination="C" displayName="POI error">
+            	<Description><h:p>The resulting 3D position with attached 3x3 covariance matrix.</h:p></Description>
+                <Attribute name="type" value="3DPositionError" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="ErrorPosePositionMultiplication"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="PosePoseListMultiplication" displayName="Multiplication (Pose * Pose List)">
+    	<Description><h:p>The component multiplies a pose AB with a list of poses BC, resulting in the product AC=AB*BC, which again is a list of poses.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="AB" source="A" destination="B" displayName="Pose">
+            	<Description><h:p>The input pose.</h:p></Description>
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="List of poses">
+            	<Description><h:p>The list of poses to transform.</h:p></Description>
+                <Predicate>type=='PoseList'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="AC" source="A" destination="C" displayName="Transformed Vectors">
+            	<Description><h:p>List of transformed poses.</h:p></Description>
+                <Attribute name="type" value="PoseList" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PosePoseListMultiplication"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="PoseListPoseMultiplication" displayName="Multiplication (Pose List * Pose)">
+    	<Description><h:p>The component multiplies a list of poses AB with a pose BC, resulting in the product AC=AB*BC, which again is a list of poses.</h:p></Description>
+
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="AB" source="A" destination="B" displayName="Pose">
+            	<Description><h:p>The list of poses to transform</h:p></Description>
+                <Predicate>type=='PoseList'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="List of poses">
+            	<Description><h:p>Input pose</h:p></Description>
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="AC" source="A" destination="C" displayName="Transformed Vectors">
+            	<Description><h:p>List of transformed poses.</h:p></Description>
+                <Attribute name="type" value="PoseList" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseListPoseMultiplication"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="PosePositionListMultiplication" displayName="Multiplication (Pose * 3D Position List)">
+    	<Description><h:p>The component multiplies a pose AB with a list of vectors BC, resulting in the product AC=AB*BC, which again is a list of vectors.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="AB" source="A" destination="B" displayName="Pose">
+            	<Description><h:p>The input pose.</h:p></Description>
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="List of Vectors">
+            	<Description><h:p>The list of 3D vectors to transform.</h:p></Description>
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="AC" source="A" destination="C" displayName="Transformed Vectors">
+            	<Description><h:p>List of transformed 3D vectors.</h:p></Description>
+                <Attribute name="type" value="3DPositionList" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PosePositionListMultiplication"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	 <Pattern name="ErrorPoseErrorPositionMultiplication" displayName="Multiplication (Pose+Error * Position+Error)">
+    	<Description><h:p>The component propagates the covariance of a pose to a point-of-interest (POI).</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="C" displayName="C"/>
+            <Edge name="AB" source="A" destination="B" displayName="ErrorPose">
+            	<Description><h:p>The pose with covariance matrix.</h:p></Description>
+                <Predicate>type=='6DError'</Predicate>
+            </Edge>
+            <Edge name="BC" source="B" destination="C" displayName="POI position">
+            	<Description><h:p>Position of the POI.</h:p></Description>
+                <Predicate>type=='3DPositionError'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="AC" source="A" destination="C" displayName="POI error">
+            	<Description><h:p>The resulting 3D position with attached 3x3 covariance matrix.</h:p></Description>
+                <Attribute name="type" value="3DPositionError" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="AB"/>
+                <Edge edge-ref="BC"/>
+                <Edge edge-ref="AC"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="ErrorPoseErrorPositionMultiplication"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+   
+    
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+    </GlobalEdgeAttributeDeclarations>
+    
+    <GlobalDataflowAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+    </GlobalDataflowAttributeDeclarations>
+ 
+    
+</UTQLPatternTemplates>

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
+    
+    <Pattern name="PoseCovarianceEstimation" displayName="Covariance Estimation (Pose)">
+    	<Description><h:p>
+             Determines the covariance of a given stream of poses. 
+             <h:br/><h:br/>
+             The component can be used in <h:code>pull</h:code> or <h:code>push</h:code> mode. The former is recommended for Monte Carlo simulations
+             because it allows to run the simulation with the highest performance possible. In other words, whenever a new datum is required, it will be
+             triggered immediately.
+             <h:br/><h:br/>
+             In <h:code>pull</h:code> mode, the component has to be triggered once via its <h:code>TriggerInput</h:code>. It then
+             generates many trigger events on its <h:code>Sync</h:code> output. Those
+             should lead to the same amount of measurements pushed on the
+             <h:code>PerturbedInput</h:code> input. Finally, one result is pushed
+             onward on the <h:code>Distribution</h:code> output.
+             <h:br/><h:br/>
+             If the component is used in <h:code>push</h:code> mode, no external trigger events are necessasry. The component starts computation with the
+             first noisy measurement pushed on the <h:code>PerturbedInput</h:code> port. Sync signals on the <h:code>Sync</h:code> port are still generated
+             but may be safely ignored.
+             <h:br/><h:br/>
+             The <h:code>Signal</h:code> attribute specifies which signal to push for synchronization.
+             <h:br/><h:br/>
+             This component should probably be used in conjunction with the
+             <h:code>Time-To-Space-Expansion Converter</h:code>, <h:code>Trigger</h:code> and
+             <h:code>Gate</h:code> components. The <h:code>List Gate</h:code> component might be useful if a list of measurements is readily available.
+             The <h:code>Perturb</h:code> component can be used to simulate noisy signals in a Monte Carlo simulation.
+             <h:br/><h:br/>
+        </h:p></Description>
+    	
+        <Input>
+            <Node name="CoordSystem" displayName="Coordinate System"/>
+            <Node name="PoseCloud" displayName="Pose Cloud"/>
+            <Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+            <Edge name="PerturbedInput" source="CoordSystem" destination="PoseCloud" displayName="Noisy data">
+            	<Description><h:p>Noisy data input</h:p></Description>
+                <Predicate>type=='6D'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="TriggerInput" source="Event" destination="EventSpace" displayName="Trigger Input">
+            	<Description><h:p>Triggers the component</h:p></Description>
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Distribution" source="CoordSystem" destination="PoseCloud" displayName="Distribution">
+            	<Description><h:p>Mean and covariance of input data</h:p></Description>
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+            <Edge name="Sync" source="Event" destination="EventSpace" displayName="Sync Output">
+            	<Description><h:p>Provides synchronization signal to trigger updates to be pushed to the inputs.</h:p></Description>
+                <Attribute name="type" value="Button" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseCovarianceEstimation"/>
+            <Attribute name="size" displayName="Amount of samples" default="100" min="1" xsi:type="IntAttributeDeclarationType">
+            	<Description><h:p>Amount of samples to be used for covariance estimation</h:p></Description>
+            </Attribute>
+            <Attribute name="button" xsi:type="StringAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+        
+    <!--Pattern name="PushPoseCovarianceEstimation" displayName="Push Covariance Estimation (Pose)">
+    	<Description><h:p>
+        </h:p></Description>
+
+        <Input>
+            <Node name="CoordSystem" displayName="Coordinate System"/>
+            <Node name="PoseCloud" displayName="Pose Cloud"/>
+            <Edge name="PerturbedInput" source="CoordSystem" destination="PoseCloud" displayName="Noisy data">
+            	<Description><h:p>Noisy data input</h:p></Description>
+                <Predicate>type=='6D'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="Distribution" source="CoordSystem" destination="PoseCloud" displayName="Distribution">
+            	<Description><h:p>Mean and covariance of input data</h:p></Description>
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseCovarianceEstimation"/>
+            <Attribute name="size" displayName="Amount of samples" default="100" min="1" xsi:type="IntAttributeDeclarationType">
+            	<Description><h:p>Amount of samples to be used for covariance estimation</h:p></Description>
+            </Attribute>
+            <Attribute name="button" xsi:type="StringAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern-->
+        
+    <Pattern name="3DPositionCovarianceEstimation" displayName="Covariance Estimation (3D Position)">
+    	<Description><h:p>
+             Determines the covariance of a given stream of poses.
+             <h:br/><h:br/>
+             The component can be used in <h:code>pull</h:code> or <h:code>push</h:code> mode. The former is recommended for Monte Carlo simulations
+             because it allows to run the simulation with the highest performance possible. In other words, whenever a new datum is required, it will be
+             triggered immediately.
+             <h:br/><h:br/>
+             In <h:code>pull</h:code> mode, the component has to be triggered once via its <h:code>TriggerInput</h:code>. It then
+             generates many trigger events on its <h:code>Sync</h:code> output. Those
+             should lead to the same amount of measurements pushed on the
+             <h:code>PerturbedInput</h:code> input. Finally, one result is pushed
+             onward on the <h:code>Distribution</h:code> output.
+             <h:br/><h:br/>
+             If the component is used in <h:code>push</h:code> mode, no external trigger events are necessasry. The component starts computation with the
+             first noisy measurement pushed on the <h:code>PerturbedInput</h:code> port. Sync signals on the <h:code>Sync</h:code> port are still generated
+             but may be safely ignored.
+             <h:br/><h:br/>
+             The <h:code>Signal</h:code> attribute specifies which signal to push for synchronization.
+             <h:br/><h:br/>
+             This component should probably be used in conjunction with the
+             <h:code>Time-To-Space-Expansion Converter</h:code>, <h:code>Trigger</h:code> and
+             <h:code>Gate</h:code> components. The <h:code>List Gate</h:code> component might be useful if a list of measurements is readily available.
+             The <h:code>Perturb</h:code> component can be used to simulate noisy signals in a Monte Carlo simulation.
+             <h:br/><h:br/>
+        </h:p></Description>
+
+        <Input>
+            <Node name="CoordSystem" displayName="Coordinate System"/>
+            <Node name="PoseCloud" displayName="Pose Cloud"/>
+            <Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+            <Edge name="PerturbedInput" source="CoordSystem" destination="PoseCloud" displayName="Noisy data">
+            	<Description><h:p>Noisy data input</h:p></Description>
+                <Predicate>type=='3DPosition'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="TriggerInput" source="Event" destination="EventSpace" displayName="Trigger Input">
+            	<Description><h:p>Triggers the component</h:p></Description>
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="Distribution" source="CoordSystem" destination="PoseCloud" displayName="Distribution">
+            	<Description><h:p>Mean and covariance of input data</h:p></Description>
+                <Attribute name="type" value="3DPositionError" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+            <Edge name="Sync" source="Event" destination="EventSpace" displayName="Sync Output">
+            	<Description><h:p>Provides synchronization signal to trigger updates to be pushed to the inputs.</h:p></Description>
+                <Attribute name="type" value="Button" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="3DPositionCovarianceEstimation"/>
+            <Attribute name="size" displayName="Amount of samples" default="100" min="1" xsi:type="IntAttributeDeclarationType">
+            	<Description><h:p>Amount of samples to be used for covariance estimation</h:p></Description>
+            </Attribute>
+            <Attribute name="button" xsi:type="StringAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+    </GlobalEdgeAttributeDeclarations>
+    
+    <GlobalDataflowAttributeDeclarations>
+        <!-- Unfortunately, the xpointer used in Xinclude is currently restricted to the element scheme and absolute element indices in Xerces (and thus XMLBeans) -->
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/2)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/3)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/4)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/5)"/>
+    </GlobalDataflowAttributeDeclarations>
+ 
+    
+</UTQLPatternTemplates>

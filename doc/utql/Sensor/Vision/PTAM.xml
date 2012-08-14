@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
+    
+    <Pattern name="PTAMMapMaker" displayName="Parallel Tracking and Mapping (PTAM) - Map Maker">
+        <Description><h:p>Georg Klein's markerless Parallel Tracking and Mapping (PTAM) implementation.</h:p></Description>
+        <Input>
+            <Node name="Camera" displayName="Camera"/>
+            <Node name="ImagePlane" displayName="Image Plane"/>
+            <Edge name="Image" displayName="Image" source="Camera" destination="ImagePlane" >
+                <Description><h:p>Greyscale input image.</h:p></Description>
+                <Predicate>type=='Image'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="CameraIntrinsics" displayName="Intrinsics" source="Camera" destination="ImagePlane" >
+                <Description><h:p>Camera intrinsic matrix.</h:p></Description>
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        <Output>
+            <Node name="Map" displayName="Ad-hoc Map"/>
+            <Edge name="Output" source="Camera" destination="Map" displayName="Map Pose">
+                <Description><h:p>Pose of feature map with respect to camera. This pose is probably wrong as long as no proper scale has been applied.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="PTAM"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="PTAMMapMakerRefPose" displayName="Parallel Tracking and Mapping (PTAM) - Map Maker (Reference Pose)">
+        <Description><h:p>
+            Georg Klein's markerless Parallel Tracking and Mapping (PTAM) implementation.
+            This version of the pattern yields the pose of the camera in the world coordinate system.
+            The 7DoF registration (pose + map scale) is performed internally, by using the <h:code>Reference Pose</h:code>.
+            The registration is incrementally improved with additional measurements over time.
+        </h:p></Description>
+        <Input>
+            <Node name="World" displayName="World"/>
+            <Node name="Camera" displayName="Camera"/>
+            <Node name="ImagePlane" displayName="Image Plane"/>
+			<Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+			
+            <Edge name="RefPose" displayName="Reference Pose" source="Camera" destination="World" >
+                <Description><h:p>Reference pose to initialize/validate/update PTAM's internal feature map</h:p></Description>
+                <Predicate>type=='6D'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="Image" displayName="Image" source="Camera" destination="ImagePlane" >
+                <Description><h:p>Greyscale input image.</h:p></Description>
+                <Predicate>type=='Image'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="CameraIntrinsics" displayName="Intrinsics" source="Camera" destination="ImagePlane" >
+                <Description><h:p>Camera intrinsic matrix.</h:p></Description>
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+			<Edge name="GetFeaturePoints" source="Event" destination="EventSpace" displayName="Trigger feature output">
+            	<Description><h:p>Trigger input used to</h:p></Description>
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        <Output>
+			<Node name="Features" displayName="Features"/>
+            <Edge name="Output" source="Camera" destination="World" displayName="Camera Pose">
+                <Description><h:p>Pose of camera with respect to the world coordinate system</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+			<Edge name="FeaturePoints" source="World" destination="Features" displayName="Feature Point Output">
+            	<Description><h:p>Output</h:p></Description>
+                <Attribute name="type" value="3DPositionList" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="ModifiedPTAM"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="PTAMMapMakerRefPosition" displayName="Parallel Tracking and Mapping (PTAM) - Map Maker (Reference Position)">
+        <Description><h:p>
+            Georg Klein's markerless Parallel Tracking and Mapping (PTAM) implementation.
+            This version of the pattern yields the pose of the camera in the world coordinate system.
+            The 7DoF registration is performed internally, by clicking features in the PTAM window whose position is also known in world
+            coordinates.
+            The registration is incrementally improved with additional measurements over time.
+        </h:p></Description>
+        <Input>
+            <Node name="World" displayName="World"/>
+            <Node name="RefPos" displayName="Reference Points"/>
+            <Node name="Camera" displayName="Camera"/>
+            <Node name="ImagePlane" displayName="Image Plane"/>
+            <Edge name="RefPosition" displayName="Reference Position" source="World" destination="RefPos" >
+                <Description><h:p>Reference position of feature known in world coordinates</h:p></Description>
+                <Predicate>type=='3DPosition'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="Image" displayName="Image" source="Camera" destination="ImagePlane" >
+                <Description><h:p>Greyscale input image.</h:p></Description>
+                <Predicate>type=='Image'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="CameraIntrinsics" displayName="Intrinsics" source="Camera" destination="ImagePlane" >
+                <Description><h:p>Camera intrinsic matrix.</h:p></Description>
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        <Output>
+            <Edge name="Output" source="Camera" destination="World" displayName="World Transformation">
+                <Description><h:p>Pose of camera with respect to the world coordinate system</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="PTAM"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="PTAM1" displayName="Parallel Tracking and Mapping (PTAM) - 1 Map">
+        <Description><h:p>Georg Klein's markerless Parallel Tracking and Mapping (PTAM) implementation.</h:p></Description>
+        <Input>
+            <Node name="Camera" displayName="Camera"/>
+            <Node name="ImagePlane" displayName="Image Plane"/>
+            <Edge name="Image" displayName="Image" source="Camera" destination="ImagePlane" >
+                <Description><h:p>Greyscale input image.</h:p></Description>
+                <Predicate>type=='Image'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="CameraIntrinsics" displayName="Intrinsics" source="Camera" destination="ImagePlane" >
+                <Description><h:p>Camera intrinsic matrix.</h:p></Description>
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        <Output>
+            <Node name="Map1" displayName="Feature Map 1">
+                <Attribute name="map" displayName="Map Archive" xsi:type="PathAttributeDeclarationType">
+                    <Description><h:p>The map archive</h:p></Description>
+                </Attribute>
+            </Node>
+            <Edge name="Output1" source="Camera" destination="Map1" displayName="Map 1 Pose">
+                <Description><h:p>Pose of feature map with respect to camera.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PTAM"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="PTAM2" displayName="Parallel Tracking and Mapping (PTAM) - 2 Maps">
+        <Description><h:p>Georg Klein's markerless Parallel Tracking and Mapping (PTAM) implementation.</h:p></Description>
+        <Input>
+            <Node name="Camera" displayName="Camera"/>
+            <Node name="ImagePlane" displayName="Image Plane"/>
+            <Edge name="Image" displayName="Image" source="Camera" destination="ImagePlane" >
+                <Description><h:p>Greyscale input image.</h:p></Description>
+                <Predicate>type=='Image'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="CameraIntrinsics" displayName="Intrinsics" source="Camera" destination="ImagePlane" >
+                <Description><h:p>Camera intrinsic matrix.</h:p></Description>
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        <Output>
+            <Node name="Map1" displayName="Feature Map 1">
+                <Attribute name="map" displayName="Map Archive" xsi:type="PathAttributeDeclarationType">
+                    <Description><h:p>The map archive</h:p></Description>
+                </Attribute>
+            </Node>
+            <Node name="Map2" displayName="Feature Map 2">
+                <Attribute name="map" displayName="Map Archive" xsi:type="PathAttributeDeclarationType">
+                    <Description><h:p>The map archive</h:p></Description>
+                </Attribute>
+            </Node>
+            <Edge name="Output1" source="Camera" destination="Map1" displayName="Map 1 Pose">
+                <Description><h:p>Pose of feature map with respect to camera.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+            <Edge name="Output2" source="Camera" destination="Map2" displayName="Map 2 Pose">
+                <Description><h:p>Pose of feature map with respect to camera.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="PTAM"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    <Pattern name="PTAM3" displayName="Parallel Tracking and Mapping (PTAM) - 3 Maps">
+        <Description><h:p>Georg Klein's markerless Parallel Tracking and Mapping (PTAM) implementation.</h:p></Description>
+        <Input>
+            <Node name="Camera" displayName="Camera"/>
+            <Node name="ImagePlane" displayName="Image Plane"/>
+            <Edge name="Image" displayName="Image" source="Camera" destination="ImagePlane" >
+                <Description><h:p>Greyscale input image.</h:p></Description>
+                <Predicate>type=='Image'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="CameraIntrinsics" displayName="Intrinsics" source="Camera" destination="ImagePlane" >
+                <Description><h:p>Camera intrinsic matrix.</h:p></Description>
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        <Output>
+            <Node name="Map1" displayName="Feature Map 1">
+                <Attribute name="map" displayName="Map Archive" xsi:type="PathAttributeDeclarationType">
+                    <Description><h:p>The map archive</h:p></Description>
+                </Attribute>
+            </Node>
+            <Node name="Map2" displayName="Feature Map 2">
+                <Attribute name="map" displayName="Map Archive" xsi:type="PathAttributeDeclarationType">
+                    <Description><h:p>The map archive</h:p></Description>
+                </Attribute>
+            </Node>
+            <Node name="Map3" displayName="Feature Map 3">
+                <Attribute name="map" displayName="Map Archive" xsi:type="PathAttributeDeclarationType">
+                    <Description><h:p>The map archive</h:p></Description>
+                </Attribute>
+            </Node>
+            <Edge name="Output1" source="Camera" destination="Map1" displayName="Map 1 Pose">
+                <Description><h:p>Pose of feature map with respect to camera.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+            <Edge name="Output2" source="Camera" destination="Map2" displayName="Map 2 Pose">
+                <Description><h:p>Pose of feature map with respect to camera.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+            <Edge name="Output3" source="Camera" destination="Map3" displayName="Map 3 Pose">
+                <Description><h:p>Pose of feature map with respect to camera.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="PTAM"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="PTAM4" displayName="Parallel Tracking and Mapping (PTAM) - 4 Maps">
+        <Description><h:p>Georg Klein's markerless Parallel Tracking and Mapping (PTAM) implementation.</h:p></Description>
+        <Input>
+            <Node name="Camera" displayName="Camera"/>
+            <Node name="ImagePlane" displayName="Image Plane"/>
+            <Edge name="Image" displayName="Image" source="Camera" destination="ImagePlane" >
+                <Description><h:p>Greyscale input image.</h:p></Description>
+                <Predicate>type=='Image'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="CameraIntrinsics" displayName="Intrinsics" source="Camera" destination="ImagePlane" >
+                <Description><h:p>Camera intrinsic matrix.</h:p></Description>
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        <Output>
+            <Node name="Map1" displayName="Feature Map 1">
+                <Attribute name="map" displayName="Map Archive" xsi:type="PathAttributeDeclarationType">
+                    <Description><h:p>The map archive</h:p></Description>
+                </Attribute>
+            </Node>
+            <Node name="Map2" displayName="Feature Map 2">
+                <Attribute name="map" displayName="Map Archive" xsi:type="PathAttributeDeclarationType">
+                    <Description><h:p>The map archive</h:p></Description>
+                </Attribute>
+            </Node>
+            <Node name="Map3" displayName="Feature Map 3">
+                <Attribute name="map" displayName="Map Archive" xsi:type="PathAttributeDeclarationType">
+                    <Description><h:p>The map archive</h:p></Description>
+                </Attribute>
+            </Node>
+            <Node name="Map4" displayName="Feature Map 4">
+                <Attribute name="map" displayName="Map Archive" xsi:type="PathAttributeDeclarationType">
+                    <Description><h:p>The map archive</h:p></Description>
+                </Attribute>
+            </Node>
+            <Edge name="Output1" source="Camera" destination="Map1" displayName="Map 1 Pose">
+                <Description><h:p>Pose of feature map with respect to camera.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+            <Edge name="Output2" source="Camera" destination="Map2" displayName="Map 2 Pose">
+                <Description><h:p>Pose of feature map with respect to camera.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+            <Edge name="Output3" source="Camera" destination="Map3" displayName="Map 3 Pose">
+                <Description><h:p>Pose of feature map with respect to camera.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+            <Edge name="Output4" source="Camera" destination="Map4" displayName="Map 4 Pose">
+                <Description><h:p>Pose of feature map with respect to camera.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="PTAM"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="PTAM5" displayName="Parallel Tracking and Mapping (PTAM) - 5 Maps">
+        <Description><h:p>Georg Klein's markerless Parallel Tracking and Mapping (PTAM) implementation.</h:p></Description>
+        <Input>
+            <Node name="Camera" displayName="Camera"/>
+            <Node name="ImagePlane" displayName="Image Plane"/>
+            <Edge name="Image" displayName="Image" source="Camera" destination="ImagePlane" >
+                <Description><h:p>Greyscale input image.</h:p></Description>
+                <Predicate>type=='Image'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="CameraIntrinsics" displayName="Intrinsics" source="Camera" destination="ImagePlane" >
+                <Description><h:p>Camera intrinsic matrix.</h:p></Description>
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+        </Input>
+        <Output>
+            <Node name="Map1" displayName="Feature Map 1">
+                <Attribute name="map" displayName="Map Archive" xsi:type="PathAttributeDeclarationType">
+                    <Description><h:p>The map archive</h:p></Description>
+                </Attribute>
+            </Node>
+            <Node name="Map2" displayName="Feature Map 2">
+                <Attribute name="map" displayName="Map Archive" xsi:type="PathAttributeDeclarationType">
+                    <Description><h:p>The map archive</h:p></Description>
+                </Attribute>
+            </Node>
+            <Node name="Map3" displayName="Feature Map 3">
+                <Attribute name="map" displayName="Map Archive" xsi:type="PathAttributeDeclarationType">
+                    <Description><h:p>The map archive</h:p></Description>
+                </Attribute>
+            </Node>
+            <Node name="Map4" displayName="Feature Map 4">
+                <Attribute name="map" displayName="Map Archive" xsi:type="PathAttributeDeclarationType">
+                    <Description><h:p>The map archive</h:p></Description>
+                </Attribute>
+            </Node>
+            <Node name="Map5" displayName="Feature Map 5">
+                <Attribute name="map" displayName="Map Archive" xsi:type="PathAttributeDeclarationType">
+                    <Description><h:p>The map archive</h:p></Description>
+                </Attribute>
+            </Node>
+            <Edge name="Output1" source="Camera" destination="Map1" displayName="Map 1 Pose">
+                <Description><h:p>Pose of feature map with respect to camera.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+            <Edge name="Output2" source="Camera" destination="Map2" displayName="Map 2 Pose">
+                <Description><h:p>Pose of feature map with respect to camera.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+            <Edge name="Output3" source="Camera" destination="Map3" displayName="Map 3 Pose">
+                <Description><h:p>Pose of feature map with respect to camera.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+            <Edge name="Output4" source="Camera" destination="Map4" displayName="Map 4 Pose">
+                <Description><h:p>Pose of feature map with respect to camera.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+            <Edge name="Output5" source="Camera" destination="Map5" displayName="Map 5 Pose">
+                <Description><h:p>Pose of feature map with respect to camera.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="PTAM"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+
+    <!-- Attribute declarations -->
+	
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/4)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/5)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/6)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/7)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/8)"/>
+    </GlobalEdgeAttributeDeclarations> 
+    
+    <GlobalDataflowAttributeDeclarations>
+        <!-- Unfortunately, the xpointer used in Xinclude is currently restricted to the element scheme and absolute element indices in Xerces (and thus XMLBeans) -->
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/2)"/>
+    </GlobalDataflowAttributeDeclarations>
+    
+</UTQLPatternTemplates>
+

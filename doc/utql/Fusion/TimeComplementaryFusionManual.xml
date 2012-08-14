@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
+    
+    <Pattern name="PoseTimeComplementaryFusionManual" displayName="Manual Time Complementary Fusion Three (Pose)">
+    	<Description><h:p>Component for time complementary fusion. It contains two inputs, <h:code>InputA</h:code> and
+    	<h:code>InputB</h:code>. All events of input A are passed through. Events on input B only pass if no events
+    	for input A were received for some amount of time.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+            <Edge name="InputA" source="A" destination="B" displayName="Input A">
+            	<Description><h:p>The primary push input.</h:p></Description>
+                <Predicate>type=='6D'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="InputB" source="A" destination="B" displayName="Input B">
+            	<Description><h:p>The secondary push input</h:p></Description>
+                <Predicate>type=='6D'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="InputC" source="A" destination="B" displayName="Input C">
+            	<Description><h:p>The third push input</h:p></Description>
+                <Predicate>type=='6D'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="ButtonEvent" displayName="Event Toggle Input" source="Event" destination="EventSpace">
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Time Complementary Output">
+            	<Description><h:p>The time complementary fused result.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseTimeComplementaryFusionManual"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    
+    <Pattern name="PoseTimeComplementaryFusionManualBinary" displayName="Manual Time Complementary Fusion Binary (Pose)">
+    	<Description><h:p>Component for time complementary fusion. It contains two inputs, <h:code>InputA</h:code> and
+    	<h:code>InputB</h:code>. All events of input A are passed through. Events on input B only pass if no events
+    	for input A were received for some amount of time.</h:p></Description>
+
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+            <Edge name="InputA" source="A" destination="B" displayName="Input A">
+            	<Description><h:p>The primary push input.</h:p></Description>
+                <Predicate>type=='6D'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="InputB" source="A" destination="B" displayName="Input B">
+            	<Description><h:p>The secondary push input</h:p></Description>
+                <Predicate>type=='6D'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="ButtonEvent" displayName="Event Toggle Input" source="Event" destination="EventSpace">
+                <Predicate>type=='Button'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Time Complementary Output">
+            	<Description><h:p>The time complementary fused result.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseTimeComplementaryFusionManual"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+
+
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+    </GlobalEdgeAttributeDeclarations>
+    
+    <GlobalDataflowAttributeDeclarations>
+        <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+    </GlobalDataflowAttributeDeclarations>
+ 
+    
+</UTQLPatternTemplates>
