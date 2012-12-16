@@ -90,7 +90,7 @@ protected:
 	void downInfinite();
 
 	// Output ports of the component
-	Dataflow::PushSupplier< bool > m_outPort;
+	Dataflow::PushSupplier< Measurement::Button > m_outPort;
 	
 	// waiting time
 	int m_seconds;
@@ -104,7 +104,7 @@ void Countdown::down()
 	while(m_number > 0)
 	{
 		Util::sleep(m_seconds*1000, 0);
-		m_outPort.send(true);
+		m_outPort.send( Measurement::Button(Measurement::now(), Math::Scalar<int>(1)));
 		m_number--;		
 	}
 }
@@ -114,7 +114,7 @@ void Countdown::downInfinite()
 	while(true)
 	{
 		Util::sleep(m_seconds*1000, 0);
-		m_outPort.send(true);		
+		m_outPort.send(Measurement::Button(Measurement::now(), Math::Scalar<int>(1)));		
 	}
 }
 
