@@ -41,6 +41,21 @@ namespace ublas = boost::numeric::ublas;
 
 namespace Ubitrack { namespace Components {
 
+// computes the distance for vectors
+template< int N >
+double doDistance( const Math::Vector< N >& a, const Math::Vector< N >& b )
+{
+	return ublas::norm_2( a - b );
+}
+
+
+// computes the distance for poses
+double doDistance( const Math::Pose& a, const Math::Pose& b )
+{
+	return ublas::norm_2( a.translation() - b.translation() );
+}
+	
+
 /**
  * @ingroup dataflow_components
  * Distance component.
@@ -98,21 +113,6 @@ protected:
 	/** Output port of the component. */
 	Dataflow::TriggerOutPort< Measurement::Distance > m_outPort;
 };
-
-
-// computes the distance for vectors
-template< int N >
-double doDistance( const Math::Vector< N >& a, const Math::Vector< N >& b )
-{
-	return ublas::norm_2( a - b );
-}
-
-
-// computes the distance for poses
-double doDistance( const Math::Pose& a, const Math::Pose& b )
-{
-	return ublas::norm_2( a.translation() - b.translation() );
-}
 
 
 UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {

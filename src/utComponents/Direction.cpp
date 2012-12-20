@@ -41,6 +41,31 @@ namespace ublas = boost::numeric::ublas;
 namespace Ubitrack { namespace Components {
 
 
+/** Method to calculate rotation from unit vector to other pose */
+template< class Type > Math::Quaternion calculate( Math::Vector<3>& orig, Math::Pose& pose1, Type& t2 )
+{
+	return Math::Quaternion();
+}
+
+template<> Math::Quaternion calculate< Math::Vector<3> >( Math::Vector<3>& orig, Math::Pose& pose1, Math::Vector<3>& pos2 )
+{
+	Math::Vector<3> dir = (~pose1) * pos2;
+	dir = dir / ublas::norm_2( dir );
+
+	Math::Vector<3> axis = cross_prod( orig, dir );
+	
+	Math::Quaternion q( axis[0], axis[1], axis[2], 1 + ublas::inner_prod( orig, dir ) );
+	q.normalize();
+
+	return pose1.rotation() * q;
+}
+
+template<> Math::Quaternion calculate< Math::Pose >( Math::Vector<3>& orig, Math::Pose& pose1, Math::Pose& pose2 )
+{
+	Math::Vector<3> pos2 = pose2.translation();
+	return calculate( orig, pose1, pos2 );
+}
+
 
 template < class EventType > 
 class DirectionComponent
@@ -82,32 +107,6 @@ class DirectionComponent
 	    /** Output port of the component. */
 		Dataflow::TriggerOutPort< Measurement::Rotation > m_outPort;
 };
-
-
-/** Method to calculate rotation from unit vector to other pose */
-template< class Type > Math::Quaternion calculate( Math::Vector<3>& orig, Math::Pose& pose1, Type& t2 )
-{
-	return Math::Quaternion();
-}
-
-template<> Math::Quaternion calculate< Math::Vector<3> >( Math::Vector<3>& orig, Math::Pose& pose1, Math::Vector<3>& pos2 )
-{
-	Math::Vector<3> dir = (~pose1) * pos2;
-	dir = dir / ublas::norm_2( dir );
-
-	Math::Vector<3> axis = cross_prod( orig, dir );
-	
-	Math::Quaternion q( axis[0], axis[1], axis[2], 1 + ublas::inner_prod( orig, dir ) );
-	q.normalize();
-
-	return pose1.rotation() * q;
-}
-
-template<> Math::Quaternion calculate< Math::Pose >( Math::Vector<3>& orig, Math::Pose& pose1, Math::Pose& pose2 )
-{
-	Math::Vector<3> pos2 = pose2.translation();
-	return calculate( orig, pose1, pos2 );
-}
 
 
 UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
