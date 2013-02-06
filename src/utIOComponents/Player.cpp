@@ -34,7 +34,9 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
+
 #include <boost/thread.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/string.hpp>
 
@@ -318,7 +320,6 @@ public:
 		, m_offset( 0 )
 		, m_speedup( 1.0 )
 		, m_outPort( "Output", *this )
-		, m_imagePath( "" )
 		, m_tsFile( "" )
 	{
 		LOG4CPP_INFO( logger, "Created PlayerComponentImage for file = " << key.get() );
@@ -327,19 +328,19 @@ public:
 		pConfig->getEdge( "Output" )->getAttributeData( "offset", m_offset );
 		pConfig->getEdge( "Output" )->getAttributeData( "speedup", m_speedup );
 
-		// get the path of the images
-		pConfig->getEdge( "Output" )->getAttributeData( "path", m_imagePath );
-
 		// get the file which describes the timestamps and filenames
 		pConfig->getEdge( "Output" )->getAttributeData( "file", m_tsFile );
 
+		boost::filesystem::path tsFile( m_tsFile );
+		if( !boost::filesystem::exists( tsFile ) )
+			UBITRACK_THROW( "file with timestamps does not exist, please check the path: " + m_tsFile );
+		
 		// read file with timestamps and filenames
-		// still needing the path from the srg
 		std::ifstream ifs( m_tsFile.c_str() );
 
-		// catch (...) {
-		// UBITRACK_THROW( "Could not open file " + m_tsFile  + ". This file contains the timestamps and filesnames of the images.");
-		// }
+		if( !ifs.is_open ( ) )
+			UBITRACK_THROW( "Could not open file \"" + m_tsFile  + "\". This file should contain the timestamps and filenames of the images." );
+	
 
 		// declare and initialize the variable for the timestamp and the file name string of the pictures
 		Measurement::Timestamp timeStamp = 0;
@@ -351,7 +352,8 @@ public:
 		std::string temp;
 		LOG4CPP_INFO( logger, "Starting loading images for file = " << key.get() );
 
-		while( getline( ifs, temp ) ){
+		while( getline( ifs, temp ) )
+		{
 
 		  LOG4CPP_NOTICE( logger, "Loading image file for log line " <<  temp );
 
@@ -362,32 +364,62 @@ public:
 		  ss >> timeStamp;
 		  ss >> fileName;
   		  
-		  //logging
-		  LOG4CPP_NOTICE( logger, "Loading image file for frame  " <<  timeStamp );
-  		  LOG4CPP_NOTICE( logger, "Loading image file " <<  (m_imagePath + fileName) );
-		  
-		  // Load the image
-		  // assigning the NULL svoids memory leaks
-		  IplImage* pIpl =  NULL;
-		  pIpl = cvLoadImage( (m_imagePath + fileName).c_str(), CV_LOAD_IMAGE_UNCHANGED );
+		 	// check for length of timestamp to deside if timestamp is ms or ns
+			// (we just need ms here, no need to be more accurate)
+			timeStamp = ( timeStamp > 1e13 ) ? timeStamp * 1e-06 : timeStamp;
+			
+			boost::filesystem::path file( fileName );
+			boost::filesystem::file_status fstatus( boost::filesystem::status( file ) );
+			
+			//check if path to file is given absolute
+			if( !boost::filesystem::exists( fstatus ) )
+			{
+				//no absolute path, check reltive path to timestampfile:
+				file = boost::filesystem::path( tsFile.parent_path().string() + "/" + fileName );
+				if( !boost::filesystem::exists( file ) )
+					continue;
+			}
+			
+			//logging
+			LOG4CPP_TRACE( logger, "loading image file " <<  file.string() << " for frame " <<  timeStamp );
 
-		  // convert loaded image into the required pImage class
-		  boost::shared_ptr< Vision::Image > pImage( new Vision::Image( pIpl->width, pIpl->height, 3 ) );
-		  cvConvertImage( pIpl, *pImage );
-		  pImage->origin = pIpl->origin;
-		  pImage->channelSeq[0]='B';
-		  pImage->channelSeq[1]='G';
-		  pImage->channelSeq[2]='R';
+			// Load the image
+			// assigning the NULL avoids memory leaks
+			IplImage* pIpl = NULL;
+			try
+			{
+				pIpl = cvLoadImage( file.string().c_str(), CV_LOAD_IMAGE_UNCHANGED );
+			}
+			catch( std::exception& e )
+			{
+				LOG4CPP_ERROR( logger, "loading image file \"" << file.string() << "\" failed: " << e.what() );
+				LOG4CPP_ERROR( logger, "loading image file \"" << file.string() << "\" failed: " << e.what() );
+				continue;
+			}
+			
+			if( !pIpl )
+			{
+				LOG4CPP_ERROR( logger, "loading image file \"" <<  file.string() << "\" failed." );
+				continue;
+			}
+
+			// convert loaded image into the required pImage class
+			boost::shared_ptr< Vision::Image > pImage( new Vision::Image( pIpl->width, pIpl->height, 3 ) );
+			cvConvertImage( pIpl, *pImage );
+			pImage->origin = pIpl->origin;
+			pImage->channelSeq[0]='B';
+			pImage->channelSeq[1]='G';
+			pImage->channelSeq[2]='R';
 
 
-		  // Building the event and packing timestamp and image into it
-		  Measurement::ImageMeasurement e( (Measurement::Timestamp) ( 1000000.0 * timeStamp), pImage );
+			// Building the event and packing timestamp and image into it
+			Measurement::ImageMeasurement e( (Measurement::Timestamp) ( 1e6 * timeStamp), pImage );
 
-		  // Store it
-		  m_events.push_back(e);
+			// Store it
+			m_events.push_back(e);
 
-		  // releasing memory
-		  cvReleaseImage(&pIpl);
+			// releasing memory
+			cvReleaseImage(&pIpl);
 		}
 
 		m_iterator = m_events.begin();
@@ -433,9 +465,6 @@ protected:
 
 	/** speedup factor */
 	double m_speedup;
-
-	/** path to the images */
-	std::string m_imagePath;
 
 	/** file which defines timestamps and images */
 	std::string m_tsFile;
