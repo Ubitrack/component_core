@@ -28,7 +28,6 @@
  *
  * @author Daniel Pustka <daniel.pustka@in.tum.de>
  */
-//#include "CalibFileXML.h"
  
 #include <fstream>
 #include <boost/bind.hpp>
@@ -198,8 +197,6 @@ protected:
 
 UBITRACK_REGISTER_COMPONENT( Ubitrack::Dataflow::ComponentFactory* const cf )
 {
-	// // cf->registerComponent< Ubitrack::Drivers::CalibWriterXML< Ubitrack::Measurement::Pose > > ( "PoseCalibWriterXML" );
-
 	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::Distance > > ( "DistanceCalibWriter" );
 	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::Pose > > ( "PoseCalibWriter" );
 	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::ErrorPose > > ( "ErrorPoseCalibWriter" );
@@ -210,10 +207,13 @@ UBITRACK_REGISTER_COMPONENT( Ubitrack::Dataflow::ComponentFactory* const cf )
 	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::Matrix3x4 > > ( "Matrix3x4CalibWriter" );
 	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::Matrix4x4 > > ( "Matrix4x4CalibWriter" );
 	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::Vector4D > > ( "Vector4CalibWriter" );
+	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::Vector8D > > ( "Vector8CalibWriter" );
 	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::PositionList > > ( "PositionListCalibWriter" );
 	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::PositionList2 > > ( "PositionList2DCalibWriter" );
 	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::PoseList > > ( "PoseListCalibWriter" );
 	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::DistanceList > > ( "DistanceListCalibWriter" );
+	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::CameraIntrinsics > > ( "CameraIntrinsicsCalibWriter" );
+	
 	
 	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::Distance > > ( "DistanceCalibReader" );
 	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::Pose > > ( "PoseCalibReader" );
@@ -225,8 +225,10 @@ UBITRACK_REGISTER_COMPONENT( Ubitrack::Dataflow::ComponentFactory* const cf )
 	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::Matrix3x4 > > ( "Matrix3x4CalibReader" );
 	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::Matrix4x4 > > ( "Matrix4x4CalibReader" );
 	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::Vector4D > > ( "Vector4CalibReader" );
+	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::Vector8D > > ( "Vector8CalibReader" );
 	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::PositionList > > ( "PositionListCalibReader" );
 	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::PositionList2 > > ( "PositionList2DCalibReader" );
 	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::PoseList > > ( "PoseListCalibReader" );
 	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::DistanceList > > ( "DistanceListCalibReader" );
+	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::CameraIntrinsics > > ( "CameraIntrinsicsCalibReader" );
 }
