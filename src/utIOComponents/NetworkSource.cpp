@@ -170,7 +170,7 @@ void SourceModule::HandleReceive( const boost::system::error_code err, size_t le
 			comp->parse( message, recvtime );
 		}
 		else
-			LOG4CPP_WARN( logger, "No such component " << name );
+			LOG4CPP_WARN( logger, "NetworkSink is sending with id=\"" << name << "\", found no corresponding NetworkSource pattern with same id."  );
 	}
 	catch ( const std::exception& e )
 	{
