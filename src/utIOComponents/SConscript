@@ -30,7 +30,6 @@ if not have_utdataflow:
 	print "Dataflow module missing -- not building components"
 	result = False
 	Return("result")
-env = masterEnv.Clone()
 
 # automatically glob files from subdirectories
 comp_sources = globSourceFiles( '*.cpp' )
@@ -38,9 +37,8 @@ comp_sources = globSourceFiles( '*.cpp' )
 # b)	
 # setup compiler and linker flags
 # Merge all options in one "ubitrack" option. Note that some options might be empty if its module is not available	
+env = masterEnv.Clone()
 component_options = mergeOptions( utdataflow_all_options)
-
-
 env.AppendUnique( **component_options )
 
 if have_utvision:
