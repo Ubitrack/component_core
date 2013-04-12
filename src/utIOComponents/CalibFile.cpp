@@ -212,7 +212,9 @@ UBITRACK_REGISTER_COMPONENT( Ubitrack::Dataflow::ComponentFactory* const cf )
 	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::PositionList2 > > ( "PositionList2DCalibWriter" );
 	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::PoseList > > ( "PoseListCalibWriter" );
 	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::DistanceList > > ( "DistanceListCalibWriter" );
-	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::CameraIntrinsics > > ( "CameraIntrinsicsCalibWriter" );
+
+	// MH: CameraIntrinsics serialization does not work
+	//cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::CameraIntrinsics > > ( "CameraIntrinsicsCalibWriter" );
 	
 	
 	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::Distance > > ( "DistanceCalibReader" );
@@ -230,5 +232,7 @@ UBITRACK_REGISTER_COMPONENT( Ubitrack::Dataflow::ComponentFactory* const cf )
 	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::PositionList2 > > ( "PositionList2DCalibReader" );
 	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::PoseList > > ( "PoseListCalibReader" );
 	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::DistanceList > > ( "DistanceListCalibReader" );
-	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::CameraIntrinsics > > ( "CameraIntrinsicsCalibReader" );
+
+	// MH: CameraIntrinsics serialization does not work
+	//cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::CameraIntrinsics > > ( "CameraIntrinsicsCalibReader" );
 }
