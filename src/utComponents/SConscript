@@ -57,10 +57,13 @@ env.AppendUnique( **component_options )
 libs = setupComponentBuild(env, comp_sources, 'components')
 
 # e)
-# nothing to do this time
+utcomponents_options = {}
+utcomponents_options[ 'CPPPATH' ] =  [ os.path.join( getCurrentPath(), '..') ]
+utcomponents_options[ 'LIBS' ] = []#libs
+utcomponents_options[ 'LIBPATH' ] = [ install_library_prefix ]
 
 # f)
-# nothing to do this time
+Export( 'utcomponents_options' )
 
 # also create a visual studio project for the library	
 sources = globSourceFiles( '*.cpp' )

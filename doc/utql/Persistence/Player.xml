@@ -16,6 +16,8 @@
             <Edge name="Output" displayName="Played Pose" source="A" destination="B">
                 <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
                 <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="offset" min="0" default="0" xsi:type="IntAttributeDeclarationType" displayName="TimeOffset"/>
+                <Attribute name="speedup" min="0.01" default="1" xsi:type="DoubleAttributeDeclarationType" displayName="Speed up factor"/>
                 <Attribute name="file" displayName="Logfile" xsi:type="PathAttributeDeclarationType">
                     <Description>
                         <p xmlns="http://www.w3.org/1999/xhtml">Logfile where pose data will be read from</p>
@@ -38,6 +40,8 @@
             <Edge name="Output" displayName="Played Position" source="A" destination="B">
                 <Attribute name="type" value="3DPosition" xsi:type="EnumAttributeReferenceType"/>
                 <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="offset" min="0" default="0" xsi:type="IntAttributeDeclarationType" displayName="TimeOffset"/>
+                <Attribute name="speedup" min="0.01" default="1" xsi:type="DoubleAttributeDeclarationType" displayName="Speed 
                 <Attribute name="file" displayName="Logfile" xsi:type="PathAttributeDeclarationType">
                     <Description>
                         <p xmlns="http://www.w3.org/1999/xhtml">Logfile where 3d position data will be read from</p>
@@ -60,6 +64,8 @@
             <Edge name="Output" displayName="Played Position" source="A" destination="B">
                 <Attribute name="type" value="2DPosition" xsi:type="EnumAttributeReferenceType"/>
                 <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="offset" min="0" default="0" xsi:type="IntAttributeDeclarationType" displayName="TimeOffset"/>
+                <Attribute name="speedup" min="0.01" default="1" xsi:type="DoubleAttributeDeclarationType" displayName="Speed 
                 <Attribute name="file" displayName="Logfile" xsi:type="PathAttributeDeclarationType">
                     <Description>
                         <p xmlns="http://www.w3.org/1999/xhtml">Logfile where 2d position data will be read from</p>
@@ -82,6 +88,8 @@
             <Edge name="Output" displayName="Played Rotation" source="A" destination="B">
                 <Attribute name="type" value="3DRotation" xsi:type="EnumAttributeReferenceType"/>
                 <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="offset" min="0" default="0" xsi:type="IntAttributeDeclarationType" displayName="TimeOffset"/>
+                <Attribute name="speedup" min="0.01" default="1" xsi:type="DoubleAttributeDeclarationType" displayName="Speed 
                 <Attribute name="file" displayName="Logfile" xsi:type="PathAttributeDeclarationType">
                     <Description>
                         <p xmlns="http://www.w3.org/1999/xhtml">Logfile where rotation data will be read from</p>
@@ -104,6 +112,8 @@
             <Edge name="Output" displayName="Played 3DPositionList" source="A" destination="B">
                 <Attribute name="type" value="3DPositionList" xsi:type="EnumAttributeReferenceType"/>
                 <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="offset" min="0" default="0" xsi:type="IntAttributeDeclarationType" displayName="TimeOffset"/>
+                <Attribute name="speedup" min="0.01" default="1" xsi:type="DoubleAttributeDeclarationType" displayName="Speed 
                 <Attribute name="file" displayName="Logfile" xsi:type="PathAttributeDeclarationType">
                     <Description>
                         <p xmlns="http://www.w3.org/1999/xhtml">Logfile where 3d position data will be read from</p>
@@ -126,6 +136,8 @@
             <Edge name="Output" displayName="Played 2DPositionList" source="A" destination="B">
                 <Attribute name="type" value="2DPositionList" xsi:type="EnumAttributeReferenceType"/>
                 <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="offset" min="0" default="0" xsi:type="IntAttributeDeclarationType" displayName="TimeOffset"/>
+                <Attribute name="speedup" min="0.01" default="1" xsi:type="DoubleAttributeDeclarationType" displayName="Speed 
                 <Attribute name="file" displayName="Logfile" xsi:type="PathAttributeDeclarationType">
                     <Description>
                         <p xmlns="http://www.w3.org/1999/xhtml">Logfile where 2d position list data will be read from</p>
@@ -150,6 +162,8 @@
             <Edge name="Output" displayName="Played RotationVelocity" source="A" destination="B">
                 <Attribute name="type" value="RotationVelocity" xsi:type="EnumAttributeReferenceType"/>
                 <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="offset" min="0" default="0" xsi:type="IntAttributeDeclarationType" displayName="TimeOffset"/>
+                <Attribute name="speedup" min="0.01" default="1" xsi:type="DoubleAttributeDeclarationType" displayName="Speed 
                 <Attribute name="file" displayName="Logfile" xsi:type="PathAttributeDeclarationType">
                     <Description>
                         <p xmlns="http://www.w3.org/1999/xhtml">Logfile where rotation velocity data will be read from</p>
@@ -172,6 +186,8 @@
             <Edge name="Output" displayName="Played Pose" source="A" destination="B">
                 <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
                 <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="offset" min="0" default="0" xsi:type="IntAttributeDeclarationType" displayName="TimeOffset"/>
+                <Attribute name="speedup" min="0.01" default="1" xsi:type="DoubleAttributeDeclarationType" displayName="Speed 
                 <Attribute name="file" displayName="Logfile" xsi:type="PathAttributeDeclarationType">
                     <Description>
                         <p xmlns="http://www.w3.org/1999/xhtml">Logfile where error pose data will be read from</p>
@@ -194,6 +210,8 @@
             <Edge name="Output" displayName="Played Pose" source="A" destination="B">
                 <Attribute name="type" value="PoseList" xsi:type="EnumAttributeReferenceType"/>
                 <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="offset" min="0" default="0" xsi:type="IntAttributeDeclarationType" displayName="TimeOffset"/>
+                <Attribute name="speedup" min="0.01" default="1" xsi:type="DoubleAttributeDeclarationType" displayName="Speed 
                 <Attribute name="file" displayName="Logfile" xsi:type="PathAttributeDeclarationType">
                     <Description>
                         <p xmlns="http://www.w3.org/1999/xhtml">Logfile where pose list data will be read from</p>
@@ -216,6 +234,8 @@
             <Edge name="Output" displayName="Played Pose" source="A" destination="B">
                 <Attribute name="type" value="3DPositionError" xsi:type="EnumAttributeReferenceType"/>
                 <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="offset" min="0" default="0" xsi:type="IntAttributeDeclarationType" displayName="TimeOffset"/>
+                <Attribute name="speedup" min="0.01" default="1" xsi:type="DoubleAttributeDeclarationType" displayName="Speed 
                 <Attribute name="file" displayName="Logfile" xsi:type="PathAttributeDeclarationType">
                     <Description>
                         <p xmlns="http://www.w3.org/1999/xhtml">Logfile where 3d position error data will be read from</p>
