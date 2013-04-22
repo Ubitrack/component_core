@@ -3,6 +3,7 @@ import glob
 import os.path
 
 # import variables from other scons files
+have_utvision = False
 Import( '*' )
 
 # HOW TO BUILD (A) LIBRAR-Y/IES FROM A MODULE
@@ -41,6 +42,7 @@ env = masterEnv.Clone()
 component_options = mergeOptions( utdataflow_all_options)
 env.AppendUnique( **component_options )
 
+# why utvision?
 if have_utvision:
 	env.AppendUnique( **utvision_all_options )
 		
