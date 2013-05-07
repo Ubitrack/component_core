@@ -1,0 +1,5 @@
+set(the_description "The UbiTrack Components")
+ut_add_module(utcomponents INTERNAL utcore utdataflow utvision)
+ut_module_include_directories(${TINYXML_INCLUDE_DIR} ${LOG4CPP_INCLUDE_DIR} ${BOOSTBINDINGS_INCLUDE_DIR} ${LAPACK_INCLUDE_DIR})
+ut_glob_module_sources()
+ut_create_module_components()
