@@ -90,6 +90,29 @@
         </DataflowConfiguration>
     </Pattern>
 	
+	<Pattern name="NetworkSourcePosition2D" displayName="Network Source (Position 2D)">
+        <Description><h:p>This pattern receives 2D position data via UDP from a NetworkSinkPosition2D having the same ID</h:p></Description>
+        
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Output" source="A" destination="B" displayName="Output">
+                <Description><h:p>The 2D position pushed via network</h:p></Description>
+                <Attribute name="type" value="2DPosition" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="NetworkSourcePosition2D"/>
+            <Attribute name="networkPort" displayName="Port" default="21844" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+
+	
 	<Pattern name="NetworkSourcePoseList" displayName="Network Source (PoseList)">
         <Description><h:p>This pattern receives pose data via UDP from a NetworkSinkPoseList having the same ID</h:p></Description>
         
@@ -168,6 +191,69 @@
         
         <DataflowConfiguration>
             <UbitrackLib class="NetworkSourceEvent"/>
+            <Attribute name="networkPort" displayName="Port" default="21844" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="NetworkSourceMatrix3x3" displayName="Network Source (Matrix 3x3)">
+        <Description><h:p>This pattern receives a 3x3 matrix via UDP from a <h:code>NetworkSinkMatrix3x3</h:code> having the same pattern ID</h:p></Description>
+        
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Output" source="A" destination="B" displayName="Output">
+                <Description><h:p>The 3x3 matrix pushed via network</h:p></Description>
+                <Attribute name="type" value="3x3Matrix" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="NetworkSourceMatrix3x3"/>
+            <Attribute name="networkPort" displayName="Port" default="21844" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="NetworkSourceMatrix3x4" displayName="Network Source (Matrix 3x4)">
+        <Description><h:p>This pattern receives a 3x4 matrix via UDP from a <h:code>NetworkSinkMatrix3x4</h:code> having the same pattern ID</h:p></Description>
+        
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Output" source="A" destination="B" displayName="Output">
+                <Description><h:p>The 3x4 matrix pushed via network</h:p></Description>
+                <Attribute name="type" value="3x4Matrix" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="NetworkSourceMatrix3x4"/>
+            <Attribute name="networkPort" displayName="Port" default="21844" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="NetworkSourceMatrix4x4" displayName="Network Source (Matrix 4x4)">
+        <Description><h:p>This pattern receives a 4x4 matrix via UDP from a <h:code>NetworkSinkMatrix4x4</h:code> having the same pattern ID</h:p></Description>
+        
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Output" source="A" destination="B" displayName="Output">
+                <Description><h:p>The 4x4 matrix pushed via network</h:p></Description>
+                <Attribute name="type" value="4x4Matrix" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="NetworkSourceMatrix4x4"/>
             <Attribute name="networkPort" displayName="Port" default="21844" xsi:type="IntAttributeDeclarationType">
                 <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
             </Attribute>
