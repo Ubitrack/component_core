@@ -190,6 +190,98 @@
         </DataflowConfiguration>
     </Pattern>
 	
+	<Pattern name="NetworkSinkPosition2D" displayName="Network Sink (Position 2D)">
+        <Description><h:p>This pattern transmits a 2D position via UDP to a NetworkSourePosition2D having the same ID.</h:p></Description>
+        
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input">
+                <Description><h:p>The 2D position received via network</h:p></Description>                
+				<Predicate>type=='2DPosition'&amp;&amp;mode=='push'</Predicate>
+
+            </Edge>
+        </Input>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="NetworkPosition2DSink"/>
+            <Attribute name="networkDestination" displayName="Network Destination" default="127.0.0.1" xsi:type="StringAttributeDeclarationType">
+            </Attribute>
+            <Attribute name="networkPort" displayName="Network Port" default="21844" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="NetworkSinkMatrix3x3" displayName="Network Sink (Matrix 3x3)">
+        <Description><h:p>This pattern transmits a 3x3 Matrix via UDP to a NetworkSoureMatrix3x3 having the same ID.</h:p></Description>
+        
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input">
+                <Description><h:p>The 3x3 Matrix received via network</h:p></Description>
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='push'</Predicate>
+
+            </Edge>
+        </Input>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="NetworkMatrix3x3Sink"/>
+            <Attribute name="networkDestination" displayName="Network Destination" default="127.0.0.1" xsi:type="StringAttributeDeclarationType">
+            </Attribute>
+            <Attribute name="networkPort" displayName="Network Port" default="21844" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="NetworkSinkMatrix3x4" displayName="Network Sink (Matrix 3x4)">
+        <Description><h:p>This pattern transmits a 3x4 Matrix via UDP to a NetworkSoureMatrix3x4 having the same ID.</h:p></Description>
+        
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input">
+                <Description><h:p>The 3x4 Matrix received via network</h:p></Description>
+                <Predicate>type=='3x4Matrix'&amp;&amp;mode=='push'</Predicate>
+
+            </Edge>
+        </Input>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="NetworkMatrix3x4Sink"/>
+            <Attribute name="networkDestination" displayName="Network Destination" default="127.0.0.1" xsi:type="StringAttributeDeclarationType">
+            </Attribute>
+            <Attribute name="networkPort" displayName="Network Port" default="21844" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="NetworkSinkMatrix4x4" displayName="Network Sink (Matrix 4x4)">
+        <Description><h:p>This pattern transmits a 4x4 Matrix via UDP to a NetworkSoureMatrix4x4 having the same ID.</h:p></Description>
+        
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input">
+                <Description><h:p>The 4x4 Matrix received via network</h:p></Description>
+                <Predicate>type=='4x4Matrix'&amp;&amp;mode=='push'</Predicate>
+
+            </Edge>
+        </Input>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="NetworkMatrix4x4Sink"/>
+            <Attribute name="networkDestination" displayName="Network Destination" default="127.0.0.1" xsi:type="StringAttributeDeclarationType">
+            </Attribute>
+            <Attribute name="networkPort" displayName="Network Port" default="21844" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Port of receiver socket. Defaults to 0x5554 (21844)</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
 	<Pattern name="NetworkSinkImage" displayName="Network Sink (Image)">
         <Description><h:p>This pattern transmits a Image via UDP to a NetworkSoureImage having the same ID.</h:p></Description>
         

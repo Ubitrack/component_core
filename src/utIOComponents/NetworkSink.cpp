@@ -161,11 +161,15 @@ UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
 	cf->registerComponent< SinkComponent< Measurement::Pose > > ( "NetworkPoseSink" );
 	cf->registerComponent< SinkComponent< Measurement::ErrorPose > > ( "NetworkErrorPoseSink" );
 	cf->registerComponent< SinkComponent< Measurement::Position > > ( "NetworkPositionSink" );
+	cf->registerComponent< SinkComponent< Measurement::Position2D > > ( "NetworkPosition2DSink" );
 	cf->registerComponent< SinkComponent< Measurement::Rotation > > ( "NetworkRotationSink" );
 	cf->registerComponent< SinkComponent< Measurement::PoseList > > ( "NetworkPoseListSink" );
 	cf->registerComponent< SinkComponent< Measurement::PositionList > > ( "NetworkPositionListSink" );
 	cf->registerComponent< SinkComponent< Measurement::PositionList2 > > ( "NetworkPositionList2Sink" );
 	cf->registerComponent< SinkComponent< Measurement::Button > > ( "NetworkEventSink" );
+	cf->registerComponent< SinkComponent< Measurement::Matrix3x3 > > ( "NetworkMatrix3x3Sink" );
+	cf->registerComponent< SinkComponent< Measurement::Matrix3x4 > > ( "NetworkMatrix3x4Sink" );
+	cf->registerComponent< SinkComponent< Measurement::Matrix4x4 > > ( "NetworkMatrix4x4Sink" );
 }
 
 } } // namespace Ubitrack::Drivers

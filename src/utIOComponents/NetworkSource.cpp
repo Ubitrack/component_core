@@ -197,6 +197,8 @@ boost::shared_ptr< SourceComponentBase > SourceModule::createComponent( const st
 		return boost::shared_ptr< SourceComponentBase >( new SourceComponent< Measurement::Rotation >( name, config, key, pModule ) );
 	else if ( type == "NetworkSourcePosition" )
 		return boost::shared_ptr< SourceComponentBase >( new SourceComponent< Measurement::Position >( name, config, key, pModule ) );
+	else if ( type == "NetworkSourcePosition2D" )
+		return boost::shared_ptr< SourceComponentBase >( new SourceComponent< Measurement::Position2D >( name, config, key, pModule ) );
 	else if ( type == "NetworkSourcePoseList" )
 		return boost::shared_ptr< SourceComponentBase >( new SourceComponent< Measurement::PoseList >( name, config, key, pModule ) );
 	else if ( type == "NetworkSourcePositionList" )
@@ -205,6 +207,12 @@ boost::shared_ptr< SourceComponentBase > SourceModule::createComponent( const st
 		return boost::shared_ptr< SourceComponentBase >( new SourceComponent< Measurement::PositionList2 >( name, config, key, pModule ) );
 	else if ( type == "NetworkSourceEvent" )
 		return boost::shared_ptr< SourceComponentBase >( new SourceComponent< Measurement::Button >( name, config, key, pModule ) );
+	else if ( type == "NetworkSourceMatrix3x3" )
+		return boost::shared_ptr< SourceComponentBase >( new SourceComponent< Measurement::Matrix3x3 >( name, config, key, pModule ) );
+	else if ( type == "NetworkSourceMatrix3x4" )
+		return boost::shared_ptr< SourceComponentBase >( new SourceComponent< Measurement::Matrix3x4 >( name, config, key, pModule ) );
+	else if ( type == "NetworkSourceMatrix4x4" )
+		return boost::shared_ptr< SourceComponentBase >( new SourceComponent< Measurement::Matrix4x4 >( name, config, key, pModule ) );
 
 	UBITRACK_THROW( "Class " + type + " not supported by network source module." );
 }
@@ -220,10 +228,14 @@ UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
 	sourceComponents.push_back( "NetworkSourceErrorPose" );
 	sourceComponents.push_back( "NetworkSourceRotation" );
 	sourceComponents.push_back( "NetworkSourcePosition" );
+	sourceComponents.push_back( "NetworkSourcePosition2D" );
 	sourceComponents.push_back( "NetworkSourcePoseList" );
 	sourceComponents.push_back( "NetworkSourcePositionList" );
 	sourceComponents.push_back( "NetworkSourcePositionList2" );
 	sourceComponents.push_back( "NetworkSourceEvent" );
+	sourceComponents.push_back( "NetworkSourceMatrix3x3" );
+	sourceComponents.push_back( "NetworkSourceMatrix3x4" );
+	sourceComponents.push_back( "NetworkSourceMatrix4x4" );
 
 	cf->registerModule< SourceModule >( sourceComponents );
 }
