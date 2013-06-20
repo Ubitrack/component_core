@@ -75,6 +75,13 @@
 				<Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
             </Edge>
         </Output>
+		
+		<DataflowConfiguration>
+            <UbitrackLib class="PositionCalibReader"/>
+            <Attribute name="file" displayName="File" xsi:type="PathAttributeDeclarationType">
+                <Description><h:p>The measurement file.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
 	</Pattern>	
 		
 	<Pattern name="ErrorPositionCalibWriter" displayName="Calibration Writer (3D Position + Error)">
