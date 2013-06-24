@@ -43,9 +43,9 @@
 
 // get a logger
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Events.Components.2D3DPoseEstimation" ) );
-static log4cpp::Category& optLogger( log4cpp::Category::getInstance( "Ubitrack.Events.Components.2D3DPoseEstimation.LM" ) );
+//static log4cpp::Category& optLogger( log4cpp::Category::getInstance( "Ubitrack.Events.Components.2D3DPoseEstimation.LM" ) );
 
-#define OPTIMIZATION_LOGGING
+//#define OPTIMIZATION_LOGGING
 #include <utMath/LevenbergMarquardt.h>
 #include <utMath/BackwardPropagation.h>
 
