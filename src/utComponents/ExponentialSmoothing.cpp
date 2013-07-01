@@ -42,6 +42,22 @@ static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Comp
 
 namespace Ubitrack { namespace Components {
 
+
+/** addition operator for adding two poses */
+Math::Pose operator+( const Math::Pose& pose1, const Math::Pose& pose2 )
+{
+	Math::Pose result = Math::Pose ( pose1.rotation() + pose2.rotation(),  pose1.translation() + pose2.translation() );;
+	return result;
+};
+
+/** multiplication operator for scaling a pose by a scalar value */
+Math::Pose operator*( const double& alpha, const Math::Pose &pose )
+{
+	return Math::Pose ( alpha * pose.rotation(),  alpha * pose.translation() );
+}
+
+
+
 /**
  * @ingroup dataflow_components
  * Exponential Smoothing component.
@@ -100,18 +116,6 @@ protected:
 
 };
 
-/** addition operator for adding two poses */
-Math::Pose operator+( const Math::Pose& pose1, const Math::Pose& pose2 )
-{
-	Math::Pose result = Math::Pose ( pose1.rotation() + pose2.rotation(),  pose1.translation() + pose2.translation() );;
-	return result;
-};
-
-/** multiplication operator for scaling a pose by a scalar value */
-Math::Pose operator*( const double& alpha, const Math::Pose &pose )
-{
-	return Math::Pose ( alpha * pose.rotation(),  alpha * pose.translation() );
-}
 
 UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf )
 {

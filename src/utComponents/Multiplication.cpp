@@ -38,49 +38,6 @@
 
 namespace Ubitrack { namespace Components {
 
-/**
- * @ingroup dataflow_components
- * Multiplication component.
- * This class contains a multiplication of two inputs implemented as a \c TriggerComponent.
- *
- * The component multiplies requested/incoming events using operator*( A, B )
- */
-template< class EventTypeA, class EventTypeB, class EventTypeOut >
-class MultiplicationComponent
-	: public Dataflow::TriggerComponent
-{
-public:
-	/**
-	 * UTQL component constructor.
-	 *
-	 * @param sName Unique name of the component.
-	 * @param subgraph UTQL subgraph
-	 */
-	MultiplicationComponent( const std::string& sName, boost::shared_ptr< Graph::UTQLSubgraph > pConfig )
-		: Dataflow::TriggerComponent( sName, pConfig )
-		, m_inPortA( "AB", *this )
-		, m_inPortB( "BC", *this )
-		, m_outPort( "AC", *this )
-    {
-    }
-
-	/** Method that computes the result. */
-	void compute( Measurement::Timestamp t )
-	{
-		m_outPort.send( EventTypeOut( t, *m_inPortA.get() * *m_inPortB.get() ) );
-	}
-
-protected:
-	/** Input port A of the component. */
-	Dataflow::TriggerInPort< EventTypeA > m_inPortA;
-
-	/** Input port B of the component. */
-	Dataflow::TriggerInPort< EventTypeB > m_inPortB;
-
-	/** Output port of the component. */
-	Dataflow::TriggerOutPort< EventTypeOut > m_outPort;
-};
-
 
 /** multiplication operator for batch multiplication of many 3D position vectors with a pose */
 std::vector< Math::Vector< 3 > > operator*( const Math::Pose& pose, const std::vector< Math::Vector< 3 > >& p3d )
@@ -130,7 +87,7 @@ std::vector< Math::ErrorVector< 3 > > operator*( const Math::Pose& pose, const s
 /*
 Math::ErrorVector< 3 > operator*( const Math::ErrorPose& a, const Math::ErrorVector< 3 >& b )
 {
-	
+
 	// covariance transform
 	Matrix< 3, 6 > jacobian;
 	errorPoseTimesVectorJacobian( jacobian, a, b.value );
@@ -144,6 +101,51 @@ Math::ErrorVector< 3 > operator*( const Math::ErrorPose& a, const Math::ErrorVec
 	return ErrorVector< 3 >( static_cast< const Pose& >( a ) * b, newCovariance );
 }
 */
+
+/**
+ * @ingroup dataflow_components
+ * Multiplication component.
+ * This class contains a multiplication of two inputs implemented as a \c TriggerComponent.
+ *
+ * The component multiplies requested/incoming events using operator*( A, B )
+ */
+template< class EventTypeA, class EventTypeB, class EventTypeOut >
+class MultiplicationComponent
+	: public Dataflow::TriggerComponent
+{
+public:
+	/**
+	 * UTQL component constructor.
+	 *
+	 * @param sName Unique name of the component.
+	 * @param subgraph UTQL subgraph
+	 */
+	MultiplicationComponent( const std::string& sName, boost::shared_ptr< Graph::UTQLSubgraph > pConfig )
+		: Dataflow::TriggerComponent( sName, pConfig )
+		, m_inPortA( "AB", *this )
+		, m_inPortB( "BC", *this )
+		, m_outPort( "AC", *this )
+    {
+    }
+
+	/** Method that computes the result. */
+	void compute( Measurement::Timestamp t )
+	{
+		m_outPort.send( EventTypeOut( t, *m_inPortA.get() * *m_inPortB.get() ) );
+	}
+
+protected:
+	/** Input port A of the component. */
+	Dataflow::TriggerInPort< EventTypeA > m_inPortA;
+
+	/** Input port B of the component. */
+	Dataflow::TriggerInPort< EventTypeB > m_inPortB;
+
+	/** Output port of the component. */
+	Dataflow::TriggerOutPort< EventTypeOut > m_outPort;
+};
+
+
 UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
 	// Pose * Pose = Pose
 	cf->registerComponent< MultiplicationComponent< Measurement::Pose, Measurement::Pose, Measurement::Pose > > ( "PoseMultiplication" );
