@@ -204,6 +204,7 @@ UBITRACK_REGISTER_COMPONENT( ComponentFactory* const cf ) {
 	cf->registerComponent< PrintSink< Measurement::Matrix4x4 > > ( "Matrix4x4PrintSink" );
 	cf->registerComponent< PrintSink< Measurement::Matrix3x3 > > ( "Matrix3x3PrintSink" );
 	cf->registerComponent< PrintSink< Measurement::Matrix3x4 > > ( "Matrix3x4PrintSink" );
+	cf->registerComponent< PrintSink< Measurement::CameraIntrinsics > > ( "CameraIntrinsicsPrintSink" );
 }
 
 } } // namespace Ubitrack::Components

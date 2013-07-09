@@ -62,8 +62,10 @@ utcomponents_options[ 'CPPPATH' ] =  [ os.path.join( getCurrentPath(), '..') ]
 utcomponents_options[ 'LIBS' ] = []#libs
 utcomponents_options[ 'LIBPATH' ] = [ install_library_prefix ]
 
+have_utcomponents = libs != 0
+
 # f)
-Export( 'utcomponents_options' )
+Export( 'utcomponents_options', 'have_utcomponents' )
 
 # also create a visual studio project for the library	
 sources = globSourceFiles( '*.cpp' )

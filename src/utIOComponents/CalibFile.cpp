@@ -214,7 +214,8 @@ UBITRACK_REGISTER_COMPONENT( Ubitrack::Dataflow::ComponentFactory* const cf )
 	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::DistanceList > > ( "DistanceListCalibWriter" );
 
 	// MH: CameraIntrinsics serialization does not work
-	//cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::CameraIntrinsics > > ( "CameraIntrinsicsCalibWriter" );
+	// CW: added again, removed the serialization error (2013-07-08)
+	cf->registerComponent< Ubitrack::Drivers::CalibWriter< Ubitrack::Measurement::CameraIntrinsics > > ( "CameraIntrinsicsCalibWriter" );
 	
 	
 	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::Distance > > ( "DistanceCalibReader" );
@@ -234,5 +235,6 @@ UBITRACK_REGISTER_COMPONENT( Ubitrack::Dataflow::ComponentFactory* const cf )
 	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::DistanceList > > ( "DistanceListCalibReader" );
 
 	// MH: CameraIntrinsics serialization does not work
-	//cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::CameraIntrinsics > > ( "CameraIntrinsicsCalibReader" );
+	// CW: added again, removed the serialization error (2013-07-08)
+	cf->registerComponent< Ubitrack::Drivers::CalibReader< Ubitrack::Measurement::CameraIntrinsics > > ( "CameraIntrinsicsCalibReader" );
 }
