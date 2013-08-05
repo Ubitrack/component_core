@@ -136,6 +136,7 @@ protected:
 
 UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
 	cf->registerComponent< TimeComplementaryFusion< Measurement::Pose > > ( "PoseTimeComplementaryFusion" );
+	cf->registerComponent< TimeComplementaryFusion< Measurement::ErrorPose > > ( "ErrorPoseTimeComplementaryFusion" );
 	cf->registerComponent< TimeComplementaryFusion< Measurement::Rotation > > ( "RotationTimeComplementaryFusion" );
 }
 

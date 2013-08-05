@@ -41,6 +41,41 @@
         </DataflowConfiguration>
     </Pattern>
     
+	<Pattern name="ErrorPoseTimeComplementaryFusion" displayName="Time Complementary Fusion (ErrorPose)">
+    	<Description><h:p>Component for time complementary fusion. It contains two inputs, <h:code>InputA</h:code> and
+    	<h:code>InputB</h:code>. All events of input A are passed through. Events on input B only pass if no events
+    	for input A were received for some amount of time.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="InputA" source="A" destination="B" displayName="Input A">
+            	<Description><h:p>The primary push input.</h:p></Description>
+                <Predicate>type=='6DError'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+            <Edge name="InputB" source="A" destination="B" displayName="Input B">
+            	<Description><h:p>The secondary push input</h:p></Description>
+                <Predicate>type=='6DError'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Time Complementary Output">
+            	<Description><h:p>The time complementary fused result.</h:p></Description>
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="ErrorPoseTimeComplementaryFusion"/>
+
+            <Attribute name="delayTime" displayName="Delay Time [ms]" default="500" xsi:type="StringAttributeDeclarationType">
+            	<Description><h:p>Time in millisecons until input events from <h:code>InputB</h:code> will be pushed onwards.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
     <Pattern name="RotationTimeComplementaryFusion" displayName="Time Complementary Fusion (3D Rotation)">
     	<Description><h:p>Component for time complementary fusion. It contains two inputs, <h:code>InputA</h:code> and
     	<h:code>InputB</h:code>. All events of input A are passed through. Events on input B only pass if no events
