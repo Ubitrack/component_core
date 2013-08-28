@@ -363,6 +363,11 @@ public:
 		  ss << temp; // parse the line
 		  ss >> timeStamp;
 		  ss >> fileName;
+
+		  if ( fileName.front() == '"' ) {
+			fileName.erase( 0, 1 ); // erase the first character
+			fileName.erase( fileName.size() - 1 ); // erase the last character
+		}
   		  
 		 	// check for length of timestamp to deside if timestamp is ms or ns
 			// (we just need ms here, no need to be more accurate)
