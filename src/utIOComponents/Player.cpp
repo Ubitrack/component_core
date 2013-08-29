@@ -364,7 +364,13 @@ public:
 		  ss >> timeStamp;
 		  ss >> fileName;
 
-		  if ( fileName.front() == '"' ) {
+		  if ( fileName.begin() == fileName.end() )
+		  	continue;
+
+		  // mh: uses c++11 standard
+		  // if ( fileName.front() == '"' ) {
+
+		  if ( *(fileName.begin()) == '"' ) {
 			fileName.erase( 0, 1 ); // erase the first character
 			fileName.erase( fileName.size() - 1 ); // erase the last character
 		}
