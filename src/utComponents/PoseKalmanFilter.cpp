@@ -147,9 +147,9 @@ public:
 
 		// create the motion model
 		Tracking::LinearPoseMotionModel motionModel( posPN.size() - 1, oriPN.size() - 1 );
-		for ( unsigned i = 0; i < posPN.size(); i++ )
+		for ( std::size_t i( 0 ); i < posPN.size(); i++ )
 			motionModel.setPosPN( i, posPN[ i ] );
-		for ( unsigned i = 0; i < oriPN.size(); i++ )
+		for ( std::size_t i( 0 ); i < oriPN.size(); i++ )
 			motionModel.setOriPN( i, oriPN[ i ] );
 
 		// initialize kalman filter with motion model
@@ -226,16 +226,16 @@ protected:
 			LOG4CPP_TRACE( logger, "Checking whether  to send pose" );
 			
 			// only send when there are no more queued events
-			for ( unsigned i = 0; i < m_inPosePorts.size(); i++ )
+			for ( std::size_t i( 0 ); i < m_inPosePorts.size(); i++ )
 				if ( m_inPosePorts[ i ]->getQueuedEvents() > 0 )
 					return;
-			for ( unsigned i = 0; i < m_inRotationPorts.size(); i++ )
+			for ( std::size_t i( 0 ); i < m_inRotationPorts.size(); i++ )
 				if ( m_inRotationPorts[ i ]->getQueuedEvents() > 0 )
 					return;
-			for ( unsigned i = 0; i < m_inRotationVelocityPorts.size(); i++ )
+			for ( std::size_t i( 0 ); i < m_inRotationVelocityPorts.size(); i++ )
 				if ( m_inRotationVelocityPorts[ i ]->getQueuedEvents() > 0 )
 					return;
-			for ( unsigned i = 0; i < m_inInverseRotationVelocityPorts.size(); i++ )
+			for ( std::size_t i( 0 ); i < m_inInverseRotationVelocityPorts.size(); i++ )
 				if ( m_inInverseRotationVelocityPorts[ i ]->getQueuedEvents() > 0 )
 					return;
 
