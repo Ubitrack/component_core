@@ -317,10 +317,10 @@ public:
 	PlayerComponentImage( const std::string& name, boost::shared_ptr< Graph::UTQLSubgraph > pConfig, const PlayerComponentKey& key,
 		PlayerModule* module )
 		: PlayerComponentBase( name, pConfig, key, module )
+		, m_tsFile( "" )
 		, m_offset( 0 )
 		, m_speedup( 1.0 )
 		, m_outPort( "Output", *this )
-		, m_tsFile( "" )
 	{
 		LOG4CPP_INFO( logger, "Created PlayerComponentImage for file = " << key.get() );
 
@@ -471,14 +471,14 @@ protected:
 	Measurement::Timestamp recordTimeToReal( Measurement::Timestamp t, Measurement::Timestamp recordStart, Measurement::Timestamp playbackStart )
 	{ return static_cast< Measurement::Timestamp >( ( t - recordStart + m_offset * 1000000LL ) / m_speedup + playbackStart ); }
 
+	/** file which defines timestamps and images */
+	std::string m_tsFile;
+	
 	/** offset if the event should be sent at some other time than its timestamp */
 	int m_offset;
 
 	/** speedup factor */
 	double m_speedup;
-
-	/** file which defines timestamps and images */
-	std::string m_tsFile;
 
 	/** output port */
 	Dataflow::PushSupplier< Measurement::ImageMeasurement > m_outPort;
