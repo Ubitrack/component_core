@@ -311,6 +311,24 @@
             <UbitrackLib class="Matrix3x4PrintSink"/>
         </DataflowConfiguration>
     </Pattern>
+	
+	<Pattern name="CameraIntrinsicsPrintSink" displayName="Print Sink (Camera Intrinsics)">
+    	<Description><h:p>This is a sink component that prints the contents of incoming events to the console.
+    	</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Printer Input Camera Intrinsics">
+            	<Description><h:p>The input port</h:p></Description>
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+                
+        <DataflowConfiguration>
+            <UbitrackLib class="CameraIntrinsicsPrintSink"/>
+        </DataflowConfiguration>
+    </Pattern>
     
     
     <!-- Attribute declarations -->

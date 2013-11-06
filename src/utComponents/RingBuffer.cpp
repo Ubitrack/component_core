@@ -82,16 +82,16 @@ public:
 			m_list.push_back( *m_inPort.get() );
 			if( m_list.size() < m_list.capacity())
 			{
-				LOG4CPP_TRACE( logger, "Ring Buffer not yet full, reached " << m_list.size() << " of " << m_list.capacity() << " measurments." );
-				UBITRACK_THROW( "Ring buffer not full. need to add more measruements." );
+				LOG4CPP_TRACE( logger, "Ring Buffer not yet full, reached " << m_list.size() << " of " << m_list.capacity() << " measurements." );
+				UBITRACK_THROW( "Ring buffer not full. need to add more measurements." );
 				return;
 			}
 			m_outPort.send( Measurement::Measurement< typename std::vector< typename EventType::value_type > >( t, m_list ) );
 			return;
 		}
 		
-		m_list[m_position_buffer ] = *m_inPort.get();
-		m_position_buffer = ++m_position_buffer % m_size;
+		m_list[ m_position_buffer++ ] = *m_inPort.get();
+		m_position_buffer = m_position_buffer % m_size;
  		m_outPort.send( Measurement::Measurement< typename std::vector< typename EventType::value_type > >( t, m_list ) );
 	}
 
@@ -104,10 +104,10 @@ protected:
 	Dataflow::TriggerOutPort< Measurement::Measurement< typename std::vector< typename EventType::value_type > > > m_outPort;
 	
 	/** size of list to aggregate */
-	unsigned int m_size;
+	std::size_t m_size;
 	
 	/** points to next element to override */
-	unsigned int m_position_buffer;
+	std::size_t m_position_buffer;
 
 	/** ring buffer */
 	std::vector< typename EventType::value_type > m_list;

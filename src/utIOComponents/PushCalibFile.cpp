@@ -73,9 +73,9 @@ public:
 		: Component( name )
 		, m_inPort( "Input", *this, boost::bind( &PushCalibReaderWriter::eventIn, this, _1 ) )
 		, m_lastTS( 0 )
+		, m_lastMeasurement( typename EventType::value_type() )
 		, m_outPort( "Output", *this )
 		, m_outPortPull( "OutputPull", *this, boost::bind( &PushCalibReaderWriter::request, this, _1 ) )
-		, m_lastMeasurement( typename EventType::value_type() )
 	{
 		// read filename from configuration
 		m_sFilename = subgraph->m_DataflowAttributes.getAttributeString( "file" );
