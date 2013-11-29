@@ -79,7 +79,7 @@ public:
 
 		/// Intrinsic parameter & rotation from the wolrd to the eye(display) 
 		const Measurement::Matrix3x3  &K_WE = m_inPortIntrinsicE.get();
-		Ubitrack::Math::Matrix3x3  R_WE;
+		Ubitrack::Math::Matrix3x3d  R_WE;
 		m_inPortRotationWE.get()->toMatrix(R_WE);
 		
 		/// Translation from the eye camera to the eye
@@ -87,7 +87,7 @@ public:
 		
 		/// Translation from the eye camera to the world
 		const Measurement::Pose &P_WC = m_inPortPoseWC.get();
-		Ubitrack::Math::Matrix3x3  R_WC;
+		Ubitrack::Math::Matrix3x3d  R_WC;
 		P_WC->rotation().toMatrix(R_WC);
 		const Ubitrack::Math::Vector<3, double> &t_WC = P_WC->translation();
 		/// ///////////////////
@@ -97,7 +97,7 @@ public:
 		/// P = K* [ R_WE t ]
 		Ubitrack::Math::Vector<3, double> ttmp = ublas::prod( R_WC, (*t_CE.get()) ) + t_WC;
 
-		Ubitrack::Math::Matrix3x4 P;
+		Ubitrack::Math::Matrix3x4d P;
 		ublas::subrange( P, 0,3, 0,3 ) = ublas::prod( (*K_WE.get()), R_WE );
 		ttmp = ublas::prod( (*K_WE.get()), ttmp);
 		P(0,3) = ttmp[0];
