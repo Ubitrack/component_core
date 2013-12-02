@@ -127,7 +127,7 @@ public:
 		m_button = Math::Scalar< int >( button[ 0 ] );
 		m_inButton = Math::Scalar< int >( inButton[ 0 ] );
 
-		mean = ublas::zero_vector< double >( 7 );
+		mean = Math::Vector< 7, double >::zeros();
 		outProd = Math::Matrix< 7, 7, double >::zeros( );
     }
 
@@ -151,7 +151,7 @@ public:
 
 				// Reset internal state
 				m_counter = 0;
-				mean = ublas::zero_vector< double >( 7 );
+				mean = Math::Vector< 7, double >::zeros();
 				outProd = Math::Matrix< 7, 7, double >::zeros();
 			}
 			else 
