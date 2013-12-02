@@ -48,7 +48,7 @@ Math::Matrix< 6, 6 > readConfiguration( boost::shared_ptr< Graph::UTQLSubgraph >
 	subgraph->m_DataflowAttributes.getAttributeData( "posSigma", posSigma );
 	subgraph->m_DataflowAttributes.getAttributeData( "rotSigma", rotSigma );
 
-	Math::Matrix< 6, 6 > cov( boost::numeric::ublas::zero_matrix< double >( 6, 6 ) );
+	Math::Matrix< 6, 6, double > cov( Math::Matrix< 6, 6, double >::zeros( ) );
 	cov( 0, 0 ) = cov( 1, 1 ) = cov( 2, 2 ) = posSigma * posSigma;
 	cov( 3, 3 ) = cov( 4, 4 ) = cov( 5, 5 ) = rotSigma * rotSigma;
 
