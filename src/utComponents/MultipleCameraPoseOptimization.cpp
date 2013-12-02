@@ -200,7 +200,7 @@ public:
 		
 		// create measurement and observations vectors
 		std::vector< std::pair< unsigned, unsigned > > observations;
-		ublas::vector< double > measurements( 2 * nObservations );
+		Math::Vector< 0, double > measurements( 2 * nObservations );
 
 		int iObs = 0;
 		for ( unsigned iCam = 0; iCam < weights.size(); iCam++ )

@@ -234,8 +234,8 @@ protected:
 template<>
 Math::ErrorVector< 3 > CovarianceEstimation< Measurement::Position, Measurement::ErrorPosition >::incrementalEstimate( Math::Vector< 3 >& posNew )
 {
-	ublas::vector_range< ublas::vector<double> > posMean ( mean, ublas::range( 0, 3 ) );
-	ublas::matrix_range< Math::Matrix< 0, 0, double >::base_type > outProd3 ( outProd, ublas::range ( 0, 3 ), ublas::range ( 0, 3 ) );
+	ublas::vector_range< typename Math::Vector< 0, double >::base_type > posMean ( mean, ublas::range( 0, 3 ) );
+	ublas::matrix_range< typename Math::Matrix< 0, 0, double >::base_type > outProd3 ( outProd, ublas::range ( 0, 3 ), ublas::range ( 0, 3 ) );
 
  	// Running mean value of position random variable
  	posMean = ( ( ((double)m_counter - 1) / (double)m_counter ) * posMean ) + ( ( 1 / (double)m_counter ) * posNew );
@@ -261,16 +261,16 @@ Math::ErrorVector< 3 > CovarianceEstimation< Measurement::Position, Measurement:
 template<>
 Math::ErrorPose CovarianceEstimation< Measurement::Pose, Measurement::ErrorPose >::incrementalEstimate( Math::Pose& poseNew )
 {
-	ublas::vector_range< ublas::vector<double> > posMean( mean, ublas::range( 0, 3 ) );
-	ublas::vector_range< ublas::vector<double> > rotMean( mean, ublas::range( 3, 7 ) );
+	ublas::vector_range< typename Math::Vector< 0, double >::base_type > posMean( mean, ublas::range( 0, 3 ) );
+	ublas::vector_range< typename Math::Vector< 0, double >::base_type > rotMean( mean, ublas::range( 3, 7 ) );
 
 	LOG4CPP_TRACE ( logger, "Update pose event: " << poseNew );
 
 	// The order is tx, ty, tz, qx, qy, qz, qw.
-	ublas::vector< double > poseNewVec( 7 );
+	Math::Vector< 0, double > poseNewVec( 7 );
 	poseNew.toVector( poseNewVec );
-	ublas::vector_range< ublas::vector<double> > posNew( poseNewVec, ublas::range( 0, 3 ) );
-	ublas::vector_range< ublas::vector<double> > rotNew( poseNewVec, ublas::range( 3, 7 ) );
+	ublas::vector_range< typename Math::Vector< 0, double >::base_type > posNew( poseNewVec, ublas::range( 0, 3 ) );
+	ublas::vector_range< typename Math::Vector< 0, double >::base_type > rotNew( poseNewVec, ublas::range( 3, 7 ) );
 
 	// Take care of quaternion ambiguity
  	if ( ublas::inner_prod( rotNew, rotMean ) < 0 )
@@ -324,7 +324,7 @@ Math::ErrorPose CovarianceEstimation< Measurement::Pose, Measurement::ErrorPose 
 	Math::Matrix< 6, 6 > covar = ep.covariance();
 	double posRms = sqrt ( covar (0,0) + covar (1,1) + covar (2,2) );
 	LOG4CPP_INFO( logger, "RMS positional error [mm]: " << posRms );
-	ublas::vector< double > axis (3);
+	Math::Vector< 3, double > axis;
 	axis (0) = sqrt ( covar (3,3) );
 	axis (1) = sqrt ( covar (4,4) );
 	axis (2) = sqrt ( covar (5,5) );
