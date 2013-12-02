@@ -40,9 +40,8 @@
 #include <utMeasurement/Measurement.h>
 #include <utUtil/Exception.h>
 #include <utTracking/Average.h>
+
 // Boost
-#include <boost/numeric/ublas/matrix.hpp>
-#include <boost/numeric/ublas/vector.hpp>
 #include <boost/math/constants/constants.hpp>
 
 

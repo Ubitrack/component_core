@@ -35,10 +35,9 @@
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utMath/Vector.h>
-#include <boost/numeric/ublas/vector.hpp>
 
 // get a logger
+#include <log4cpp/Category.hh>
 static log4cpp::Category& eventsLogger( log4cpp::Category::getInstance( "Ubitrack.Events.Components.RotationCorrection" ) );
 
 namespace Ubitrack { namespace Components {

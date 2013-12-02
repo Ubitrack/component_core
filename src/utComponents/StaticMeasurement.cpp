@@ -42,8 +42,6 @@
 #include <sstream>
 
 #include <boost/bind.hpp>
-#include <boost/numeric/ublas/vector.hpp>
-namespace ublas = boost::numeric::ublas;
 
 #include <utDataflow/PullSupplier.h>
 #include <utDataflow/Component.h>
@@ -359,7 +357,7 @@ namespace Ubitrack { namespace Components {
 				UBITRACK_THROW( "staticPose has no value attribute" );
 
 
-			ublas::vector< double > p( 7 );
+			Math::Vector< 7, double > p;
 			std::istringstream poseString( sValue );
 			for ( unsigned i = 0; i < 7; i++ )
 				poseString >> p( i );

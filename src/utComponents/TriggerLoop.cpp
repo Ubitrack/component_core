@@ -35,11 +35,6 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
-#include <log4cpp/Category.hh>
-#include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/vector_proxy.hpp>
-#include <boost/math/quaternion.hpp>
-#include <boost/math/constants/constants.hpp>
 
 #include <utDataflow/Component.h>
 #include <utDataflow/PullConsumer.h>
@@ -51,12 +46,9 @@
 
 
 using namespace Ubitrack;
-using namespace boost::numeric;
-
-//namespace ublas = boost::numeric::ublas;
-
 
 // get a logger
+#include <log4cpp/Category.hh>
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Components.TriggerLoop" ) );
 
 namespace Ubitrack { namespace Components {

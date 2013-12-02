@@ -35,11 +35,9 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
-#include <log4cpp/Category.hh>
-#include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/vector_proxy.hpp>
-#include <boost/math/quaternion.hpp>
-#include <boost/math/constants/constants.hpp>
+
+
+#include <boost/math/constants/constants.hpp> // PI
 
 #include <utDataflow/Component.h>
 #include <utDataflow/PullConsumer.h>
@@ -51,12 +49,10 @@
 
 
 using namespace Ubitrack;
-using namespace boost::numeric;
-
-//namespace ublas = boost::numeric::ublas;
-
+namespace ublas = boost::numeric::ublas;
 
 // get a logger
+#include <log4cpp/Category.hh>
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Components.CovarianceEstimation" ) );
 
 namespace Ubitrack { namespace Components {
@@ -222,8 +218,8 @@ protected:
 	// stop
 	bool m_bStopped;
 
-	ublas::vector< double > mean;
-	ublas::matrix< double > outProd;
+	Math::Vector< 0, double > mean;
+	Math::Matrix< 0, 0, double > outProd;
 
 	int m_counter;
 	int m_size;
@@ -239,7 +235,7 @@ template<>
 Math::ErrorVector< 3 > CovarianceEstimation< Measurement::Position, Measurement::ErrorPosition >::incrementalEstimate( Math::Vector< 3 >& posNew )
 {
 	ublas::vector_range< ublas::vector<double> > posMean ( mean, ublas::range( 0, 3 ) );
-	ublas::matrix_range< ublas::matrix<double> > outProd3 ( outProd, ublas::range ( 0, 3 ), ublas::range ( 0, 3 ) );
+	ublas::matrix_range< Math::Matrix< 0, 0, double >::base_type > outProd3 ( outProd, ublas::range ( 0, 3 ), ublas::range ( 0, 3 ) );
 
  	// Running mean value of position random variable
  	posMean = ( ( ((double)m_counter - 1) / (double)m_counter ) * posMean ) + ( ( 1 / (double)m_counter ) * posNew );
