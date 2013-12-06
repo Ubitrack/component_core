@@ -91,8 +91,8 @@ public:
 		if ( m_inPortA.get()->size() < 3 )
 			UBITRACK_THROW( "Insufficient correspondences" );
 
-		const std::vector< Math::Vector< 3, double > >& left = *m_inPortA.get();
-		const std::vector< Math::Vector< 3, double > >& right = *m_inPortB.get();	
+		const std::vector< Math::Vector< double, 3 > >& left = *m_inPortA.get();
+		const std::vector< Math::Vector< double, 3 > >& right = *m_inPortB.get();	
 			
 		Math::Pose pose = Calibration::calculateAbsoluteOrientation( left, right );
 				
@@ -114,10 +114,10 @@ protected:
 	void sendResult( Measurement::ErrorPose ep );
 	
 	/** Input port A of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 3 > > m_inPortA;
+	Dataflow::ExpansionInPort< Math::Vector< double, 3 > > m_inPortA;
 
 	/** Input port B of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 3 > > m_inPortB;
+	Dataflow::ExpansionInPort< Math::Vector< double, 3 > > m_inPortB;
 
 	/** Output port of the component. */
 	Dataflow::TriggerOutPort< ResultType > m_outPort;

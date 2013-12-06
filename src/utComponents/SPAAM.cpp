@@ -109,7 +109,7 @@ public:
 		{
 			Math::Matrix< 3, 3 > K;
 			Math::Matrix< 3, 3 > R;
-			Math::Vector< 3 > t;
+			Math::Vector< double, 3 > t;
 			Calibration::decomposeProjection( K, R, t, mat );
 			LOG4CPP_DEBUG( logger, "K: " << K );
 			LOG4CPP_DEBUG( logger, "R: " << R );
@@ -122,10 +122,10 @@ public:
 protected:
 
 	/** 2D Input port of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 2 > > m_inPort2D;
+	Dataflow::ExpansionInPort< Math::Vector< double, 2 > > m_inPort2D;
 
 	/** 3D Input port of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 3 > > m_inPort3D;
+	Dataflow::ExpansionInPort< Math::Vector< double, 3 > > m_inPort3D;
 
 	/** Output port of the component. */
 	Dataflow::TriggerOutPort< Measurement::Matrix3x4 > m_outPort;

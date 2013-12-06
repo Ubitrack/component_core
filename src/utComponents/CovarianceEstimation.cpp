@@ -123,7 +123,7 @@ public:
 		m_button = Math::Scalar< int >( button[ 0 ] );
 		m_inButton = Math::Scalar< int >( inButton[ 0 ] );
 
-		mean = Math::Vector< 7, double >::zeros();
+		mean = Math::Vector< double, 7 >::zeros();
 		outProd = Math::Matrix< 7, 7, double >::zeros( );
     }
 
@@ -147,7 +147,7 @@ public:
 
 				// Reset internal state
 				m_counter = 0;
-				mean = Math::Vector< 7, double >::zeros();
+				mean = Math::Vector< double, 7 >::zeros();
 				outProd = Math::Matrix< 7, 7, double >::zeros();
 			}
 			else 
@@ -218,7 +218,7 @@ protected:
 	// stop
 	bool m_bStopped;
 
-	Math::Vector< 0, double > mean;
+	Math::Vector< double > mean;
 	Math::Matrix< 0, 0, double > outProd;
 
 	int m_counter;
@@ -232,9 +232,9 @@ protected:
 
 
 template<>
-Math::ErrorVector< 3 > CovarianceEstimation< Measurement::Position, Measurement::ErrorPosition >::incrementalEstimate( Math::Vector< 3 >& posNew )
+Math::ErrorVector< double, 3 > CovarianceEstimation< Measurement::Position, Measurement::ErrorPosition >::incrementalEstimate( Math::Vector< double, 3 >& posNew )
 {
-	ublas::vector_range< typename Math::Vector< 0, double >::base_type > posMean ( mean, ublas::range( 0, 3 ) );
+	ublas::vector_range< typename Math::Vector< double >::base_type > posMean ( mean, ublas::range( 0, 3 ) );
 	ublas::matrix_range< typename Math::Matrix< 0, 0, double >::base_type > outProd3 ( outProd, ublas::range ( 0, 3 ), ublas::range ( 0, 3 ) );
 
  	// Running mean value of position random variable
@@ -247,10 +247,10 @@ Math::ErrorVector< 3 > CovarianceEstimation< Measurement::Position, Measurement:
  	if ( m_counter == 1 ) 
  	{
  		LOG4CPP_TRACE( logger, "Not enough data to compute covariance matrix" );
- 		return Math::ErrorVector<3>();
+ 		return Math::ErrorVector< double, 3 >();
  	}
 
- 	Math::ErrorVector< 3 > ev ( posMean, outProd3 / ((double)m_counter) - ublas::outer_prod ( posMean, posMean ) );
+ 	Math::ErrorVector< double, 3 > ev ( posMean, outProd3 / ((double)m_counter) - ublas::outer_prod ( posMean, posMean ) );
 
 	LOG4CPP_TRACE( logger, "Running (empirical) mean / covariance: " << std::endl << ev );
 
@@ -261,16 +261,16 @@ Math::ErrorVector< 3 > CovarianceEstimation< Measurement::Position, Measurement:
 template<>
 Math::ErrorPose CovarianceEstimation< Measurement::Pose, Measurement::ErrorPose >::incrementalEstimate( Math::Pose& poseNew )
 {
-	ublas::vector_range< typename Math::Vector< 0, double >::base_type > posMean( mean, ublas::range( 0, 3 ) );
-	ublas::vector_range< typename Math::Vector< 0, double >::base_type > rotMean( mean, ublas::range( 3, 7 ) );
+	ublas::vector_range< typename Math::Vector< double >::base_type > posMean( mean, ublas::range( 0, 3 ) );
+	ublas::vector_range< typename Math::Vector< double >::base_type > rotMean( mean, ublas::range( 3, 7 ) );
 
 	LOG4CPP_TRACE ( logger, "Update pose event: " << poseNew );
 
 	// The order is tx, ty, tz, qx, qy, qz, qw.
-	Math::Vector< 0, double > poseNewVec( 7 );
+	Math::Vector< double > poseNewVec( 7 );
 	poseNew.toVector( poseNewVec );
-	ublas::vector_range< typename Math::Vector< 0, double >::base_type > posNew( poseNewVec, ublas::range( 0, 3 ) );
-	ublas::vector_range< typename Math::Vector< 0, double >::base_type > rotNew( poseNewVec, ublas::range( 3, 7 ) );
+	ublas::vector_range< typename Math::Vector< double >::base_type > posNew( poseNewVec, ublas::range( 0, 3 ) );
+	ublas::vector_range< typename Math::Vector< double >::base_type > rotNew( poseNewVec, ublas::range( 3, 7 ) );
 
 	// Take care of quaternion ambiguity
  	if ( ublas::inner_prod( rotNew, rotMean ) < 0 )
@@ -309,9 +309,9 @@ Math::ErrorPose CovarianceEstimation< Measurement::Pose, Measurement::ErrorPose 
 	 * of the real part can then be discarded, it should be ~0.
 	 */
 
-	Math::Vector<7> invMean;
+	Math::Vector< double, 7 > invMean;
 	(~(Math::Pose::fromVector( mean ) ) ).toVector( invMean );
-	Math::ErrorVector< 7 > ev ( invMean, outProd / ( (double)m_counter ) - ublas::outer_prod ( mean, mean ) );
+	Math::ErrorVector< double, 7 > ev ( invMean, outProd / ( (double)m_counter ) - ublas::outer_prod ( mean, mean ) );
 	Math::ErrorPose invEp = Math::ErrorPose::fromAdditiveErrorVector( ev );
 	
 	// We created the error pose from the inverted mean value above, to obtain the transformed 6x6 covariance
@@ -324,7 +324,7 @@ Math::ErrorPose CovarianceEstimation< Measurement::Pose, Measurement::ErrorPose 
 	Math::Matrix< 6, 6 > covar = ep.covariance();
 	double posRms = sqrt ( covar (0,0) + covar (1,1) + covar (2,2) );
 	LOG4CPP_INFO( logger, "RMS positional error [mm]: " << posRms );
-	Math::Vector< 3, double > axis;
+	Math::Vector< double, 3 > axis;
 	axis (0) = sqrt ( covar (3,3) );
 	axis (1) = sqrt ( covar (4,4) );
 	axis (2) = sqrt ( covar (5,5) );

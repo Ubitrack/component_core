@@ -128,10 +128,10 @@ public:
 protected:
 
 	/** Input port A of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 3 > > m_inPortA;
+	Dataflow::ExpansionInPort< Math::Vector< double, 3 > > m_inPortA;
 
 	/** Input port B of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 3 > > m_inPortB;
+	Dataflow::ExpansionInPort< Math::Vector< double, 3 > > m_inPortB;
 
 	/** Output port of the component. */
 	Dataflow::TriggerOutPort< Measurement::Pose > m_outPort;

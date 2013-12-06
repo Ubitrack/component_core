@@ -96,7 +96,7 @@ Math::Scalar< double > ScaleEstimation< Measurement::Pose >::estimateScale( Math
 };
 
 template<>
-Math::Scalar< double > ScaleEstimation< Measurement::Position >::estimateScale( Math::Vector< 3 >& posA, Math::Vector< 3 >& posB )
+Math::Scalar< double > ScaleEstimation< Measurement::Position >::estimateScale( Math::Vector< double, 3 >& posA, Math::Vector< double, 3 >& posB )
 {
 	return Math::Scalar< double >( norm_2 ( posA ) / norm_2 ( posB ) );
 };

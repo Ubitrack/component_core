@@ -65,9 +65,9 @@ template< class VType = double >
 class ObjectiveFunction
 {
 public:
-	ObjectiveFunction( const std::vector< Math::Vector< 3, VType > >& p3D, 
+	ObjectiveFunction( const std::vector< Math::Vector< VType, 3 > >& p3D, 
 		const std::vector< Math::Matrix< 3, 3 > >& cameraRotations, 
-		const std::vector< Math::Vector< 3 > >& cameraTranslations, 
+		const std::vector< Math::Vector< double, 3 > >& cameraTranslations, 
 		const std::vector< Math::Matrix< 3, 3, VType > >& cameraIntrinsics, 
 		const std::vector< std::pair< unsigned, unsigned > > visibilities )
 		: m_p3D( p3D )
@@ -120,9 +120,9 @@ public:
 	}
 	
 protected:
-	const std::vector< Math::Vector< 3, VType > >& m_p3D;
+	const std::vector< Math::Vector< VType, 3 > >& m_p3D;
 	const std::vector< Math::Matrix< 3, 3 > >& m_camR;
-	const std::vector< Math::Vector< 3 > >& m_camT;
+	const std::vector< Math::Vector< double, 3 > >& m_camT;
 	const std::vector< Math::Matrix< 3, 3, VType > >& m_camI;
 	const std::vector< std::pair< unsigned, unsigned > > m_vis;
 };
@@ -169,8 +169,8 @@ public:
 	{
 		namespace ublas = boost::numeric::ublas;
 
-		const std::vector< Math::Vector< 3 > >& p3d = *m_in3d.get();
-		const std::vector< std::vector< Math::Vector< 2 > > >& p2d = *m_in2d.get();
+		const std::vector< Math::Vector< double, 3 > >& p3d = *m_in3d.get();
+		const std::vector< std::vector< Math::Vector< double, 2 > > >& p2d = *m_in2d.get();
 		const std::vector< std::vector< Math::Scalar< double > > >& weights = *m_inWeights.get();
 		const std::vector< Math::Pose >& camPoses = *m_inCameraPoses.get();
 		const std::vector< Math::Matrix< 3, 3 > >& camMatrices = *m_inCameraMatrices.get();
@@ -200,7 +200,7 @@ public:
 		
 		// create measurement and observations vectors
 		std::vector< std::pair< unsigned, unsigned > > observations;
-		Math::Vector< 0, double > measurements( 2 * nObservations );
+		Math::Vector< double > measurements( 2 * nObservations );
 
 		int iObs = 0;
 		for ( unsigned iCam = 0; iCam < weights.size(); iCam++ )
@@ -216,7 +216,7 @@ public:
 
 		// create camera matrices and rotations
 		std::vector< Math::Matrix< 3, 3 > > camRotations( camPoses.size() );
-		std::vector< Math::Vector< 3 > > camTranslations( camPoses.size() );
+		std::vector< Math::Vector< double, 3 > > camTranslations( camPoses.size() );
 		for ( unsigned iCam = 0; iCam < weights.size(); iCam++ )
 		{
 			camRotations[ iCam ] = Math::Matrix< 3, 3 >( camPoses[ iCam ].rotation() );
@@ -227,7 +227,7 @@ public:
 		LOG4CPP_DEBUG( logger, "Optimizing pose over " << p2d.size() << " cameras using " << nObservations << " observations" );
 		
 		ObjectiveFunction< double > f( p3d, camRotations, camTranslations, camMatrices, observations );
-		Math::Vector< 6 > param;
+		Math::Vector< double, 6 > param;
 		ublas::subrange( param, 0, 3 ) = initialPose.translation();
 		ublas::subrange( param, 3, 6 ) = initialPose.rotation().toLogarithm();
 		
@@ -245,7 +245,7 @@ public:
 			LOG4CPP_DEBUG( logger, "Computing covariance" );
 			
 			// pose in exponential map representation
-			Math::Vector< 6 > expParam;
+			Math::Vector< double, 6 > expParam;
 			ublas::subrange( expParam, 0, 3 ) = ublas::subrange( param, 0, 3 );
 			ublas::subrange( expParam, 3, 6 ) = finalPose.rotation().toLogarithm();
 			
@@ -276,7 +276,7 @@ protected:
 	Dataflow::TriggerInPort< Measurement::PositionList > m_in3d;
 
 	/** Input port: list of corresponding 2D points for each 3D point. */
-	Dataflow::ExpansionInPort< std::vector< Math::Vector< 2 > > > m_in2d;
+	Dataflow::ExpansionInPort< std::vector< Math::Vector< double, 2 > > > m_in2d;
 
 	/** 
 	 * Input port: list of weights (inverse variance) for each corresponding 2D-3D measurement of 

@@ -96,11 +96,11 @@ protected:
 };
 
 
-Math::Vector< 3 > operator*( const Math::Matrix< 4, 4 > mat, const Math::Vector< 3 > vec )
+Math::Vector< double, 3 > operator*( const Math::Matrix< 4, 4 > mat, const Math::Vector< double, 3 > vec )
 {
-	Math::Vector< 4 > hom( vec[0], vec[1], vec[2], 1.0 );
-	Math::Vector< 4 > tmp;
-	Math::Vector< 3 > res;
+	Math::Vector< double, 4 > hom( vec[0], vec[1], vec[2], 1.0 );
+	Math::Vector< double, 4 > tmp;
+	Math::Vector< double, 3 > res;
 
 	tmp = boost::numeric::ublas::prod( mat, hom );
 	double w = tmp[3];
@@ -114,20 +114,20 @@ Math::Vector< 3 > operator*( const Math::Matrix< 4, 4 > mat, const Math::Vector<
 };
 
 
-std::vector< Math::Vector< 3 > > operator*( const Math::Matrix< 4, 4 > mat, const std::vector< Math::Vector< 3 > > vecList )
+std::vector< Math::Vector< double, 3 > > operator*( const Math::Matrix< 4, 4 > mat, const std::vector< Math::Vector< double, 3 > > vecList )
 {
-	std::vector< Math::Vector< 3 > > result( vecList.size() );
+	std::vector< Math::Vector< double, 3 > > result( vecList.size() );
 	for ( unsigned i = 0; i < vecList.size(); i++ )
 		result[ i ] = mat * vecList[i];
 	return result;
 };
 
 
-Math::Vector< 2 > operator*( const Math::Matrix< 3, 4 > mat, const Math::Vector< 3 > vec )
+Math::Vector< double, 2 > operator*( const Math::Matrix< 3, 4 > mat, const Math::Vector< double, 3 > vec )
 {
-	Math::Vector< 4 > hom( vec(0), vec(1), vec(2), 1.0 );
-	Math::Vector< 3 > tmp;
-	Math::Vector< 2 > res;
+	Math::Vector< double, 4 > hom( vec(0), vec(1), vec(2), 1.0 );
+	Math::Vector< double, 3 > tmp;
+	Math::Vector< double, 2 > res;
 
 	tmp = boost::numeric::ublas::prod( mat, hom );
 	double w = tmp[2];
@@ -140,11 +140,11 @@ Math::Vector< 2 > operator*( const Math::Matrix< 3, 4 > mat, const Math::Vector<
 };
 
 
-Math::Vector< 2 > operator*( const Math::Matrix< 3, 3 > mat, const Math::Vector< 2 > vec )
+Math::Vector< double, 2 > operator*( const Math::Matrix< 3, 3 > mat, const Math::Vector< double, 2 > vec )
 {
-	Math::Vector< 3 > hom( vec(0), vec(1), 1.0 );
-	Math::Vector< 2	> tmp;
-	Math::Vector< 2 > res;
+	Math::Vector< double, 3 > hom( vec(0), vec(1), 1.0 );
+	Math::Vector< double, 2	> tmp;
+	Math::Vector< double, 2 > res;
 
 	tmp = boost::numeric::ublas::prod( mat, hom );
 	double w = tmp[1];
@@ -157,18 +157,18 @@ Math::Vector< 2 > operator*( const Math::Matrix< 3, 3 > mat, const Math::Vector<
 };
 
 
-std::vector< Math::Vector< 2 > > operator*( const Math::Matrix< 3, 4 > mat, const std::vector< Math::Vector< 3 > > vecList )
+std::vector< Math::Vector< double, 2 > > operator*( const Math::Matrix< 3, 4 > mat, const std::vector< Math::Vector< double, 3 > > vecList )
 {
-	std::vector< Math::Vector< 2 > > result( vecList.size() );
+	std::vector< Math::Vector< double, 2 > > result( vecList.size() );
 	for ( unsigned i = 0; i < vecList.size(); i++ )
 		result[ i ] = mat * vecList[i];
 	return result;
 };
 
 
-std::vector< Math::Vector< 2 > > operator*( const Math::Matrix< 3, 3 > mat, const std::vector< Math::Vector< 2 > > vecList )
+std::vector< Math::Vector< double, 2 > > operator*( const Math::Matrix< 3, 3 > mat, const std::vector< Math::Vector< double, 2 > > vecList )
 {
-	std::vector< Math::Vector< 2 > > result( vecList.size() );
+	std::vector< Math::Vector< double, 2 > > result( vecList.size() );
 	for ( unsigned i = 0; i < vecList.size(); i++ )
 		result[ i ] = mat * vecList[i];
 	return result;

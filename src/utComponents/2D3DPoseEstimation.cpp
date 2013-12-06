@@ -94,8 +94,8 @@ public:
 	/** Method that computes the result. */
 	void compute( Measurement::Timestamp ts )
 	{
-		const std::vector< Math::Vector< 2 > >& p2d( *m_in2d.get() );
-		const std::vector< Math::Vector< 3 > >& p3d( *m_in3d.get() );
+		const std::vector< Math::Vector< double, 2 > >& p2d( *m_in2d.get() );
+		const std::vector< Math::Vector< double, 3 > >& p3d( *m_in3d.get() );
 		const Math::Matrix< 3, 3 > cam = *m_inCam.get();
 
 		if ( p2d.size() < 4 ) {
@@ -109,10 +109,10 @@ public:
 
 protected:
 	/** Input port Input2d of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 2 > > m_in2d;
+	Dataflow::ExpansionInPort< Math::Vector< double, 2 > > m_in2d;
 
 	/** Input port Input3d of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 3 > > m_in3d;
+	Dataflow::ExpansionInPort< Math::Vector< double, 3 > > m_in3d;
 
 	/** Input port Intrinsics of the component. */
 	Dataflow::TriggerInPort< Measurement::Matrix3x3 > m_inCam;

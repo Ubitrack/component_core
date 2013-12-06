@@ -78,15 +78,15 @@ protected:
 
 
 /** inversion operator for position = negation */
-Math::Vector<3> operator~( const Math::Vector<3>& op )
+Math::Vector< double, 3 > operator~( const Math::Vector< double, 3 >& op )
 {
-	return Math::Vector<3>( -op );
+	return Math::Vector< double, 3 >( -op );
 }
 
 /** inversion operator for batch inversion of many pose vectors  */
-std::vector< Math::Vector<3> > operator~( const std::vector< Math::Vector<3> >& p3d )
+std::vector< Math::Vector< double, 3 > > operator~( const std::vector< Math::Vector< double, 3 > >& p3d )
 {
-	std::vector< Math::Vector<3> > result( p3d.size() );
+	std::vector< Math::Vector< double, 3 > > result( p3d.size() );
 	for ( unsigned i = 0; i < p3d.size(); i++ )
 		result[ i ] = ~p3d[ i ];
 	return result;

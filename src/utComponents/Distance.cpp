@@ -43,7 +43,7 @@ namespace Ubitrack { namespace Components {
 
 // computes the distance for vectors
 template< std::size_t N, typename T >
-double doDistance( const Math::Vector< N, T >& a, const Math::Vector< N, T >& b )
+double doDistance( const Math::Vector< T, N >& a, const Math::Vector< T, N >& b )
 {
 	return ublas::norm_2( a - b );
 }

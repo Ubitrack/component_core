@@ -83,9 +83,9 @@ protected:
 
 
 /** multiplication operator for batch multiplication of many 3D position vectors with a pose */
-std::vector< Math::Vector< 3 > > operator*( const Math::Pose& pose, const std::vector< Math::Vector< 3 > >& p3d )
+std::vector< Math::Vector< double, 3 > > operator*( const Math::Pose& pose, const std::vector< Math::Vector< double, 3 > >& p3d )
 {
-	std::vector< Math::Vector< 3 > > result( p3d.size() );
+	std::vector< Math::Vector< double, 3 > > result( p3d.size() );
 	for ( unsigned i = 0; i < p3d.size(); i++ )
 		result[ i ] = pose * p3d[ i ];
 	return result;
@@ -110,25 +110,25 @@ std::vector< Math::Pose > operator*( const std::vector< Math::Pose >& p6d, const
 }
 
 /** multiplication operator for position "multiplication" (= addition) */
-Math::Vector<3> operator*( const Math::Vector<3>& pos1, const Math::Vector<3>& pos2 )
+Math::Vector< double, 3 > operator*( const Math::Vector< double, 3 >& pos1, const Math::Vector< double, 3 >& pos2 )
 {
-	Math::Vector<3> result;
+	Math::Vector< double, 3 > result;
 	result = pos1 + pos2;
 	return result;
 }
 
 /** multiplication operator for batch multiplication of many 3D position vectors with a pose */
-std::vector< Math::ErrorVector< 3 > > operator*( const Math::Pose& pose, const std::vector< Math::ErrorVector< 3 > >& p3d )
+std::vector< Math::ErrorVector< double, 3 > > operator*( const Math::Pose& pose, const std::vector< Math::ErrorVector< double, 3 > >& p3d )
 {
-	std::vector< Math::ErrorVector< 3 > > result( p3d.size() );
+	std::vector< Math::ErrorVector< double, 3 > > result( p3d.size() );
 	for ( unsigned i = 0; i < p3d.size(); i++ )
-		result[ i ] =  Math::ErrorVector< 3 >(pose * p3d[ i ].value, p3d[ i ].covariance);
+		result[ i ] =  Math::ErrorVector< double, 3 >(pose * p3d[ i ].value, p3d[ i ].covariance);
 	return result;
 }
 
 
 /*
-Math::ErrorVector< 3 > operator*( const Math::ErrorPose& a, const Math::ErrorVector< 3 >& b )
+Math::ErrorVector< double, 3 > operator*( const Math::ErrorPose& a, const Math::ErrorVector< double, 3 >& b )
 {
 	
 	// covariance transform
@@ -141,7 +141,7 @@ Math::ErrorVector< 3 > operator*( const Math::ErrorPose& a, const Math::ErrorVec
 	noalias( tmp ) = ublas::prod( jacobian, a.covariance() );
 	noalias( newCovariance ) = ublas::prod( tmp, ublas::trans( jacobian ) );
 
-	return ErrorVector< 3 >( static_cast< const Pose& >( a ) * b, newCovariance );
+	return ErrorVector< double, 3 >( static_cast< const Pose& >( a ) * b, newCovariance );
 }
 */
 UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
