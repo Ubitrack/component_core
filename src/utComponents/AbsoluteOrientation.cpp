@@ -122,7 +122,7 @@ protected:
 	/** Output port of the component. */
 	Dataflow::TriggerOutPort< ResultType > m_outPort;
 
-	Math::Matrix< 6, 6 > m_covariance;
+	Math::Matrix< double, 6, 6 > m_covariance;
 };
 
 

@@ -102,7 +102,7 @@ public:
 		if ( m_inPortA.get()->size() != m_inPortB.get()->size() || m_inPortA.get()->size() < 4  )
 			UBITRACK_THROW( "Illegal number of correspondences" );
 		
-		Math::Matrix< 3, 3 > mat = Calibration::homographyDLT( *m_inPortB.get(),*m_inPortA.get() );
+		Math::Matrix< double, 3, 3 > mat = Calibration::homographyDLT( *m_inPortB.get(),*m_inPortA.get() );
 	
 		m_outPort.send( Measurement::Matrix3x3( t, mat ) );
 	}

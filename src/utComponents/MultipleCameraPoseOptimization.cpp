@@ -66,9 +66,9 @@ class ObjectiveFunction
 {
 public:
 	ObjectiveFunction( const std::vector< Math::Vector< VType, 3 > >& p3D, 
-		const std::vector< Math::Matrix< 3, 3 > >& cameraRotations, 
+		const std::vector< Math::Matrix< double, 3, 3 > >& cameraRotations, 
 		const std::vector< Math::Vector< double, 3 > >& cameraTranslations, 
-		const std::vector< Math::Matrix< 3, 3, VType > >& cameraIntrinsics, 
+		const std::vector< Math::Matrix< VType, 3, 3 > >& cameraIntrinsics, 
 		const std::vector< std::pair< unsigned, unsigned > > visibilities )
 		: m_p3D( p3D )
 		, m_camR( cameraRotations )
@@ -121,9 +121,9 @@ public:
 	
 protected:
 	const std::vector< Math::Vector< VType, 3 > >& m_p3D;
-	const std::vector< Math::Matrix< 3, 3 > >& m_camR;
+	const std::vector< Math::Matrix< double, 3, 3 > >& m_camR;
 	const std::vector< Math::Vector< double, 3 > >& m_camT;
-	const std::vector< Math::Matrix< 3, 3, VType > >& m_camI;
+	const std::vector< Math::Matrix< VType, 3, 3 > >& m_camI;
 	const std::vector< std::pair< unsigned, unsigned > > m_vis;
 };
 
@@ -173,7 +173,7 @@ public:
 		const std::vector< std::vector< Math::Vector< double, 2 > > >& p2d = *m_in2d.get();
 		const std::vector< std::vector< Math::Scalar< double > > >& weights = *m_inWeights.get();
 		const std::vector< Math::Pose >& camPoses = *m_inCameraPoses.get();
-		const std::vector< Math::Matrix< 3, 3 > >& camMatrices = *m_inCameraMatrices.get();
+		const std::vector< Math::Matrix< double, 3, 3 > >& camMatrices = *m_inCameraMatrices.get();
 		const Math::Pose& initialPose = *m_inInitialPose.get();
 
 		if ( p3d.size() < 3 )
@@ -215,11 +215,11 @@ public:
 				}
 
 		// create camera matrices and rotations
-		std::vector< Math::Matrix< 3, 3 > > camRotations( camPoses.size() );
+		std::vector< Math::Matrix< double, 3, 3 > > camRotations( camPoses.size() );
 		std::vector< Math::Vector< double, 3 > > camTranslations( camPoses.size() );
 		for ( unsigned iCam = 0; iCam < weights.size(); iCam++ )
 		{
-			camRotations[ iCam ] = Math::Matrix< 3, 3 >( camPoses[ iCam ].rotation() );
+			camRotations[ iCam ] = Math::Matrix< double, 3, 3 >( camPoses[ iCam ].rotation() );
 			camTranslations[ iCam ] = camPoses[ iCam ].translation();
 		}
 
@@ -250,12 +250,12 @@ public:
 			ublas::subrange( expParam, 3, 6 ) = finalPose.rotation().toLogarithm();
 			
 			// initialize matrices
-			Math::Matrix< 6, 6 > cov;
+			Math::Matrix< double, 6, 6 > cov;
 			
 			// make 3x4 projection matrices
-			std::vector< Math::Matrix< 3, 4 > > camPs( camPoses.size() );
+			std::vector< Math::Matrix< double, 3, 4 > > camPs( camPoses.size() );
 			for ( unsigned i = 0; i < camPoses.size(); i++ )
-				camPs[ i ] = ublas::prod( camMatrices[ i ], Math::Matrix< 3, 4 >( camPoses[ i ] ) );
+				camPs[ i ] = ublas::prod( camMatrices[ i ], Math::Matrix< double, 3, 4 >( camPoses[ i ] ) );
 				
 			// backward propagation
 			Calibration::Function::MultipleCameraProjectionErrorART< double > fe( p3d, camPs, observations ); //, *m_inCenterOfGravity.get() );
@@ -265,7 +265,7 @@ public:
 			m_outPortError.send( Measurement::ErrorPose( ts, Math::ErrorPose( finalPose, cov ) ) );
 		}
 		#else
-			m_outPortError.send( Measurement::ErrorPose( ts, Math::ErrorPose( finalPose, Math::Matrix< 6, 6 >() ) ) );
+			m_outPortError.send( Measurement::ErrorPose( ts, Math::ErrorPose( finalPose, Math::Matrix< double, 6, 6 >() ) ) );
 		#endif
 		
     }
@@ -288,7 +288,7 @@ protected:
 	Dataflow::ExpansionInPort< Math::Pose > m_inCameraPoses;
 
 	/** Input port: Intrinsic matrices for each camera. */
-	Dataflow::ExpansionInPort< Math::Matrix< 3, 3 > > m_inCameraMatrices;
+	Dataflow::ExpansionInPort< Math::Matrix< double, 3, 3 > > m_inCameraMatrices;
 
 	/** Input port: Initial pose for optimization */
 	Dataflow::TriggerInPort< Measurement::Pose > m_inInitialPose;

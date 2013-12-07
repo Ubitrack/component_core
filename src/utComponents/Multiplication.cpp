@@ -132,11 +132,11 @@ Math::ErrorVector< double, 3 > operator*( const Math::ErrorPose& a, const Math::
 {
 	
 	// covariance transform
-	Matrix< 3, 6 > jacobian;
+	Matrix< double, 3, 6 > jacobian;
 	errorPoseTimesVectorJacobian( jacobian, a, b.value );
 
-	Matrix< 3, 6 > tmp;
-	Matrix< 3, 3 > newCovariance;
+	Matrix< double, 3, 6 > tmp;
+	Matrix< double, 3, 3 > newCovariance;
 
 	noalias( tmp ) = ublas::prod( jacobian, a.covariance() );
 	noalias( newCovariance ) = ublas::prod( tmp, ublas::trans( jacobian ) );

@@ -96,7 +96,7 @@ public:
 	{
 		const std::vector< Math::Vector< double, 2 > >& p2d( *m_in2d.get() );
 		const std::vector< Math::Vector< double, 3 > >& p3d( *m_in3d.get() );
-		const Math::Matrix< 3, 3 > cam = *m_inCam.get();
+		const Math::Matrix< double, 3, 3 > cam = *m_inCam.get();
 
 		if ( p2d.size() < 4 ) {
 			UBITRACK_THROW( "2D3D pose estimation configured to use at least " + boost::lexical_cast<std::string>( m_iMinCorrespondences ) + " points" );

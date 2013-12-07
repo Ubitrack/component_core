@@ -136,7 +136,7 @@ namespace Ubitrack { namespace Components {
 			matrixString >> m[i];
 		}
 
-		m_Data = Measurement::Matrix4x4 ( Math::Matrix< 4, 4 > (m) );
+		m_Data = Measurement::Matrix4x4 ( Math::Matrix< double, 4, 4 > (m) );
 	}
 
 	template<> void StaticMeasurement< Measurement::Matrix3x3 >::initMeasurement( const Ubitrack::Graph::UTQLSubgraph::GraphEdgeAttributes& config )
@@ -155,7 +155,7 @@ namespace Ubitrack { namespace Components {
 			matrixString >> m[i];
 		}
 
-		m_Data = Measurement::Matrix3x3 ( Math::Matrix< 3, 3 > (m) );
+		m_Data = Measurement::Matrix3x3 ( Math::Matrix< double, 3, 3 > (m) );
 	}
 	
 	template<> void StaticMeasurement< Measurement::Matrix3x4 >::initMeasurement( const Ubitrack::Graph::UTQLSubgraph::GraphEdgeAttributes& config )
@@ -174,7 +174,7 @@ namespace Ubitrack { namespace Components {
 			matrixString >> m[i];
 		}
 
-		m_Data = Measurement::Matrix3x4 ( Math::Matrix< 3, 4 > (m) );
+		m_Data = Measurement::Matrix3x4 ( Math::Matrix< double, 3, 4 > (m) );
 	}
 
 

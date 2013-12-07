@@ -124,7 +124,7 @@ public:
 		m_inButton = Math::Scalar< int >( inButton[ 0 ] );
 
 		mean = Math::Vector< double, 7 >::zeros();
-		outProd = Math::Matrix< 7, 7, double >::zeros( );
+		outProd = Math::Matrix< double, 7, 7 >::zeros( );
     }
 
 
@@ -148,7 +148,7 @@ public:
 				// Reset internal state
 				m_counter = 0;
 				mean = Math::Vector< double, 7 >::zeros();
-				outProd = Math::Matrix< 7, 7, double >::zeros();
+				outProd = Math::Matrix< double, 7, 7 >::zeros();
 			}
 			else 
 			{
@@ -219,7 +219,7 @@ protected:
 	bool m_bStopped;
 
 	Math::Vector< double > mean;
-	Math::Matrix< 0, 0, double > outProd;
+	Math::Matrix< double, 0, 0 > outProd;
 
 	int m_counter;
 	int m_size;
@@ -235,7 +235,7 @@ template<>
 Math::ErrorVector< double, 3 > CovarianceEstimation< Measurement::Position, Measurement::ErrorPosition >::incrementalEstimate( Math::Vector< double, 3 >& posNew )
 {
 	ublas::vector_range< typename Math::Vector< double >::base_type > posMean ( mean, ublas::range( 0, 3 ) );
-	ublas::matrix_range< typename Math::Matrix< 0, 0, double >::base_type > outProd3 ( outProd, ublas::range ( 0, 3 ), ublas::range ( 0, 3 ) );
+	ublas::matrix_range< typename Math::Matrix< double, 0, 0 >::base_type > outProd3 ( outProd, ublas::range ( 0, 3 ), ublas::range ( 0, 3 ) );
 
  	// Running mean value of position random variable
  	posMean = ( ( ((double)m_counter - 1) / (double)m_counter ) * posMean ) + ( ( 1 / (double)m_counter ) * posNew );
@@ -321,7 +321,7 @@ Math::ErrorPose CovarianceEstimation< Measurement::Pose, Measurement::ErrorPose 
 	LOG4CPP_TRACE( logger, "Running (empirical) mean / covariance: " << std::endl << ep );
 
 	// For debug purposes, compute positional and angular error...
-	Math::Matrix< 6, 6 > covar = ep.covariance();
+	Math::Matrix< double, 6, 6 > covar = ep.covariance();
 	double posRms = sqrt ( covar (0,0) + covar (1,1) + covar (2,2) );
 	LOG4CPP_INFO( logger, "RMS positional error [mm]: " << posRms );
 	Math::Vector< double, 3 > axis;

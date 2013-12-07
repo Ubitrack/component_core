@@ -102,13 +102,13 @@ public:
 		if ( m_inPort2D.get()->size() != m_inPort3D.get()->size() || m_inPort2D.get()->size() < 6 )
 			UBITRACK_THROW( "Illegal number of correspondences" );
 
-		Math::Matrix< 3, 4 > mat = Calibration::projectionDLT( *m_inPort3D.get(), *m_inPort2D.get() );
+		Math::Matrix< double, 3, 4 > mat = Calibration::projectionDLT( *m_inPort3D.get(), *m_inPort2D.get() );
 
 		// print decomposed matrix to console if logging is enabled
 		if ( logger.isDebugEnabled() )
 		{
-			Math::Matrix< 3, 3 > K;
-			Math::Matrix< 3, 3 > R;
+			Math::Matrix< double, 3, 3 > K;
+			Math::Matrix< double, 3, 3 > R;
 			Math::Vector< double, 3 > t;
 			Calibration::decomposeProjection( K, R, t, mat );
 			LOG4CPP_DEBUG( logger, "K: " << K );
