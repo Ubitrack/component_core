@@ -33,21 +33,18 @@
  */
 
 // Ubitrack
-#include <utDataflow/TriggerComponent.h>
-#include <utDataflow/ExpansionInPort.h>
-#include <utDataflow/TriggerOutPort.h>
-#include <utDataflow/ComponentFactory.h>
-#include <utMeasurement/Measurement.h>
+
+
 #include <utUtil/Exception.h>
-#include <utTracking/Average.h>
-
-// Boost
-#include <boost/math/constants/constants.hpp>
-
+#include <utMath/Stochastic/Average.h>
+#include <utMeasurement/Measurement.h>
+#include <utDataflow/TriggerOutPort.h>
+#include <utDataflow/ExpansionInPort.h>
+#include <utDataflow/TriggerComponent.h>
+#include <utDataflow/ComponentFactory.h>
 
 //LOG4CPP
-//#include <log4cpp/Category.hh>
-//static log4cpp::Category& eventLogger( log4cpp::Category::getInstance( "Ubitrack.Events.Components.Average" ) );
+#include <log4cpp/Category.hh>
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Components.Average" ) );
 
 namespace Ubitrack { namespace Components {
@@ -74,7 +71,7 @@ public:
 	}
 
 protected:
-	Tracking::Average<typename EventType::value_type,typename ResultType::value_type> m_average;
+	Math::Stochastic::Average<typename EventType::value_type,typename ResultType::value_type> m_average;
 	
 	Dataflow::ExpansionInPort< typename EventType::value_type > m_inPort;	
 	Dataflow::TriggerOutPort< ResultType > m_outPort;
