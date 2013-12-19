@@ -48,7 +48,7 @@ static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Even
 
 //#define OPTIMIZATION_LOGGING
 #include <utMath/Optimization/LevenbergMarquardt.h>
-#include <utMath/BackwardPropagation.h>
+#include <utMath/Stochastic/BackwardPropagation.h>
 
 #include <utMath/Optimization/NewFunction/Function.h>
 #include <utMath/Optimization/NewFunction/Addition.h>
@@ -260,7 +260,7 @@ public:
 				
 			// backward propagation
 			Calibration::Function::MultipleCameraProjectionErrorART< double > fe( p3d, camPs, observations ); //, *m_inCenterOfGravity.get() );
-			Math::backwardPropagationIdentity( cov, 100.0, fe, expParam );
+			Math::Stochastic::backwardPropagationIdentity( cov, 100.0, fe, expParam );
 			LOG4CPP_DEBUG( logger, "covariance: " << cov );
 			
 			m_outPortError.send( Measurement::ErrorPose( ts, Math::ErrorPose( finalPose, cov ) ) );
