@@ -46,7 +46,7 @@ static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Even
 //static log4cpp::Category& optLogger( log4cpp::Category::getInstance( "Ubitrack.Events.Components.2D3DPoseEstimation.LM" ) );
 
 //#define OPTIMIZATION_LOGGING
-#include <utMath/LevenbergMarquardt.h>
+#include <utMath/Optimization/LevenbergMarquardt.h>
 #include <utMath/BackwardPropagation.h>
 
 #include <utMath/NewFunction/Function.h>
@@ -231,7 +231,7 @@ public:
 		ublas::subrange( param, 0, 3 ) = initialPose.translation();
 		ublas::subrange( param, 3, 6 ) = initialPose.rotation().toLogarithm();
 		
-		double res = Math::levenbergMarquardt( f, param, measurements, Math::OptTerminate( 10, 1e-6 ), Math::OptNoNormalize() );
+		double res = Math::Optimization::levenbergMarquardt( f, param, measurements, Math::Optimization::OptTerminate( 10, 1e-6 ), Math::Optimization::OptNoNormalize() );
 		
 		Math::Pose finalPose( Math::Quaternion::fromLogarithm( ublas::subrange( param, 3, 6 ) ), ublas::subrange( param, 0, 3 ) );
 		LOG4CPP_DEBUG( logger, "pose: " << finalPose << ", residual: " << res );
