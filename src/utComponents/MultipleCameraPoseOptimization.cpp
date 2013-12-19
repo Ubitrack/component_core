@@ -30,7 +30,7 @@
  *
  * @author Daniel Pustka <daniel.pustka@in.tum.de>
  */
-#include <log4cpp/Category.hh>
+
 
 #include <utDataflow/TriggerComponent.h>
 #include <utDataflow/TriggerInPort.h>
@@ -42,6 +42,7 @@
 //#include <utCalibration/Function/MultipleCameraProjectionErrorART.h>
 
 // get a logger
+#include <log4cpp/Category.hh>
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Events.Components.2D3DPoseEstimation" ) );
 //static log4cpp::Category& optLogger( log4cpp::Category::getInstance( "Ubitrack.Events.Components.2D3DPoseEstimation.LM" ) );
 
@@ -49,11 +50,11 @@ static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Even
 #include <utMath/Optimization/LevenbergMarquardt.h>
 #include <utMath/BackwardPropagation.h>
 
-#include <utMath/NewFunction/Function.h>
-#include <utMath/NewFunction/Addition.h>
-#include <utMath/NewFunction/Dehomogenization.h>
-#include <utMath/NewFunction/LieRotation.h>
-#include <utMath/NewFunction/LinearTransformation.h>
+#include <utMath/Optimization/NewFunction/Function.h>
+#include <utMath/Optimization/NewFunction/Addition.h>
+#include <utMath/Optimization/NewFunction/Dehomogenization.h>
+#include <utMath/Optimization/NewFunction/LieRotation.h>
+#include <utMath/Optimization/NewFunction/LinearTransformation.h>
 
 
 namespace Ubitrack { namespace Components {
@@ -92,7 +93,7 @@ public:
 	template< class VT1, class VT2, class MT > 
 	void evaluateWithJacobian( VT1& result, const VT2& input, MT& J ) const
 	{
-		namespace NF = Math::Function;
+		namespace NF = Math::Optimization::Function;
 		namespace ublas = boost::numeric::ublas;
 		
 		for ( unsigned i = 0; i < m_vis.size(); i++ )
