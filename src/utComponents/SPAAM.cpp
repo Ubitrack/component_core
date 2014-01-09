@@ -102,14 +102,14 @@ public:
 		if ( m_inPort2D.get()->size() != m_inPort3D.get()->size() || m_inPort2D.get()->size() < 6 )
 			UBITRACK_THROW( "Illegal number of correspondences" );
 
-		Math::Matrix< 3, 4 > mat = Calibration::projectionDLT( *m_inPort3D.get(), *m_inPort2D.get() );
+		Math::Matrix< double, 3, 4 > mat = Calibration::projectionDLT( *m_inPort3D.get(), *m_inPort2D.get() );
 
 		// print decomposed matrix to console if logging is enabled
 		if ( logger.isDebugEnabled() )
 		{
-			Math::Matrix< 3, 3 > K;
-			Math::Matrix< 3, 3 > R;
-			Math::Vector< 3 > t;
+			Math::Matrix< double, 3, 3 > K;
+			Math::Matrix< double, 3, 3 > R;
+			Math::Vector< double, 3 > t;
 			Calibration::decomposeProjection( K, R, t, mat );
 			LOG4CPP_DEBUG( logger, "K: " << K );
 			LOG4CPP_DEBUG( logger, "R: " << R );
@@ -122,10 +122,10 @@ public:
 protected:
 
 	/** 2D Input port of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 2 > > m_inPort2D;
+	Dataflow::ExpansionInPort< Math::Vector< double, 2 > > m_inPort2D;
 
 	/** 3D Input port of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 3 > > m_inPort3D;
+	Dataflow::ExpansionInPort< Math::Vector< double, 3 > > m_inPort3D;
 
 	/** Output port of the component. */
 	Dataflow::TriggerOutPort< Measurement::Matrix3x4 > m_outPort;

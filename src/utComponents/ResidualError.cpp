@@ -113,9 +113,9 @@ protected:
 
 
 UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
-	cf->registerComponent< ResidualErrorComponent< Math::Vector< 3 > > > ( "ResidualError" );//kept due to conformity
-	cf->registerComponent< ResidualErrorComponent< Math::Vector< 3 > > > ( "Position3DResidualError" );
-	cf->registerComponent< ResidualErrorComponent< Math::Vector< 2 > > > ( "Position2DResidualError" );
+	cf->registerComponent< ResidualErrorComponent< Math::Vector< double, 3 > > > ( "ResidualError" );//kept due to conformity
+	cf->registerComponent< ResidualErrorComponent< Math::Vector< double, 3 > > > ( "Position3DResidualError" );
+	cf->registerComponent< ResidualErrorComponent< Math::Vector< double, 2 > > > ( "Position2DResidualError" );
 	
 
 }

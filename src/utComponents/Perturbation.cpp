@@ -117,20 +117,20 @@ public:
 	}	
 
 protected:
-	Math::Vector< 2 > perturbPosition2D( Math::Vector<2> pos ) 
+	Math::Vector< double, 2 > perturbPosition2D( Math::Vector< double, 2 > pos ) 
 	{
 		if ( dist == GAUSSIAN )
-			return pos + Math::Vector< 2 >( (*distSamplerPosNorm)(), (*distSamplerPosNorm)() );
+			return pos + Math::Vector< double, 2 >( (*distSamplerPosNorm)(), (*distSamplerPosNorm)() );
 		else
-			return pos + Math::Vector< 2 >( (*distSamplerPosUni)() / sqrt((double)2.0), (*distSamplerPosUni)() / sqrt((double)2.0) );
+			return pos + Math::Vector< double, 2 >( (*distSamplerPosUni)() / sqrt((double)2.0), (*distSamplerPosUni)() / sqrt((double)2.0) );
 	}
 
-	Math::Vector< 3 > perturbPosition( Math::Vector<3> pos ) 
+	Math::Vector< double, 3 > perturbPosition( Math::Vector< double, 3 > pos ) 
 	{
 		if ( dist == GAUSSIAN )
-			return pos + Math::Vector< 3 >( (*distSamplerPosNorm)(), (*distSamplerPosNorm)(), (*distSamplerPosNorm)() );
+			return pos + Math::Vector< double, 3 >( (*distSamplerPosNorm)(), (*distSamplerPosNorm)(), (*distSamplerPosNorm)() );
 		else
-			return pos + Math::Vector< 3 >( (*distSamplerPosUni)() / sqrt((double)3.0), (*distSamplerPosUni)() / sqrt((double)3.0), (*distSamplerPosUni)() / sqrt(double(3.0)) );
+			return pos + Math::Vector< double, 3 >( (*distSamplerPosUni)() / sqrt((double)3.0), (*distSamplerPosUni)() / sqrt((double)3.0), (*distSamplerPosUni)() / sqrt(double(3.0)) );
 	}
 	
 	Math::Quaternion perturbOrientation( Math::Quaternion rot ) 
@@ -141,7 +141,7 @@ protected:
 		 * (!)
 		 */
 		std::vector<double> stdAxis = (*distSamplerDir)();
-		Math::Vector<3> axis ( stdAxis[0], stdAxis[1], stdAxis[2] );
+		Math::Vector< double, 3 > axis ( stdAxis[0], stdAxis[1], stdAxis[2] );
 		double angle;
 		if ( dist == GAUSSIAN )
 			angle = (*distSamplerRotNorm)();
@@ -221,25 +221,25 @@ protected:
 
 
 template<>
-Math::Vector< 2 > PerturbationComponent< Measurement::Position2D >::perturb(
-	const Math::Vector< 2 >& ref )
+Math::Vector< double, 2 > PerturbationComponent< Measurement::Position2D >::perturb(
+	const Math::Vector< double, 2 >& ref )
 {
 	return perturbPosition ( ref );
 }
 
 
 template<>
-Math::Vector< 3 > PerturbationComponent< Measurement::Position >::perturb(
-	const Math::Vector< 3 >& ref )
+Math::Vector< double, 3 > PerturbationComponent< Measurement::Position >::perturb(
+	const Math::Vector< double, 3 >& ref )
 {
 	return perturbPosition ( ref );
 }
 
 
 template<>
-std::vector< Math::Vector< 2 > > PerturbationComponent< Measurement::PositionList2 >::perturb( const std::vector< Math::Vector< 2 > >& refList )
+std::vector< Math::Vector< double, 2 > > PerturbationComponent< Measurement::PositionList2 >::perturb( const std::vector< Math::Vector< double, 2 > >& refList )
 {
-	std::vector< Math::Vector< 2 > > result( refList.size() );
+	std::vector< Math::Vector< double, 2 > > result( refList.size() );
 	for ( unsigned i = 0; i < refList.size(); i++ ) 
 	{
 		result[ i ] = perturbPosition2D ( refList[ i ] );
@@ -251,9 +251,9 @@ std::vector< Math::Vector< 2 > > PerturbationComponent< Measurement::PositionLis
 
 
 template<>
-std::vector< Math::Vector< 3 > > PerturbationComponent< Measurement::PositionList >::perturb( const std::vector< Math::Vector< 3 > >& refList )
+std::vector< Math::Vector< double, 3 > > PerturbationComponent< Measurement::PositionList >::perturb( const std::vector< Math::Vector< double, 3 > >& refList )
 {
-	std::vector< Math::Vector< 3 > > result( refList.size() );
+	std::vector< Math::Vector< double, 3 > > result( refList.size() );
 	for ( unsigned i = 0; i < refList.size(); i++ ) 
 	{
 		result[ i ] = perturbPosition ( refList[ i ] );

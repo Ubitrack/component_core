@@ -91,8 +91,8 @@ public:
 			Measurement::Pose predicted( m_inPredictor.get( raw.time() ) );
 			
 			// pixel position
-			Math::Vector< 3 > posRaw( ublas::prod( *intrinsics, raw->translation() ) );
-			Math::Vector< 3 > posPredicted( ublas::prod( *intrinsics, predicted->translation() ) );
+			Math::Vector< double, 3 > posRaw( ublas::prod( *intrinsics, raw->translation() ) );
+			Math::Vector< double, 3 > posPredicted( ublas::prod( *intrinsics, predicted->translation() ) );
 			posRaw /= double( posRaw( 2 ) );
 			posPredicted /= double( posPredicted( 2 ) );
 

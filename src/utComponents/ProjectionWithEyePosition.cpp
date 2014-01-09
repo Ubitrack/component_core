@@ -89,13 +89,13 @@ public:
 		const Measurement::Pose &P_WC = m_inPortPoseWC.get();
 		Ubitrack::Math::Matrix3x3d  R_WC;
 		P_WC->rotation().toMatrix(R_WC);
-		const Ubitrack::Math::Vector<3, double> &t_WC = P_WC->translation();
+		const Ubitrack::Math::Vector< double, 3 > &t_WC = P_WC->translation();
 		/// ///////////////////
 		/// Calculate the projection matrix
 		/// ///////////////////
 		/// t = R_WC * t_CE +t_WC
 		/// P = K* [ R_WE t ]
-		Ubitrack::Math::Vector<3, double> ttmp = ublas::prod( R_WC, (*t_CE.get()) ) + t_WC;
+		Ubitrack::Math::Vector< double, 3 > ttmp = ublas::prod( R_WC, (*t_CE.get()) ) + t_WC;
 
 		Ubitrack::Math::Matrix3x4d P;
 		ublas::subrange( P, 0,3, 0,3 ) = ublas::prod( (*K_WE.get()), R_WE );

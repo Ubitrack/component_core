@@ -85,8 +85,8 @@ public:
 		if ( m_inPort.get()->size() < 3 )
 			UBITRACK_THROW( "not enough poses" );
 
-		Math::Vector< 3 > pm;
-		Math::Vector< 3 > pw;
+		Math::Vector< double, 3 > pm;
+		Math::Vector< double, 3 > pw;
 		Calibration::tipCalibration( *m_inPort.get(), pm, pw );
 
 		m_outPort.send( Measurement::Position( t, pm ) );

@@ -80,9 +80,9 @@ public:
 	/** Method that computes the result. */
 	void receiveProjectionMatrix( const Measurement::Matrix3x4 p )
 	{
-			Math::Matrix< 3, 3 > K;
-			Math::Matrix< 3, 3 > R;
-			Math::Vector< 3> t;
+			Math::Matrix< double, 3, 3 > K;
+			Math::Matrix< double, 3, 3 > R;
+			Math::Vector< double, 3 > t;
 			
 			 	
 			Calibration::decomposeProjection( K, R, t,*p);

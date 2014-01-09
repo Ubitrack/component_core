@@ -84,18 +84,18 @@ protected:
 
 
 /** multiplication operator for batch multiplication of many vectors with a pose */
-std::vector< Math::Vector< 3 > > operator*( const Math::Pose& pose, const std::vector< Math::Vector< 3 > >& p3d )
+std::vector< Math::Vector< double, 3 > > operator*( const Math::Pose& pose, const std::vector< Math::Vector< double, 3 > >& p3d )
 {
-	std::vector< Math::Vector< 3 > > result( p3d.size() );
+	std::vector< Math::Vector< double, 3 > > result( p3d.size() );
 	for ( unsigned i = 0; i < p3d.size(); i++ )
 		result[ i ] = pose * p3d[ i ];
 	return result;
 }
 
 /** multiplication operator for position "multiplication" (= addition) */
-Math::Vector<3> operator*( const Math::Vector<3>& pos1, const Math::Vector<3>& pos2 )
+Math::Vector< double, 3 > operator*( const Math::Vector< double, 3 >& pos1, const Math::Vector< double, 3 >& pos2 )
 {
-	Math::Vector<3> result;
+	Math::Vector< double, 3 > result;
 	result = pos1 + pos2;
 	return result;
 }

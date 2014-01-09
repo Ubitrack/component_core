@@ -102,7 +102,7 @@ public:
 		if ( m_inPortA.get()->size() != m_inPortB.get()->size() || m_inPortA.get()->size() < 4  )
 			UBITRACK_THROW( "Illegal number of correspondences" );
 		
-		Math::Matrix< 3, 3 > mat = Calibration::homographyDLT( *m_inPortB.get(),*m_inPortA.get() );
+		Math::Matrix< double, 3, 3 > mat = Calibration::homographyDLT( *m_inPortB.get(),*m_inPortA.get() );
 	
 		m_outPort.send( Measurement::Matrix3x3( t, mat ) );
 	}
@@ -110,10 +110,10 @@ public:
 protected:
 
 	/** 2D Input port of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 2 > > m_inPortA;
+	Dataflow::ExpansionInPort< Math::Vector< double, 2 > > m_inPortA;
 
 	/** 3D Input port of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 2 > > m_inPortB;
+	Dataflow::ExpansionInPort< Math::Vector< double, 2 > > m_inPortB;
 
 	/** Output port of the component. */
 	Dataflow::TriggerOutPort< Measurement::Matrix3x3 > m_outPort;

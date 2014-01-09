@@ -138,7 +138,7 @@ void CastComponent< Measurement::PositionList2, Measurement::Position2D >::compu
 template<>
 void CastComponent< Measurement::Pose, Measurement::Matrix3x4 >::compute( Measurement::Timestamp t )
 {
-	Math::Matrix<3,4> tmpMatrix(*m_inPort.get());
+	Math::Matrix< double, 3, 4 > tmpMatrix(*m_inPort.get());
 	m_outPort.send( Measurement::Matrix3x4( t, tmpMatrix ) );
 }
 

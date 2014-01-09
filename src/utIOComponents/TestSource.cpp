@@ -57,9 +57,9 @@ double random()
 	return double( rand() ) / RAND_MAX * 2.0 - 1.0;
 }
 
-Math::Vector< 3 > randomPosition( const Math::Vector< 3 >& ref, double noise )
+Math::Vector< double, 3 > randomPosition( const Math::Vector< double, 3 >& ref, double noise )
 {
-	return ref + Math::Vector< 3 >( random() * noise, random() * noise, random() * noise );
+	return ref + Math::Vector< double, 3 >( random() * noise, random() * noise, random() * noise );
 }
 
 Math::Quaternion randomRotation( const Math::Quaternion& ref, double noise )
@@ -227,11 +227,11 @@ protected:
 	}
 
 	/// helper function to check and parse position attribute
-	Math::Vector< 3 > readPosition( const std::string& s )
+	Math::Vector< double, 3 > readPosition( const std::string& s )
 	{
 		double position[3];
 		sscanf( s.c_str(), "%lf %lf %lf", &position[0], &position[1], &position[2] );
-		return Math::Vector<3>( position[0], position[1], position[2] );
+		return Math::Vector< double, 3 >( position[0], position[1], position[2] );
 	}
 
 	/// helper function to check and parse rotation attribute
@@ -276,7 +276,7 @@ protected:
 template<>
 void TestSource< Measurement::Position >::readStatic( const Graph::UTQLSubgraph& subgraph )
 {
-	m_staticMeasurement = Math::Vector< 3 >( 0, 0, 0 );
+	m_staticMeasurement = Math::Vector< double, 3 >( 0, 0, 0 );
 
 	std::string sAttr = subgraph.m_DataflowAttributes.getAttributeString( "position" );
 	if ( !sAttr.empty() )
@@ -299,7 +299,7 @@ template<>
 void TestSource< Measurement::Pose >::readStatic( const Graph::UTQLSubgraph& subgraph )
 {
 	Math::Quaternion rot( 0, 0, 0, 1 );
-	Math::Vector< 3 > pos( 0, 0, 0 );
+	Math::Vector< double, 3 > pos( 0, 0, 0 );
 
 	std::string sAttr = subgraph.m_DataflowAttributes.getAttributeString( "position" );
 	if ( !sAttr.empty() )
@@ -314,8 +314,8 @@ void TestSource< Measurement::Pose >::readStatic( const Graph::UTQLSubgraph& sub
 
 
 template<>
-Math::Vector< 3 > TestSource< Measurement::Position >::randomEvent(
-	const Math::Vector< 3 >& ref, double posNoise, double )
+Math::Vector< double, 3 > TestSource< Measurement::Position >::randomEvent(
+	const Math::Vector< double, 3 >& ref, double posNoise, double )
 {
 	return randomPosition( ref, posNoise );
 }

@@ -124,7 +124,7 @@ template<> void PrintSink< Measurement::PositionList >::printFunc( const Ubitrac
 {
 	std::cout << "Received Measurement for "
 			  << getName() << ": ";
-	for (std::vector< Math::Vector < 3 > >::iterator it = data->begin();
+	for (std::vector< Math::Vector< double, 3 > >::iterator it = data->begin();
 		 it != data.get()->end(); ++it)
 	{
 	  std::cout << *it << " ";
@@ -150,7 +150,7 @@ template<> void PrintSink< Measurement::DistanceList >::printFunc( const Ubitrac
 {
 	std::cout << "Received Measurement for "
 			  << getName() << ": ";
-	for (std::vector< Math::Scalar < double > >::iterator it = data->begin();
+	for (std::vector< Math::Scalar< double > >::iterator it = data->begin();
 		 it != data.get()->end(); ++it)
 	{
 	  std::cout << *it << " ";
@@ -163,7 +163,7 @@ template<> void PrintSink< Measurement::IDList >::printFunc( const Ubitrack::Mea
 {
 	std::cout << "Received Measurement for "
 			  << getName() << ": ";
-	for (std::vector< Math::Scalar < unsigned long > >::iterator it = data->begin();
+	for (std::vector< Math::Scalar< unsigned long > >::iterator it = data->begin();
 		 it != data.get()->end(); ++it)
 	{
 	  std::cout << *it << " ";
@@ -176,7 +176,7 @@ template<> void PrintSink< Measurement::PositionList2 >::printFunc( const Ubitra
 {
 	std::cout << "Received Measurement for "
 			  << getName() << ": ";
-	for (std::vector< Math::Vector < 2 > >::iterator it = data->begin();
+	for (std::vector< Math::Vector< double, 2 > >::iterator it = data->begin();
  it != data.get()->end(); ++it)
 	{
 	  std::cout << *it << " ";
