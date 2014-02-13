@@ -38,6 +38,9 @@
 #include <queue>
 #include <boost/foreach.hpp>
 #include <utUtil/CalibFile.h>
+#include <boost/archive/text_oarchive.hpp>
+#include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 #include <utMath/Stochastic/Average.h>
 
@@ -183,6 +186,8 @@ void TimeDelayEstimation::start()
 
 void TimeDelayEstimation::threadProc(){
 
+	int superindex = 0;
+
 	while ( !m_bStop )
 	{
 		std::vector<Measurement::Position>* data1 = 0;
@@ -297,15 +302,56 @@ void TimeDelayEstimation::threadProc(){
 			data2First = data2First + m_maxTimeOffsetInMs;
 
 			estimateTimeDelay(data1First, data1First+m_sliceSizeInMs, data2First, data2First+m_sliceSizeInMs);
+
+			/*
+			std::stringstream ss1;
+			ss1 << "d:\\temp\\corrdata\\corr1_"<< superindex << "_" << i << ".txt";			
+
+			std::stringstream ss2;
+			ss2 << "d:\\temp\\corrdata\\corr2_"<< superindex << "_" << i << ".txt";
+
+			
+			std::ofstream stream1(ss1.str());		
+			std::ofstream stream2(ss2.str());		
+						
+			std::string linesep( "\n" );
+
+			vec_iter tmp1 = data1First;
+			int index = 0;
+			
+			for(;tmp1 != data1First+m_sliceSizeInMs;++tmp1){
+				stream1 << index;
+				stream1 << ";";
+				stream1 << *tmp1;
+				stream1 << linesep;
+				index++;
+			}
+			vec_iter tmp2 = data2First;
+			index = 0;
+			for(;tmp2 != data2First+m_sliceSizeInMs;++tmp2){
+				stream2 << index;
+				stream2 << ";";
+				stream2 << *tmp2;
+				stream2 << linesep;
+				index++;
+			}
+			stream1.close();
+			stream2.close();
+			*/
 		}
 
 		std::map< int, std::vector< double > >::iterator it = m_correlationData.begin();
 		int offset=0;
 		double correlation=0;
+
+		/*
+		std::stringstream ss1;
+		ss1 << "d:\\temp\\corrdata\\correlation.txt";		
+		std::ofstream stream1(ss1.str());		
+		*/
 		for(;it != m_correlationData.end();++it){
 
-			//if(it->first >= -5 && it->first <= 5)
-			//	continue;
+		
 			Math::Stochastic::Average<double, double> average;
 			
 			double value = average.mean(it->second);
@@ -315,13 +361,23 @@ void TimeDelayEstimation::threadProc(){
 				offset = it->first;
 			}
 			//LOG4CPP_INFO(logger, "offset:" << it->first << " corr:" << value);
-			for(int i=0;i<it->second.size();i++){
-				//LOG4CPP_INFO(logger, it->second[i]);
-			}
+							
+			/*			
+			std::string linesep( "\n" );
+			
+			stream1 << it->first;
+			stream1 << ";";
+			stream1 << value;
+			stream1 << linesep;			
+			*/
+		
 		}
+		//stream1.close();
 
 		LOG4CPP_INFO(logger, "Result: offset:" << offset << " corr:" << correlation);
+
 		
+		superindex++;
 		
 		
 	}
@@ -357,15 +413,50 @@ void TimeDelayEstimation::estimateTimeDelay(vec_iter data1First, vec_iter data1L
 	
 	std::vector<double> data1(data1First, data1Last);
 
+	Measurement::Timestamp ts = Measurement::now();
 	
 	for(int j=-m_maxTimeOffsetInMs;j<m_maxTimeOffsetInMs;j++){
 		std::vector<double> data2(data2First+j, data2Last+j);		
 
 		double corr = Ubitrack::Calibration::computeCorrelation(data1, data2);
 		
-		//LOG4CPP_INFO(logger, "estimateTimeDelay:"<< j << ":" << corr);
-		
+				
+		//LOG4CPP_INFO(logger, "estimateTimeDelay:"<< j << ":" << corr << " : " << output.at<float>(0,0) << " : " << corr - output.at<float>(0,0));
+		/*
+		std::stringstream ss1;
+		ss1 << "d:\\temp\\corrdata\\tmpdata\\corr1_" << j << ".txt";			
 
+		std::stringstream ss2;
+		ss2 << "d:\\temp\\corrdata\\tmpdata\\corr2_" << j << ".txt";
+
+			
+		std::ofstream stream1(ss1.str());		
+		std::ofstream stream2(ss2.str());		
+						
+		std::string linesep( "\n" );
+
+		vec_iter tmp1 = data1First;			
+			
+		for(int i=0;i<data1.size();i++)	{
+			stream1 << i;
+			stream1 << ";";
+			stream1 << data1[i];
+			stream1 << ";";
+			stream1 << corr;			
+			stream1 << linesep;			
+		}
+		vec_iter tmp2 = data2First;
+		
+		for(int i=0;i<data2.size();i++)	{
+			stream2 << i;
+			stream2 << ";";
+			stream2 << data2[i];
+			stream2 << linesep;			
+		}
+		stream1.close();
+		stream2.close();
+		
+		*/
 		m_correlationData[j].push_back(corr);
 
 
