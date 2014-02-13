@@ -36,6 +36,13 @@
 #include <utMeasurement/Measurement.h>
 #include <utCalibration/Correlation.h>
 #include <queue>
+#include <boost/foreach.hpp>
+#include <utUtil/CalibFile.h>
+#include <boost/archive/text_oarchive.hpp>
+#include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+
+#include <utMath/Stochastic/Average.h>
 
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Components.TimeDelayEstimation" ) );
 
@@ -43,12 +50,16 @@ namespace ublas = boost::numeric::ublas;
 
 namespace Ubitrack { namespace Components {
 
+typedef struct{
+	double corr;
+	Measurement::Timestamp offset;
+} CorrData;
 
 class TimeDelayEstimation
 	: public Dataflow::Component
 {
 public:
-	typedef std::vector<Measurement::Position>::iterator vec_iter;
+	typedef std::vector<double>::iterator vec_iter;
 
 	/**
 	 * UTQL component constructor.
@@ -65,9 +76,9 @@ public:
 		m_data1 = new std::vector<Measurement::Position>();
 		m_data2 = new std::vector<Measurement::Position>();
 
-		m_recordSize = 10 * 1000 * 1000000LL;
-		m_sliceSize = 1 * 1000 * 1000000LL;
-		m_maxTimeOffset = 500;
+		m_recordSizeInMs = 3 * 1000;
+		m_sliceSizeInMs =  2000;		
+		m_maxTimeOffsetInMs = 200;		
     }
 
 	~TimeDelayEstimation(){
@@ -87,8 +98,8 @@ public:
 
 	void checkData(){
 		if(m_data1->size() > 0 && m_data2->size() > 0){
-			bool avail1 = (m_data1->back().time() - m_data1->front().time()) >= m_recordSize;
-			bool avail2 = (m_data2->back().time() - m_data2->front().time()) >= m_recordSize;
+			bool avail1 = (m_data1->back().time() - m_data1->front().time()) >= m_recordSizeInMs*1000000LL;
+			bool avail2 = (m_data2->back().time() - m_data2->front().time()) >= m_recordSizeInMs*1000000LL;
 			if(avail1 && avail2){
 				addDataToThread();
 			}
@@ -131,15 +142,18 @@ protected:
 	std::queue<std::vector<Measurement::Position>*> m_threadData1;
 	std::queue<std::vector<Measurement::Position>*> m_threadData2;
 
+	std::map< int, std::vector< double > > m_correlationData;
+
+
 	// the thread
 	boost::scoped_ptr< boost::thread > m_Thread;
 
 	// stop the thread?
 	volatile bool m_bStop;
 
-	int m_recordSize;
-	int m_sliceSize;
-	int m_maxTimeOffset;
+	long m_recordSizeInMs;	
+	long m_maxTimeOffsetInMs;
+	long m_sliceSizeInMs;
 	
 	
 	
@@ -151,11 +165,11 @@ void TimeDelayEstimation::stop()
 	{
 		m_running = false;
 		m_bStop = true;
-		LOG4CPP_INFO( logger, "Trying to stop highgui frame grabber");
+		LOG4CPP_INFO( logger, "Trying to stop TimeDelayEstimation");
 		if ( m_Thread )
 		{
 			m_Thread->join();
-			LOG4CPP_INFO( logger, "Trying to stop highgui frame grabber, thread joined");
+			LOG4CPP_INFO( logger, "Trying to stop TimeDelayEstimation, thread joined");
 		}
 	}
 }
@@ -172,6 +186,8 @@ void TimeDelayEstimation::start()
 
 void TimeDelayEstimation::threadProc(){
 
+	int superindex = 0;
+
 	while ( !m_bStop )
 	{
 		std::vector<Measurement::Position>* data1 = 0;
@@ -187,30 +203,182 @@ void TimeDelayEstimation::threadProc(){
 		}
 
 		if(data1 == 0){
-			Sleep(m_recordSize/4);
+			LOG4CPP_INFO(logger, "no new data");
+			Sleep(m_recordSizeInMs/4);
+			continue;
+		}
+		//new data available
+		LOG4CPP_INFO(logger, "new data");
+		
+		// check if data is useable
+		Math::Stochastic::Average<Math::Vector3d, Math::ErrorVector<double, 3 > > averageData;
+		std::vector< Math::Vector3d > tmpData;
+		for(int i=0;i < data1->size();i++){
+			tmpData.push_back(*(data1->at(i)));
+		}
+		Math::ErrorVector<double, 3 > meanWithError = averageData.mean(tmpData);
+
+		//LOG4CPP_INFO(logger, "RMS: "<< meanWithError.getRMS() << " : " << meanWithError.covariance );
+		if(meanWithError.getRMS() < 0.05){
+			LOG4CPP_INFO(logger, "too little movement, RMS:" << meanWithError.getRMS());
+			delete data1;
+			delete data2;
 			continue;
 		}
 
-		//new data available
+		
+		/*double length = 0;
+		for(int i=1;i < data1->size();i++){
+			length += ublas::norm_2(*(data1->at(i)) - *(data1->at(i-1))) ;
+		}
+		if(length < 0.7){
+			LOG4CPP_INFO(logger, "too short:" << length);
+			delete data1;
+			delete data2;
+			continue;
+		}
+		LOG4CPP_INFO(logger, "length:" << length);
+		*/
 
 		// get first common timestamp
-		Measurement::Timestamp startTime = std::max(m_data1->front().time(), m_data2->front().time());
+		Measurement::Timestamp startTime = std::max(data1->front().time(), data2->front().time());
+		Measurement::Timestamp endTime = std::min(data1->back().time(), data2->back().time());
 		
 		// interpolate data in ms steps
-		std::vector<double>::size_type totalCount = m_recordSize/1000000LL;
-		std::vector<double> corr_data1(totalCount);
-		std::vector<double> corr_data2(totalCount);
+		std::vector<double>::size_type totalCount = (endTime - startTime) / 1000000L;
+		LOG4CPP_INFO(logger, "totalCount:"<<totalCount);
+		std::vector<double> corr_data1;
+		corr_data1.reserve(totalCount);
+		std::vector<double> corr_data2;
+		corr_data2.reserve(totalCount);
+
+		//std::vector<Math::Scalar<double> > corr_data1Test1;
+		//std::vector<Math::Scalar<double> > corr_data1Test2;
 
 		for(std::vector<double>::size_type i=0;i<totalCount;i++){
 			Measurement::Timestamp t = startTime+i*1000000LL;
 			Math::Vector3d p1 = interpolate(*data1, t);
 			Math::Vector3d p2 = interpolate(*data2, t);
 
+			//LOG4CPP_INFO(logger, "time:" << t << " value" << p1 );
+						
 			// reduce to one dimension
 			corr_data1.push_back( ublas::norm_2(p1) );
 			corr_data2.push_back( ublas::norm_2(p2) );
+			//corr_data1Test1.push_back( Math::Scalar<double>(ublas::norm_2(p1)));
+			//corr_data1Test2.push_back( Math::Scalar<double>(ublas::norm_2(p2)));
+		}
+		/*
+		Measurement::DistanceList n1(startTime, corr_data1Test1);
+		Measurement::DistanceList n2(startTime, corr_data1Test2);
+		
+		std::stringstream ss1;
+		ss1 << "d:\\temp\\corr1" << startTime << ".txt";
+		Util::writeCalibFile( ss1.str(), n1 );
+
+		std::stringstream ss2;
+		ss2 << "d:\\temp\\corr2" << startTime << ".txt";
+		Util::writeCalibFile( ss2.str(), n2 );
+		*/
+	
+
+		delete data1;
+		delete data2;
+
+		
+
+		// select slices and estimate time delay
+		LOG4CPP_INFO(logger, "corr_data1:"<<corr_data1.size());
+
+		int countSlices = (corr_data1.size() - m_maxTimeOffsetInMs*2) / m_sliceSizeInMs;
+
+		LOG4CPP_INFO(logger, "count of slices:" << countSlices);
+
+		 vec_iter data1First = corr_data1.begin(); 
+		 vec_iter data2First = corr_data2.begin();
+
+		for(int i=0;i<countSlices;i++){
+			data1First = data1First + m_maxTimeOffsetInMs;
+			data2First = data2First + m_maxTimeOffsetInMs;
+
+			estimateTimeDelay(data1First, data1First+m_sliceSizeInMs, data2First, data2First+m_sliceSizeInMs);
+
+			/*
+			std::stringstream ss1;
+			ss1 << "d:\\temp\\corrdata\\corr1_"<< superindex << "_" << i << ".txt";			
+
+			std::stringstream ss2;
+			ss2 << "d:\\temp\\corrdata\\corr2_"<< superindex << "_" << i << ".txt";
+
+			
+			std::ofstream stream1(ss1.str());		
+			std::ofstream stream2(ss2.str());		
+						
+			std::string linesep( "\n" );
+
+			vec_iter tmp1 = data1First;
+			int index = 0;
+			
+			for(;tmp1 != data1First+m_sliceSizeInMs;++tmp1){
+				stream1 << index;
+				stream1 << ";";
+				stream1 << *tmp1;
+				stream1 << linesep;
+				index++;
+			}
+			vec_iter tmp2 = data2First;
+			index = 0;
+			for(;tmp2 != data2First+m_sliceSizeInMs;++tmp2){
+				stream2 << index;
+				stream2 << ";";
+				stream2 << *tmp2;
+				stream2 << linesep;
+				index++;
+			}
+			stream1.close();
+			stream2.close();
+			*/
 		}
 
+		std::map< int, std::vector< double > >::iterator it = m_correlationData.begin();
+		int offset=0;
+		double correlation=0;
+
+		/*
+		std::stringstream ss1;
+		ss1 << "d:\\temp\\corrdata\\correlation.txt";		
+		std::ofstream stream1(ss1.str());		
+		*/
+		for(;it != m_correlationData.end();++it){
+
+		
+			Math::Stochastic::Average<double, double> average;
+			
+			double value = average.mean(it->second);
+			if(correlation < value)
+			{
+				correlation = value;
+				offset = it->first;
+			}
+			//LOG4CPP_INFO(logger, "offset:" << it->first << " corr:" << value);
+							
+			/*			
+			std::string linesep( "\n" );
+			
+			stream1 << it->first;
+			stream1 << ";";
+			stream1 << value;
+			stream1 << linesep;			
+			*/
+		
+		}
+		//stream1.close();
+
+		LOG4CPP_INFO(logger, "Result: offset:" << offset << " corr:" << correlation);
+
+		
+		superindex++;
+		
 		
 	}
 }
@@ -218,8 +386,9 @@ void TimeDelayEstimation::threadProc(){
 Math::Vector3d TimeDelayEstimation::interpolate(const std::vector<Measurement::Position>& data, Measurement::Timestamp t){
 		Measurement::Position p1,p2;
 		double factor = 1.0;		
-		for(int i=1; i<data.size();i++){
-			if(data[i].time() > t){
+		for(int i=0; i<data.size();i++){
+			if(data[i].time() > t){				
+
 				p1 = data[i-1];
 				p2 = data[i];
 				Measurement::Timestamp eventDifference = p2.time() - p1.time();
@@ -241,50 +410,59 @@ Math::Vector3d TimeDelayEstimation::interpolate(const std::vector<Measurement::P
 	}
 
 void TimeDelayEstimation::estimateTimeDelay(vec_iter data1First, vec_iter data1Last, vec_iter data2First, vec_iter data2Last){
-		Measurement::Timestamp startTime = std::min(m_data1->front().time(), m_data2->front().time());
+	
+	std::vector<double> data1(data1First, data1Last);
 
-		startTime = startTime + 500*1000000LL;
+	Measurement::Timestamp ts = Measurement::now();
+	
+	for(int j=-m_maxTimeOffsetInMs;j<m_maxTimeOffsetInMs;j++){
+		std::vector<double> data2(data2First+j, data2Last+j);		
 
-		std::vector<double> corr_data1;
-		std::vector<double> corr_data2;
+		double corr = Ubitrack::Calibration::computeCorrelation(data1, data2);
+		
+				
+		//LOG4CPP_INFO(logger, "estimateTimeDelay:"<< j << ":" << corr << " : " << output.at<float>(0,0) << " : " << corr - output.at<float>(0,0));
+		/*
+		std::stringstream ss1;
+		ss1 << "d:\\temp\\corrdata\\tmpdata\\corr1_" << j << ".txt";			
 
-		corr_data1.reserve(1000);
-		corr_data2.reserve(1000);
+		std::stringstream ss2;
+		ss2 << "d:\\temp\\corrdata\\tmpdata\\corr2_" << j << ".txt";
 
-		for(int i=0;i<1000;i++){
-			Measurement::Timestamp t = startTime+i*1000000LL;
-			Math::Vector3d p1 = interpolate(*m_data1, t);
+			
+		std::ofstream stream1(ss1.str());		
+		std::ofstream stream2(ss2.str());		
+						
+		std::string linesep( "\n" );
 
-			corr_data1.push_back( ublas::norm_2(p1) );
+		vec_iter tmp1 = data1First;			
+			
+		for(int i=0;i<data1.size();i++)	{
+			stream1 << i;
+			stream1 << ";";
+			stream1 << data1[i];
+			stream1 << ";";
+			stream1 << corr;			
+			stream1 << linesep;			
 		}
-
-		int timeDelay = 0;
-		double correlation = 0;
-
-		for(int j=-500;j<500;j++){
-			corr_data2.clear();
-
-			for(int i=0;i<1000;i++){
-				Measurement::Timestamp t = startTime+(i+j)*1000000LL;
-				Math::Vector3d p2 = interpolate(*m_data2, t);
-
-				corr_data2.push_back( ublas::norm_2(p2) );
-			}
-
-			double corr = Ubitrack::Calibration::computeCorrelation(corr_data1, corr_data2);
-			if(corr > correlation){
-				correlation = corr;
-				timeDelay = j;
-			}
-
+		vec_iter tmp2 = data2First;
+		
+		for(int i=0;i<data2.size();i++)	{
+			stream2 << i;
+			stream2 << ";";
+			stream2 << data2[i];
+			stream2 << linesep;			
 		}
+		stream1.close();
+		stream2.close();
+		
+		*/
+		m_correlationData[j].push_back(corr);
 
-		
 
-		
-		LOG4CPP_INFO(logger, "TimeDelayEstimation:" << timeDelay << " corr:" << correlation);
-		
 	}
+
+}
 
 
 UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
