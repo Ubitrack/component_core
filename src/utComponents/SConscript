@@ -49,7 +49,6 @@ if not have_lapack:
 component_options = mergeOptions( utdataflow_all_options)
 env = masterEnv.Clone()
 env.AppendUnique( **component_options )
-env.AppendUnique( **opencv_options )
 		
 # d)
 # library is component, nothing to export

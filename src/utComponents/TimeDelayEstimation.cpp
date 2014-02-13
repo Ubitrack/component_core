@@ -39,9 +39,6 @@
 #include <boost/foreach.hpp>
 #include <utUtil/CalibFile.h>
 #include <boost/archive/text_oarchive.hpp>
-#include <opencv2/opencv.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-
 #include <utMath/Stochastic/Average.h>
 
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Components.TimeDelayEstimation" ) );
