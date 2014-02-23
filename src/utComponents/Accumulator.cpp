@@ -36,24 +36,25 @@
  * @author Florian Echtler <echtler@in.tum.de>
  */
 
-#include <boost/bind.hpp>
-//#include <log4cpp/Category.hh>
-
-#include <utDataflow/PullConsumer.h>
 #include <utDataflow/PushConsumer.h>
 #include <utDataflow/PushSupplier.h>
 #include <utDataflow/Component.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
 
+#include <boost/bind.hpp>
+
 // currently unused
+// #include <log4cpp/Category.hh>
 // static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Components.Accumulator" ) );
 
 namespace Ubitrack { namespace Components {
 
 using namespace Dataflow;
 
-template< class EventType > class Accumulator : public Component
+template< class EventType >
+class Accumulator
+	: public Component
 {
 public:
 	/**
@@ -96,7 +97,9 @@ protected:
 	}
 
 	/** Properties of the accumulator*/
-	unsigned int m_maxLength,m_size;
+	std::size_t m_maxLength;
+	
+	std::size_t m_size;
 	std::vector< typename EventType::value_type > m_data;
 
 	/** Ports of the component */

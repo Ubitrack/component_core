@@ -35,6 +35,7 @@
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
+#include <utMath/VectorFunctions.h> // cross_product
 
 namespace ublas = boost::numeric::ublas;
 
@@ -52,7 +53,7 @@ template<> Math::Quaternion calculate< Math::Vector< double, 3 > >( Math::Vector
 	Math::Vector< double, 3 > dir = (~pose1) * pos2;
 	dir = dir / ublas::norm_2( dir );
 
-	Math::Vector< double, 3 > axis = cross_prod( orig, dir );
+	Math::Vector< double, 3 > axis = cross_product( orig, dir );
 	
 	Math::Quaternion q( axis[0], axis[1], axis[2], 1 + ublas::inner_prod( orig, dir ) );
 	q.normalize();
