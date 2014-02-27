@@ -170,5 +170,9 @@ typedef Buffer< Measurement::PositionList > PositionListBuffer;
 typedef Buffer< Measurement::PositionList2 > PositionList2Buffer;
 typedef Buffer< Measurement::RotationVelocity > RotationVelocityBuffer;
 typedef Buffer< Measurement::Button > SkalarBuffer;
+typedef Buffer< Measurement::Matrix4x4 > Matrix4x4Buffer;
+typedef Buffer< Measurement::Matrix3x4 > Matrix3x4Buffer;
+typedef Buffer< Measurement::Matrix3x3 > Matrix3x3Buffer;
+
 
 } } // namespace Ubitrack::Components

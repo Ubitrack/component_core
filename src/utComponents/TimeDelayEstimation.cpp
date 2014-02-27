@@ -38,6 +38,7 @@
 #include <queue>
 #include <boost/foreach.hpp>
 #include <utUtil/CalibFile.h>
+#include <utUtil/OS.h>
 #include <boost/archive/text_oarchive.hpp>
 #include <utMath/Stochastic/Average.h>
 
@@ -201,7 +202,7 @@ void TimeDelayEstimation::threadProc(){
 
 		if(data1 == 0){
 			LOG4CPP_INFO(logger, "no new data");
-			Sleep(m_recordSizeInMs/4);
+			Ubitrack::Util::sleep(m_recordSizeInMs/4);
 			continue;
 		}
 		//new data available
