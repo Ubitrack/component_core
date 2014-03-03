@@ -75,7 +75,7 @@ public:
 		, m_inPort( "Input", *this, boost::bind( &KeyFrameSignalGenerator::receiveMeasurement, this, _1 ) )
 		, m_outPort( "Output", *this )
 		, m_button( ' ' )
-		, m_minTranslation(0.1)
+		, m_minDistance(0.1)
 		, m_logger( log4cpp::Category::getInstance( "Ubitrack.Components.KeyFrameSignalGenerator" ) )
     {
 		// read button key
@@ -85,7 +85,7 @@ public:
 			button = subgraph->m_DataflowAttributes.getAttributeString( "button" );
 		
 		
-		subgraph->m_DataflowAttributes.getAttributeData<double>( "minTranslation", m_minTranslation );
+		subgraph->m_DataflowAttributes.getAttributeData<double>( "minDistance", m_minDistance );
 			
 			
 			
@@ -116,7 +116,7 @@ protected:
     /** log4cpp logger reference */
     log4cpp::Category& m_logger;	
 	
-	double m_minTranslation;
+	double m_minDistance;
 	
 	bool sufficientMovement( const typename EventType& );
 };
@@ -133,15 +133,56 @@ bool KeyFrameSignalGenerator< Measurement::Pose >::sufficientMovement( const Mea
 	
 	double distance = norm_2 ( m_lastMeasurement->translation() - pose->translation() );
 	
-	if(distance > m_minTranslation){
+	if(distance > m_minDistance){
 		m_lastMeasurement = pose;
 		return true;
 	} else 
 		return false;	 	
 };
 
+template<>
+bool KeyFrameSignalGenerator< Measurement::Position >::sufficientMovement( const Measurement::Position& pos )
+{
+	if(m_lastMeasurement.time() == 0)
+	{
+		m_lastMeasurement = pos;
+		return true;
+		
+	}
+	
+	double distance = norm_2 ( *m_lastMeasurement - *pos );
+	
+	if(distance > m_minDistance){
+		m_lastMeasurement = pos;
+		return true;
+	} else 
+		return false;	 	
+};
+
+template<>
+bool KeyFrameSignalGenerator< Measurement::Rotation >::sufficientMovement( const Measurement::Rotation& rot )
+{
+	if(m_lastMeasurement.time() == 0)
+	{
+		m_lastMeasurement = rot;
+		return true;
+		
+	}
+	Math::Quaternion qdiff = (*m_lastMeasurement - *rot);
+	double distance = std::abs(qdiff.angle());
+	
+	if(distance > m_minDistance){
+		m_lastMeasurement = rot;
+		return true;
+	} else 
+		return false;	 	
+};
+
+
 UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
     cf->registerComponent< KeyFrameSignalGenerator< Measurement::Pose > > ( "PoseKeyFrameSignalGenerator" );
+    cf->registerComponent< KeyFrameSignalGenerator< Measurement::Position > > ( "PositionKeyFrameSignalGenerator" );
+    cf->registerComponent< KeyFrameSignalGenerator< Measurement::Rotation > > ( "RotationKeyFrameSignalGenerator" );
 }
 
 } } // namespace Ubitrack::Components

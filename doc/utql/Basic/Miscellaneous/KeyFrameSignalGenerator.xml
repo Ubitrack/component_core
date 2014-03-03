@@ -32,13 +32,75 @@
         <DataflowConfiguration>
             <UbitrackLib class="PoseKeyFrameSignalGenerator"/>
             <Attribute name="button" xsi:type="StringAttributeReferenceType"/>			
-			<Attribute name="minTranslation" displayName="minTranslation" default="0.1" xsi:type="StringAttributeDeclarationType">
+			<Attribute name="minDistance" displayName="minDistance" default="0.1" xsi:type="StringAttributeDeclarationType">
             	
             </Attribute>
         </DataflowConfiguration>
     </Pattern>
     
-  
+    <Pattern name="PositionKeyFrameSignalGenerator" displayName="Key Frame Signal Generator (Position)">
+    	<Description>
+        </Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+           <Edge name="Input" source="A" destination="B" displayName="Trigger Push Input">
+            	<Description><h:p>Trigger input</h:p></Description>
+                <Predicate>type=='3DPosition'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        <Output>
+            <Node name="C" displayName="C"/>
+            <Node name="D" displayName="D"/>
+             <Edge name="Output" source="C" destination="D" displayName="Triggered Signal">
+            	<Description><h:p>The triggered signal event.</h:p></Description>
+                <Attribute name="type" value="Button" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionKeyFrameSignalGenerator"/>
+            <Attribute name="button" xsi:type="StringAttributeReferenceType"/>			
+			<Attribute name="minDistance" displayName="minDistance" default="0.1" xsi:type="StringAttributeDeclarationType">
+            	
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+
+	<Pattern name="RotationKeyFrameSignalGenerator" displayName="Key Frame Signal Generator (Rotation)">
+    	<Description>
+        </Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+           <Edge name="Input" source="A" destination="B" displayName="Trigger Push Input">
+            	<Description><h:p>Trigger input</h:p></Description>
+                <Predicate>type=='3DRotation'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        <Output>
+            <Node name="C" displayName="C"/>
+            <Node name="D" displayName="D"/>
+             <Edge name="Output" source="C" destination="D" displayName="Triggered Signal">
+            	<Description><h:p>The triggered signal event.</h:p></Description>
+                <Attribute name="type" value="Button" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="RotationKeyFrameSignalGenerator"/>
+            <Attribute name="button" xsi:type="StringAttributeReferenceType"/>			
+			<Attribute name="minDistance" displayName="minDistance" default="0.1" xsi:type="StringAttributeDeclarationType">
+            	
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+
+	
         
     <!-- Attribute declarations -->
 
