@@ -118,7 +118,7 @@ protected:
 	
 	double m_minDistance;
 	
-	bool sufficientMovement( const typename EventType& );
+	bool sufficientMovement( const EventType& );
 };
 
 template<>
