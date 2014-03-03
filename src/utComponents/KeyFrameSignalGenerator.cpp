@@ -168,7 +168,7 @@ bool KeyFrameSignalGenerator< Measurement::Rotation >::sufficientMovement( const
 		return true;
 		
 	}
-	Math::Quaternion qdiff = (*m_lastMeasurement - *rot);
+	Math::Quaternion qdiff = ((*m_lastMeasurement) * ~(*rot));
 	double distance = std::abs(qdiff.angle());
 	
 	if(distance > m_minDistance){
