@@ -137,4 +137,5 @@ UBITRACK_REGISTER_COMPONENT( Ubitrack::Dataflow::ComponentFactory* const cf )
 	cf->registerComponent< Ubitrack::Drivers::Recorder< Ubitrack::Measurement::PositionList2 > > ( "PositionList2Recorder" );
 	cf->registerComponent< Ubitrack::Drivers::Recorder< Ubitrack::Measurement::PoseList > > ( "PoseListRecorder" );
 	cf->registerComponent< Ubitrack::Drivers::Recorder< Ubitrack::Measurement::Matrix3x4 > > ( "Matrix3x4Recorder" );
+	cf->registerComponent< Ubitrack::Drivers::Recorder< Ubitrack::Measurement::Matrix3x3 > > ( "Matrix3x3Recorder" );
 }
