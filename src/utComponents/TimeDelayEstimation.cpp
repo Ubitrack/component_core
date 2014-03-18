@@ -28,20 +28,24 @@
  * TimeDelayEstimation component.
  * This file contains a TimeDelayEstimation of two inputs implemented as a \c TriggerComponent.
  *
- * @author Daniel Pustka <daniel.pustka@in.tum.de>
+ * @author Daniel Pustka <daniel.pustka@in.tum.de> ?really?
  */
+ 
+#include <utUtil/OS.h>
+#include <utUtil/CalibFile.h>
+
+
 #include <utDataflow/Component.h>
 #include <utDataflow/PushConsumer.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utCalibration/Correlation.h>
-#include <queue>
-#include <boost/foreach.hpp>
-#include <utUtil/CalibFile.h>
-#include <utUtil/OS.h>
-#include <boost/archive/text_oarchive.hpp>
-#include <utMath/Stochastic/Average.h>
 
+#include <utMath/Stochastic/Average.h>
+#include <utCalibration/Correlation.h>
+
+#include <queue> // std::queue
+
+#include <log4cpp/Category.hh>
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Components.TimeDelayEstimation" ) );
 
 namespace ublas = boost::numeric::ublas;

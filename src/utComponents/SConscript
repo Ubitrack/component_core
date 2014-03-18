@@ -39,9 +39,9 @@ if not have_utdataflow:
 # b)
 comp_sources = globSourceFiles( '*.cpp' )
 
-# remove components that require a not present feature
+# remove components that require a not present feature (alphabetical list)
 if not have_lapack:
-	for src in [ 'RotHecKalmanFilter.cpp', 'RotOnlyKalmanFilter.cpp', 'HomogeneousMatrixEstimation.cpp', 'DecomposeProjectionMatrix.cpp', 'SPAAM.cpp', 'AbsoluteOrientation.cpp', 'AbsoluteOrientationRANSAC.cpp', 'OnlineRotHec.cpp', '2D3DPoseEstimation.cpp', 'HandEyeCalibration.cpp', 'PoseKalmanFilter.cpp', 'TipCalibration.cpp', 'MultipleCameraPoseOptimization.cpp' ]:
+	for src in [ '2D3DPoseEstimation.cpp', 'AbsoluteOrientation.cpp', 'AbsoluteOrientationRANSAC.cpp', 'DecomposeProjectionMatrix.cpp',  'HandEyeCalibration.cpp', 'HomogeneousMatrixEstimation.cpp', 'MultipleCameraPoseOptimization.cpp', 'OnlineRotHec.cpp',  'PoseKalmanFilter.cpp', 'RotHecKalmanFilter.cpp', 'RotOnlyKalmanFilter.cpp', 'SPAAM.cpp', 'TimeDelayEstimation.cpp', 'TipCalibration.cpp' ]:
 		comp_sources.remove( src );
 
 
