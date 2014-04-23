@@ -38,7 +38,7 @@
 #include <utDataflow/PullSupplier.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utCalibration/RotationHecKalmanFilter.h>
+#include <utAlgorithm/RotationHecKalmanFilter.h>
 
 // get a logger
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Components.RotHecKalmanFilter" ) );
@@ -159,7 +159,7 @@ protected:
 	Dataflow::PullSupplier< Measurement::Rotation > m_out;
 
 	// the kalman filter
-	Calibration::RotationHecKalmanFilter m_kf;
+	Algorithm::RotationHecKalmanFilter m_kf;
 };
 
 

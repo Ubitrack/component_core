@@ -34,7 +34,7 @@
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utCalibration/TipCalibration.h>
+#include <utAlgorithm/TipCalibration.h>
 
 namespace Ubitrack { namespace Components {
 
@@ -54,7 +54,7 @@ namespace Ubitrack { namespace Components {
  * @par Operation
  * The component computes the location of a tip in the coordinate frame of a marker,
  * given a list of at least three marker poses. For details see
- * \c Ubitrack::Calibration::tipCalibration.
+ * \c Ubitrack::Algorithm::tipCalibration.
  *
  * @par Instances
  * Registered for the following expansions and push/pull configurations:
@@ -87,7 +87,7 @@ public:
 
 		Math::Vector< double, 3 > pm;
 		Math::Vector< double, 3 > pw;
-		Calibration::tipCalibration( *m_inPort.get(), pm, pw );
+		Algorithm::tipCalibration( *m_inPort.get(), pm, pw );
 
 		m_outPort.send( Measurement::Position( t, pm ) );
     }

@@ -37,7 +37,7 @@
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utCalibration/Homography.h>
+#include <utAlgorithm/Homography.h>
 
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Components.HomogeneousMatrixEstimation" ) );
 
@@ -62,7 +62,7 @@ namespace Ubitrack { namespace Components {
  * @par Operation
  * The component computes 3x3 Homogeneous Matrix Estimation from 2D to 2D,
  * given corresponding points in Input2D and 1_Input2D. For details see 
- * \c Ubitrack::Calibration::projectionDLT.
+ * \c Ubitrack::Algorithm::projectionDLT.
  *
  * @par Instances
  * Registered for the following expansions and push/pull configurations:
@@ -102,7 +102,7 @@ public:
 		if ( m_inPortA.get()->size() != m_inPortB.get()->size() || m_inPortA.get()->size() < 4  )
 			UBITRACK_THROW( "Illegal number of correspondences" );
 		
-		Math::Matrix< double, 3, 3 > mat = Calibration::homographyDLT( *m_inPortB.get(),*m_inPortA.get() );
+		Math::Matrix< double, 3, 3 > mat = Algorithm::homographyDLT( *m_inPortB.get(),*m_inPortA.get() );
 	
 		m_outPort.send( Measurement::Matrix3x3( t, mat ) );
 	}

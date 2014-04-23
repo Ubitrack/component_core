@@ -36,7 +36,7 @@
 #include <utMeasurement/Measurement.h>
 #include <utMath/Vector.h>
 
-#include <utCalibration/HandEyeCalibration.h>
+#include <utAlgorithm/HandEyeCalibration.h>
 
 // get a logger
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Components.HandEyeCalibration" ) );
@@ -85,7 +85,7 @@ public:
 		if ( m_handPort.get()->size() != m_objectPort.get()->size() || m_handPort.get()->size() < 2 )
 			UBITRACK_THROW( "Illegal number of correspondences" );
 
-		boost::shared_ptr< Math::Pose > p( new Math::Pose( Calibration::performHandEyeCalibration( *m_handPort.get(), *m_objectPort.get() ) ) );
+		boost::shared_ptr< Math::Pose > p( new Math::Pose( Algorithm::performHandEyeCalibration( *m_handPort.get(), *m_objectPort.get() ) ) );
 		
 		m_transfPort.send( Measurement::Pose ( t, p ) );
 	}

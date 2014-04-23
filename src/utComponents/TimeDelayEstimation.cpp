@@ -41,7 +41,7 @@
 #include <utMeasurement/Measurement.h>
 
 #include <utMath/Stochastic/Average.h>
-#include <utCalibration/Correlation.h>
+#include <utAlgorithm/Correlation.h>
 
 #include <queue> // std::queue
 
@@ -420,7 +420,7 @@ void TimeDelayEstimation::estimateTimeDelay(vec_iter data1First, vec_iter data1L
 	for(int j=-m_maxTimeOffsetInMs;j<m_maxTimeOffsetInMs;j++){
 		std::vector<double> data2(data2First+j, data2Last+j);		
 
-		double corr = Ubitrack::Calibration::computeCorrelation(data1, data2);
+		double corr = Ubitrack::Algorithm::computeCorrelation(data1, data2);
 		
 				
 		//LOG4CPP_INFO(logger, "estimateTimeDelay:"<< j << ":" << corr << " : " << output.at<float>(0,0) << " : " << corr - output.at<float>(0,0));
