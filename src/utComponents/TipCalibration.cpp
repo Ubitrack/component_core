@@ -34,7 +34,7 @@
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utAlgorithm/TipCalibration.h>
+#include <utAlgorithm/ToolTip/TipCalibration.h>
 
 namespace Ubitrack { namespace Components {
 
@@ -87,7 +87,7 @@ public:
 
 		Math::Vector< double, 3 > pm;
 		Math::Vector< double, 3 > pw;
-		Algorithm::tipCalibration( *m_inPort.get(), pm, pw );
+		Algorithm::ToolTip::tipCalibration( *m_inPort.get(), pm, pw );
 
 		m_outPort.send( Measurement::Position( t, pm ) );
     }
