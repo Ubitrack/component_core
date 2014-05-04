@@ -92,24 +92,24 @@ public:
 
 		/// (R_WS,t_WS)
 		const Measurement::Pose &P_WS = m_inPortPoseWS.get();
-		Ubitrack::Math::Matrix3x3  R_WS;
+		Ubitrack::Math::Matrix3x3d  R_WS;
 		P_WS->rotation().toMatrix(R_WS); /// This operation accumrates numerical error about 0.5 %
-		const Ubitrack::Math::Vector<3, double> &t_WS = P_WS->translation();
+		const Ubitrack::Math::Vector3d &t_WS = P_WS->translation();
 		
 		/// Translation from the eye to the eye tracker: t_ET
-		const Ubitrack::Math::Vector<3, double> &t_ET = m_inPortPositionET.get()->content();
+		const Ubitrack::Math::Vector3d &t_ET = m_inPortPositionET.get()->content();
 		
 		/// Translation from the eye tracker to the world: (R_WT,t_WT)
 		const Measurement::Pose &P_WT = m_inPortPoseWT.get();
-		Ubitrack::Math::Matrix3x3  R_WT;
+		Ubitrack::Math::Matrix3x3d  R_WT;
 		P_WT->rotation().toMatrix(R_WT); /// This operation accumrates numerical error about 0.5 %
-		const Ubitrack::Math::Vector<3, double> &t_WT = P_WT->translation();
+		const Ubitrack::Math::Vector3d &t_WT = P_WT->translation();
 		
 		///  -R_WS*(-R_WT'*t_WT+ R_WT'*t_ET);
 		/// =-R_WS*R_WT'*(t_ET-t_WT);
-		const Ubitrack::Math::Vector<3, double> &t_ET_min_t_WT = t_ET-t_WT;
-		const Ubitrack::Math::Vector<3, double> &tmpVec = ublas::prod( ublas::trans(R_WT), t_ET_min_t_WT);
-		const Ubitrack::Math::Vector<3, double> t_WE = - ublas::prod( R_WS, tmpVec ); 
+		const Ubitrack::Math::Vector3d &t_ET_min_t_WT = t_ET-t_WT;
+		const Ubitrack::Math::Vector3d &tmpVec = ublas::prod( ublas::trans(R_WT), t_ET_min_t_WT);
+		const Ubitrack::Math::Vector3d    t_WE = - ublas::prod( R_WS, tmpVec ); 
 
 
 		/// ///////////////////
@@ -118,7 +118,7 @@ public:
 		/*
 		t_WE = -R_WS*(-R_WT'*t_WT+ R_WT'*t_ET);
 		*/
-		const Ubitrack::Math::Vector<3, double> t_WE_t_WS = t_WE-t_WS;
+		const Ubitrack::Math::Vector3d t_WE_t_WS = t_WE-t_WS;
 
 		/*
 		b  = (t_WE - t_WS);
@@ -129,11 +129,11 @@ public:
 		      0 bz -by;
 		      0  0  1];
 	  */
-		Ubitrack::Math::Matrix3x3 A;
+		Ubitrack::Math::Matrix3x3d A;
 		A(0,0) = alpha; A(0,1) = 0.0;   A(0,2) = 1280/2-0.5;
 		A(1,0) = 0.0;   A(1,1) = alpha; A(1,2) = 1024/2-0.5;
 		A(2,0) = 0.0;   A(2,1) = 0.0;   A(2,2) = 1.0;
-		Ubitrack::Math::Matrix3x3 S;
+		Ubitrack::Math::Matrix3x3d S;
 		S(0,0) = t_WE_t_WS(2); S(0,1) = 0.0;          S(0,2) = -t_WE_t_WS(0);
 		S(1,0) = 0.0;          S(1,1) = t_WE_t_WS(2); S(1,2) = -t_WE_t_WS(1);
 		S(2,0) = 0.0;          S(2,1) = 0.0;          S(2,2) = 1.0;
@@ -142,8 +142,8 @@ public:
 		/// Calculate the projection matrix
 		/// ///////////////////
 		/// P_WE = K_E0*K2*[R_WS t_WE];
-		Ubitrack::Math::Matrix3x4 P;
-		Ubitrack::Math::Matrix3x3 AK = ublas::prod( A, S );
+		Ubitrack::Math::Matrix3x4d P;
+		Ubitrack::Math::Matrix3x3d AK = ublas::prod( A, S );
 		/// ublas::subrange( P, start_x, x_num, start_y, y_num )
 
 		// /// Convert projection paramters to Ubitrack format
@@ -155,7 +155,7 @@ public:
 
 
 		ublas::subrange( P, 0,3, 0,3 )     = ublas::prod( AK, R_WS );
-		Ubitrack::Math::Vector<3, double> ttmp = ublas::prod( AK, t_WE);
+		Ubitrack::Math::Vector3d ttmp = ublas::prod( AK, t_WE);
 		P(0,3) = ttmp[0];
 		P(1,3) = ttmp[1];
 		P(2,3) = ttmp[2];
