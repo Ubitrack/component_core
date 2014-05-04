@@ -39,6 +39,7 @@
  *  year      = {2014}
  * }
  * @author Yuta Itoh <yuta.itoh@in.tum.de>
+ * @date 2013
  */
 #include <utDataflow/TriggerComponent.h>
 #include <utDataflow/TriggerInPort.h>
@@ -142,16 +143,26 @@ public:
 		/// ///////////////////
 		/// P_WE = K_E0*K2*[R_WS t_WE];
 		Ubitrack::Math::Matrix3x4 P;
-		const Ubitrack::Math::Matrix3x3 AK = ublas::prod( A, S );
+		Ubitrack::Math::Matrix3x3 AK = ublas::prod( A, S );
 		/// ublas::subrange( P, start_x, x_num, start_y, y_num )
+
+		// /// Convert projection paramters to Ubitrack format
+		//for(size_t r=0;r<3;r++){
+		//	for(size_t c=0;c<3;c++){
+		//		///AK(r,c)=-AK(r,c);
+		//	}
+		//}
+
+
 		ublas::subrange( P, 0,3, 0,3 )     = ublas::prod( AK, R_WS );
 		Ubitrack::Math::Vector<3, double> ttmp = ublas::prod( AK, t_WE);
 		P(0,3) = ttmp[0];
 		P(1,3) = ttmp[1];
 		P(2,3) = ttmp[2];
 
-#if 1
+#if 0
 		std::cout.precision(15);
+		std::cout<< "AK   " << AK <<std::endl;
 		std::cout<< "P_WE " << P <<std::endl;
 		std::cout<< "t_ET " << t_ET <<std::endl;
 		std::cout<< "R_WT'*(t_ET-t_WT) " << tmpVec<<std::endl;
@@ -162,6 +173,14 @@ public:
 		std::cout<< "t_WT " << t_WT  <<std::endl;
 		std::cout<< "K2 " << S <<std::endl;
 #endif
+		// Flip signs if necessary
+		if( P(2,3)<0.0 ){
+			for( int r = 0; r<3; r++ ){
+				for( int c = 0; c<4; c++ ){
+					P(r,c) = -P(r,c); 
+				}
+			}
+		}
 
 		m_outPort.send( Measurement::Matrix3x4( t, P ) );
 

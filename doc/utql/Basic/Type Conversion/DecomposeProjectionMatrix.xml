@@ -37,6 +37,38 @@
             <UbitrackLib class="DecomposeProjectionMatrix"/>
         </DataflowConfiguration>
     </Pattern>
+
+    <Pattern name="DecomposeProjectionMatrix2" displayName="Decompose Projection  Matrix">
+    	<Description><h:p>This component splits incoming pose measurements into rotation and translation parts.
+		</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="Camera"/>
+            <Node name="B" displayName="Image plane"/>
+            <Node name="C" displayName="World"/>
+            <Edge name="Input" source="C" destination="B" displayName="Matrix Input">
+            	<Description><h:p>The input Matrix </h:p></Description>
+                <Predicate>type=='3x4Matrix'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Intrinsic" source="A" destination="B" displayName="intrinsic Part">
+            	<Description><h:p>The intrinsic part of the Matrix .</h:p></Description>
+                <Attribute name="type" value="3x3Matrix" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+            <Edge name="Extrinsic" source="C" destination="A" displayName="extrinsic Part">
+            	<Description><h:p>The extrinsic part of the Matrix.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="DecomposeProjectionMatrix"/>
+        </DataflowConfiguration>
+    </Pattern>
         
     <!-- Attribute declarations -->
     

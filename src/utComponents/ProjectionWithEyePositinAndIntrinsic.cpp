@@ -39,6 +39,7 @@
  *  year      = {2014}
  * }
  * @author Yuta Itoh <yuta.itoh@in.tum.de>
+ * @date 2013
  */
 #include <utDataflow/TriggerComponent.h>
 #include <utDataflow/TriggerInPort.h>
@@ -121,8 +122,8 @@ public:
 		t_SE0_z =(t_WE0(3)- t_WS_z );
 		t_E0E = t_WE-t_WE0;% eye2 position
 		K2=[ (t_SE0_z+t_E0E(3))  0    -t_E0E(1)
-         		0  (t_SE0_z+t_E0E(3)) -t_E0E(2)
-		        0           0          t_SE0_z ];
+				0  (t_SE0_z+t_E0E(3)) -t_E0E(2)
+				0           0          t_SE0_z ];
 		*/
 		const double t_SE0_z =t_WE0(2)-t_WS_z;
 		const Ubitrack::Math::Vector<3, double> t_E0E = t_WE-t_WE0;
@@ -170,6 +171,14 @@ public:
 		std::cout<< "K2 " << S <<std::endl;
 		std::cout<< "K_E0*K2 " << KS <<std::endl;
 #endif
+		// Flip signs if necessary
+		if( P(2,3)<0.0 ){
+			for( int r = 0; r<3; r++ ){
+				for( int c = 0; c<4; c++ ){
+					P(r,c) = -P(r,c); 
+				}
+			}
+		}
 
 		m_outPort.send( Measurement::Matrix3x4( t, P ) );
 
