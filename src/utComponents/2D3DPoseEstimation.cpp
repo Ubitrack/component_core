@@ -32,14 +32,14 @@
 #include <log4cpp/Category.hh>
 
 #include <utMath/MatrixOperations.h>
-#include <utCalibration/2D3DPoseEstimation.h>
+#include <utAlgorithm/2D3DPoseEstimation.h>
 #include <utDataflow/TriggerComponent.h>
 #include <utDataflow/TriggerInPort.h>
 #include <utDataflow/ExpansionInPort.h>
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utCalibration/2D3DPoseEstimation.h>
+#include <utAlgorithm/2D3DPoseEstimation.h>
 
 #include <boost/lexical_cast.hpp>
 
@@ -78,7 +78,7 @@ public:
 		, m_inCam( "Intrinsics", *this )
 		, m_errOutPort( "Output", *this )
 		, m_iMinCorrespondences( 4 )
-		, m_method( (enum Calibration::InitializationMethod)Calibration::PLANAR_HOMOGRAPHY )
+		, m_method( (enum Algorithm::InitializationMethod)Algorithm::PLANAR_HOMOGRAPHY )
     {
 		config->m_DataflowAttributes.getAttributeData( "initPoseMethod", (unsigned int &)m_method );
 		config->m_DataflowAttributes.getAttributeData( "min2d3dCorresp", m_iMinCorrespondences );
@@ -94,25 +94,25 @@ public:
 	/** Method that computes the result. */
 	void compute( Measurement::Timestamp ts )
 	{
-		const std::vector< Math::Vector< 2 > >& p2d( *m_in2d.get() );
-		const std::vector< Math::Vector< 3 > >& p3d( *m_in3d.get() );
-		const Math::Matrix< 3, 3 > cam = *m_inCam.get();
+		const std::vector< Math::Vector< double, 2 > >& p2d( *m_in2d.get() );
+		const std::vector< Math::Vector< double, 3 > >& p3d( *m_in3d.get() );
+		const Math::Matrix< double, 3, 3 > cam = *m_inCam.get();
 
 		if ( p2d.size() < 4 ) {
 			UBITRACK_THROW( "2D3D pose estimation configured to use at least " + boost::lexical_cast<std::string>( m_iMinCorrespondences ) + " points" );
 		}
 		
-		Math::ErrorPose errPose = Calibration::computePose( p2d, p3d, cam, m_method );
+		Math::ErrorPose errPose = Algorithm::computePose( p2d, p3d, cam, m_method );
 		
 		m_errOutPort.send( Measurement::ErrorPose( ts, errPose ) );		
     }
 
 protected:
 	/** Input port Input2d of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 2 > > m_in2d;
+	Dataflow::ExpansionInPort< Math::Vector< double, 2 > > m_in2d;
 
 	/** Input port Input3d of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 3 > > m_in3d;
+	Dataflow::ExpansionInPort< Math::Vector< double, 3 > > m_in3d;
 
 	/** Input port Intrinsics of the component. */
 	Dataflow::TriggerInPort< Measurement::Matrix3x3 > m_inCam;
@@ -124,7 +124,7 @@ protected:
 	unsigned int m_iMinCorrespondences;
 
 	/** Method used for computation of initial pose */
-	enum Calibration::InitializationMethod m_method;
+	enum Algorithm::InitializationMethod m_method;
 };
 
 

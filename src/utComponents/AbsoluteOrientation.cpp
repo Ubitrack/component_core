@@ -35,7 +35,7 @@
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utCalibration/AbsoluteOrientation.h>
+#include <utAlgorithm/AbsoluteOrientation.h>
 
 namespace Ubitrack { namespace Components {
 
@@ -57,7 +57,7 @@ namespace Ubitrack { namespace Components {
  * @par Operation
  * The component computes the transformation from a coordinate system A to a coordinate system B,
  * given corresponding points in A (InputA) and B (InputB). For details see
- * \c Ubitrack::Calibration::calculateAbsoluteOrientation.
+ * \c Ubitrack::Algorithm::calculateAbsoluteOrientation.
  */
 template< class ResultType >
 class AbsoluteOrientationComponent
@@ -91,12 +91,12 @@ public:
 		if ( m_inPortA.get()->size() < 3 )
 			UBITRACK_THROW( "Insufficient correspondences" );
 
-		const std::vector< Math::Vector< 3, double > >& left = *m_inPortA.get();
-		const std::vector< Math::Vector< 3, double > >& right = *m_inPortB.get();	
+		const std::vector< Math::Vector< double, 3 > >& left = *m_inPortA.get();
+		const std::vector< Math::Vector< double, 3 > >& right = *m_inPortB.get();	
 			
-		Math::Pose pose = Calibration::calculateAbsoluteOrientation( left, right );
+		Math::Pose pose = Algorithm::calculateAbsoluteOrientation( left, right );
 				
-		Calibration::EvaluateAbsoluteOrientation< double > evaluator;
+		Algorithm::EvaluateAbsoluteOrientation< double > evaluator;
 		double m_error_distance = 0;
 		for( unsigned int i = 0; i < left.size(); i++ ) {
 			m_error_distance += evaluator( pose, left[i], right[i] );
@@ -114,15 +114,15 @@ protected:
 	void sendResult( Measurement::ErrorPose ep );
 	
 	/** Input port A of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 3 > > m_inPortA;
+	Dataflow::ExpansionInPort< Math::Vector< double, 3 > > m_inPortA;
 
 	/** Input port B of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 3 > > m_inPortB;
+	Dataflow::ExpansionInPort< Math::Vector< double, 3 > > m_inPortB;
 
 	/** Output port of the component. */
 	Dataflow::TriggerOutPort< ResultType > m_outPort;
 
-	Math::Matrix< 6, 6 > m_covariance;
+	Math::Matrix< double, 6, 6 > m_covariance;
 };
 
 

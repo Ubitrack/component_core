@@ -38,6 +38,70 @@
 
 namespace Ubitrack { namespace Components {
 
+
+/** multiplication operator for batch multiplication of many 3D position vectors with a pose */
+std::vector< Math::Vector< double, 3 > > operator*( const Math::Pose& pose, const std::vector< Math::Vector< double, 3 > >& p3d )
+{
+	std::vector< Math::Vector< double, 3 > > result( p3d.size() );
+	for ( unsigned i = 0; i < p3d.size(); i++ )
+		result[ i ] = pose * p3d[ i ];
+	return result;
+}
+
+/** multiplication operator for batch multiplication of many pose vectors with a pose */
+std::vector< Math::Pose > operator*( const Math::Pose& pose, const std::vector< Math::Pose >& p6d )
+{
+	std::vector< Math::Pose > result( p6d.size() );
+	for ( unsigned i = 0; i < p6d.size(); i++ )
+		result[ i ] = pose * p6d[ i ];
+	return result;
+}
+
+/** multiplication operator for batch multiplication of a pose with many poses  */
+std::vector< Math::Pose > operator*( const std::vector< Math::Pose >& p6d, const Math::Pose& pose )
+{
+	std::vector< Math::Pose > result( p6d.size() );
+	for ( unsigned i = 0; i < p6d.size(); i++ )
+		result[ i ] = p6d[ i ] * pose;
+	return result;
+}
+
+/** multiplication operator for position "multiplication" (= addition) */
+Math::Vector< double, 3 > operator*( const Math::Vector< double, 3 >& pos1, const Math::Vector< double, 3 >& pos2 )
+{
+	Math::Vector< double, 3 > result;
+	result = pos1 + pos2;
+	return result;
+}
+
+/** multiplication operator for batch multiplication of many 3D position vectors with a pose */
+std::vector< Math::ErrorVector< double, 3 > > operator*( const Math::Pose& pose, const std::vector< Math::ErrorVector< double, 3 > >& p3d )
+{
+	std::vector< Math::ErrorVector< double, 3 > > result( p3d.size() );
+	for ( unsigned i = 0; i < p3d.size(); i++ )
+		result[ i ] =  Math::ErrorVector< double, 3 >(pose * p3d[ i ].value, p3d[ i ].covariance);
+	return result;
+}
+
+
+/*
+Math::ErrorVector< double, 3 > operator*( const Math::ErrorPose& a, const Math::ErrorVector< double, 3 >& b )
+{
+
+	// covariance transform
+	Matrix< double, 3, 6 > jacobian;
+	errorPoseTimesVectorJacobian( jacobian, a, b.value );
+
+	Matrix< double, 3, 6 > tmp;
+	Matrix< double, 3, 3 > newCovariance;
+
+	noalias( tmp ) = ublas::prod( jacobian, a.covariance() );
+	noalias( newCovariance ) = ublas::prod( tmp, ublas::trans( jacobian ) );
+
+	return ErrorVector< double, 3 >( static_cast< const Pose& >( a ) * b, newCovariance );
+}
+*/
+
 /**
  * @ingroup dataflow_components
  * Multiplication component.
@@ -82,68 +146,6 @@ protected:
 };
 
 
-/** multiplication operator for batch multiplication of many 3D position vectors with a pose */
-std::vector< Math::Vector< 3 > > operator*( const Math::Pose& pose, const std::vector< Math::Vector< 3 > >& p3d )
-{
-	std::vector< Math::Vector< 3 > > result( p3d.size() );
-	for ( unsigned i = 0; i < p3d.size(); i++ )
-		result[ i ] = pose * p3d[ i ];
-	return result;
-}
-
-/** multiplication operator for batch multiplication of many pose vectors with a pose */
-std::vector< Math::Pose > operator*( const Math::Pose& pose, const std::vector< Math::Pose >& p6d )
-{
-	std::vector< Math::Pose > result( p6d.size() );
-	for ( unsigned i = 0; i < p6d.size(); i++ )
-		result[ i ] = pose * p6d[ i ];
-	return result;
-}
-
-/** multiplication operator for batch multiplication of a pose with many poses  */
-std::vector< Math::Pose > operator*( const std::vector< Math::Pose >& p6d, const Math::Pose& pose )
-{
-	std::vector< Math::Pose > result( p6d.size() );
-	for ( unsigned i = 0; i < p6d.size(); i++ )
-		result[ i ] = p6d[ i ] * pose;
-	return result;
-}
-
-/** multiplication operator for position "multiplication" (= addition) */
-Math::Vector<3> operator*( const Math::Vector<3>& pos1, const Math::Vector<3>& pos2 )
-{
-	Math::Vector<3> result;
-	result = pos1 + pos2;
-	return result;
-}
-
-/** multiplication operator for batch multiplication of many 3D position vectors with a pose */
-std::vector< Math::ErrorVector< 3 > > operator*( const Math::Pose& pose, const std::vector< Math::ErrorVector< 3 > >& p3d )
-{
-	std::vector< Math::ErrorVector< 3 > > result( p3d.size() );
-	for ( unsigned i = 0; i < p3d.size(); i++ )
-		result[ i ] =  Math::ErrorVector< 3 >(pose * p3d[ i ].value, p3d[ i ].covariance);
-	return result;
-}
-
-
-/*
-Math::ErrorVector< 3 > operator*( const Math::ErrorPose& a, const Math::ErrorVector< 3 >& b )
-{
-	
-	// covariance transform
-	Matrix< 3, 6 > jacobian;
-	errorPoseTimesVectorJacobian( jacobian, a, b.value );
-
-	Matrix< 3, 6 > tmp;
-	Matrix< 3, 3 > newCovariance;
-
-	noalias( tmp ) = ublas::prod( jacobian, a.covariance() );
-	noalias( newCovariance ) = ublas::prod( tmp, ublas::trans( jacobian ) );
-
-	return ErrorVector< 3 >( static_cast< const Pose& >( a ) * b, newCovariance );
-}
-*/
 UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
 	// Pose * Pose = Pose
 	cf->registerComponent< MultiplicationComponent< Measurement::Pose, Measurement::Pose, Measurement::Pose > > ( "PoseMultiplication" );

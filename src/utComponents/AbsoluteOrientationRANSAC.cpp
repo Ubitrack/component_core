@@ -39,15 +39,14 @@ static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Abso
 
 
 #include <utMath/Matrix.h>
-#include <utMath/Ransac.h>
-#include <utMath/Optimization.h>
+#include <utMath/Optimization/Ransac.h> //includes Optimization.h
 
 #include <utDataflow/TriggerComponent.h>
 #include <utDataflow/ExpansionInPort.h>
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utCalibration/AbsoluteOrientation.h>
+#include <utAlgorithm/AbsoluteOrientation.h>
 
 
 namespace Ubitrack { namespace Components {
@@ -73,7 +72,7 @@ using namespace Ubitrack::Math;
  * @par Operation
  * The component computes the transformation from a coordinate system A to a coordinate system B,
  * given corresponding points in A (InputA) and B (InputB). For details see
- * \c Ubitrack::Calibration::calculateAbsoluteOrientation.
+ * \c Ubitrack::Algorithm::calculateAbsoluteOrientation.
  */
  
  
@@ -113,12 +112,12 @@ public:
 
 		boost::shared_ptr< Math::Pose > p( new Math::Pose() );
 		unsigned number = 
-			Ransac( *p
+			Optimization::ransac( *p
 			, *m_inPortA.get(), *m_inPortB.get()
 			, m_threshold,  m_nSetSize, m_nMinInliers
 			, m_nMinRuns, m_nMaxRuns
-			, Calibration::EstimateAbsoluteOrientation< double >()
-			, Calibration::EvaluateAbsoluteOrientation< double >() );
+			, Algorithm::EstimateAbsoluteOrientation< double >()
+			, Algorithm::EvaluateAbsoluteOrientation< double >() );
 
 		LOG4CPP_INFO( logger, "Robust absolute orientation performed with " << number << " iterations" );
 
@@ -128,10 +127,10 @@ public:
 protected:
 
 	/** Input port A of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 3 > > m_inPortA;
+	Dataflow::ExpansionInPort< Math::Vector< double, 3 > > m_inPortA;
 
 	/** Input port B of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 3 > > m_inPortB;
+	Dataflow::ExpansionInPort< Math::Vector< double, 3 > > m_inPortB;
 
 	/** Output port of the component. */
 	Dataflow::TriggerOutPort< Measurement::Pose > m_outPort;

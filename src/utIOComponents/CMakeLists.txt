@@ -1,0 +1,5 @@
+set(the_description "The UbiTrack IOComponents")
+ut_add_component(utiocomponents DEPS utcore utdataflow utvision)
+ut_component_include_directories(${UBITRACK_CORE_DEPS_INCLUDE_DIR} ${OPENCV_INCLUDE_DIR} ${TBB_INCLUDE_DIR})
+ut_glob_component_sources("HEADERS" "*.h" "SOURCES" "*.cpp")
+ut_create_multi_component(${OPENCV_LIBRARIES} ${TBB_ALL_LIBRARIES})

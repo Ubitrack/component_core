@@ -42,8 +42,6 @@
 #include <sstream>
 
 #include <boost/bind.hpp>
-#include <boost/numeric/ublas/vector.hpp>
-namespace ublas = boost::numeric::ublas;
 
 #include <utDataflow/PullSupplier.h>
 #include <utDataflow/Component.h>
@@ -138,7 +136,7 @@ namespace Ubitrack { namespace Components {
 			matrixString >> m[i];
 		}
 
-		m_Data = Measurement::Matrix4x4 ( Math::Matrix< 4, 4 > (m) );
+		m_Data = Measurement::Matrix4x4 ( Math::Matrix< double, 4, 4 > (m) );
 	}
 
 	template<> void StaticMeasurement< Measurement::Matrix3x3 >::initMeasurement( const Ubitrack::Graph::UTQLSubgraph::GraphEdgeAttributes& config )
@@ -157,7 +155,7 @@ namespace Ubitrack { namespace Components {
 			matrixString >> m[i];
 		}
 
-		m_Data = Measurement::Matrix3x3 ( Math::Matrix< 3, 3 > (m) );
+		m_Data = Measurement::Matrix3x3 ( Math::Matrix< double, 3, 3 > (m) );
 	}
 	
 	template<> void StaticMeasurement< Measurement::Matrix3x4 >::initMeasurement( const Ubitrack::Graph::UTQLSubgraph::GraphEdgeAttributes& config )
@@ -176,7 +174,7 @@ namespace Ubitrack { namespace Components {
 			matrixString >> m[i];
 		}
 
-		m_Data = Measurement::Matrix3x4 ( Math::Matrix< 3, 4 > (m) );
+		m_Data = Measurement::Matrix3x4 ( Math::Matrix< double, 3, 4 > (m) );
 	}
 
 
@@ -197,7 +195,7 @@ namespace Ubitrack { namespace Components {
 			positionString >> p[i];
 		}
 
-		m_Data = Measurement::Position ( Math::Vector< 3 > (p) );
+		m_Data = Measurement::Position ( Math::Vector< double, 3 > (p) );
 	}
 	
 	// TODO: replace with measurement serializsations, could use getAttributeData then also and implement this generic..
@@ -217,7 +215,7 @@ namespace Ubitrack { namespace Components {
 			positionString >> p[i];
 		}
 
-		m_Data = Measurement::Position2D ( Math::Vector< 2 > (p) );
+		m_Data = Measurement::Position2D ( Math::Vector< double, 2 > (p) );
 	}
 
 	// TODO: replace with measurement serializsations, could use getAttributeData then also and implement this generic..
@@ -271,7 +269,7 @@ namespace Ubitrack { namespace Components {
 			positionString >> p[i];
 		}
 
-		m_Data = Measurement::Vector4D( Math::Vector< 4 >( p ) );
+		m_Data = Measurement::Vector4D( Math::Vector< double, 4 >( p ) );
 	}
 
 	// yes yes.. rotation / position again.. will fix this all at once..
@@ -327,7 +325,7 @@ namespace Ubitrack { namespace Components {
 			positionString >> p[i];
 		}
 
-		Math::Vector<3> trans( p );
+		Math::Vector< double, 3 > trans( p );
 		Math::Quaternion q( r[0], r[1], r[2], r[3] );
 
 		m_Data = Measurement::Pose ( Math::Pose( q.normalize(), trans ) );
@@ -359,7 +357,7 @@ namespace Ubitrack { namespace Components {
 				UBITRACK_THROW( "staticPose has no value attribute" );
 
 
-			ublas::vector< double > p( 7 );
+			Math::Vector< double, 7 > p;
 			std::istringstream poseString( sValue );
 			for ( unsigned i = 0; i < 7; i++ )
 				poseString >> p( i );
@@ -400,7 +398,7 @@ namespace Ubitrack { namespace Components {
 			for ( unsigned i = 0; i < 3; i++ )
 				positionString >> p[i];
 
-			m_Data->push_back( Math::Vector< 3 >( p ) );
+			m_Data->push_back( Math::Vector< double, 3 >( p ) );
 		}
 
 	}
@@ -435,7 +433,7 @@ namespace Ubitrack { namespace Components {
 			for ( unsigned i = 0; i < 2; i++ )
 				positionString >> p[i];
 
-			m_Data->push_back( Math::Vector< 2 >( p ) );
+			m_Data->push_back( Math::Vector< double, 2 >( p ) );
 		}
 
 	}

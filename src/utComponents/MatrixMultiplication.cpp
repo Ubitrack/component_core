@@ -42,6 +42,87 @@ static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Comp
 
 namespace Ubitrack { namespace Components {
 
+
+
+Math::Vector< double, 3 > operator*( const Math::Matrix< double, 4, 4 > mat, const Math::Vector< double, 3 > vec )
+{
+	Math::Vector< double, 4 > hom( vec[0], vec[1], vec[2], 1.0 );
+	Math::Vector< double, 4 > tmp;
+	Math::Vector< double, 3 > res;
+
+	tmp = boost::numeric::ublas::prod( mat, hom );
+	double w = tmp[3];
+	tmp = tmp / w;
+
+	res[0] = tmp[0];
+	res[1] = tmp[1];
+	res[2] = tmp[2];
+
+	return res;
+};
+
+
+std::vector< Math::Vector< double, 3 > > operator*( const Math::Matrix< double, 4, 4 > mat, const std::vector< Math::Vector< double, 3 > > vecList )
+{
+	std::vector< Math::Vector< double, 3 > > result( vecList.size() );
+	for ( unsigned i = 0; i < vecList.size(); i++ )
+		result[ i ] = mat * vecList[i];
+	return result;
+};
+
+
+Math::Vector< double, 2 > operator*( const Math::Matrix< double, 3, 4 > mat, const Math::Vector< double, 3 > vec )
+{
+	Math::Vector< double, 4 > hom( vec(0), vec(1), vec(2), 1.0 );
+	Math::Vector< double, 3 > tmp;
+	Math::Vector< double, 2 > res;
+
+	tmp = boost::numeric::ublas::prod( mat, hom );
+	double w = tmp[2];
+	tmp = tmp / w;
+
+	res[0] = tmp[0];
+	res[1] = tmp[1];
+
+	return res;
+};
+
+
+Math::Vector< double, 2 > operator*( const Math::Matrix< double, 3, 3 > mat, const Math::Vector< double, 2 > vec )
+{
+	Math::Vector< double, 3 > hom( vec(0), vec(1), 1.0 );
+	Math::Vector< double, 2	> tmp;
+	Math::Vector< double, 2 > res;
+
+	tmp = boost::numeric::ublas::prod( mat, hom );
+	double w = tmp[1];
+	tmp = tmp / w;
+
+	res[0] = tmp[0];
+	res[1] = tmp[1];
+
+	return res;
+};
+
+
+std::vector< Math::Vector< double, 2 > > operator*( const Math::Matrix< double, 3, 4 > mat, const std::vector< Math::Vector< double, 3 > > vecList )
+{
+	std::vector< Math::Vector< double, 2 > > result( vecList.size() );
+	for ( unsigned i = 0; i < vecList.size(); i++ )
+		result[ i ] = mat * vecList[i];
+	return result;
+};
+
+
+std::vector< Math::Vector< double, 2 > > operator*( const Math::Matrix< double, 3, 3 > mat, const std::vector< Math::Vector< double, 2 > > vecList )
+{
+	std::vector< Math::Vector< double, 2 > > result( vecList.size() );
+	for ( unsigned i = 0; i < vecList.size(); i++ )
+		result[ i ] = mat * vecList[i];
+	return result;
+};
+
+
 /**
  * @ingroup dataflow_components
  * Matrix multiplication component.
@@ -93,85 +174,6 @@ protected:
 
 	/** Output port of the component. */
 	Dataflow::TriggerOutPort< ResType > m_outPort;
-};
-
-
-Math::Vector< 3 > operator*( const Math::Matrix< 4, 4 > mat, const Math::Vector< 3 > vec )
-{
-	Math::Vector< 4 > hom( vec[0], vec[1], vec[2], 1.0 );
-	Math::Vector< 4 > tmp;
-	Math::Vector< 3 > res;
-
-	tmp = boost::numeric::ublas::prod( mat, hom );
-	double w = tmp[3];
-	tmp = tmp / w;
-	
-	res[0] = tmp[0];
-	res[1] = tmp[1];
-	res[2] = tmp[2];
-
-	return res;
-};
-
-
-std::vector< Math::Vector< 3 > > operator*( const Math::Matrix< 4, 4 > mat, const std::vector< Math::Vector< 3 > > vecList )
-{
-	std::vector< Math::Vector< 3 > > result( vecList.size() );
-	for ( unsigned i = 0; i < vecList.size(); i++ )
-		result[ i ] = mat * vecList[i];
-	return result;
-};
-
-
-Math::Vector< 2 > operator*( const Math::Matrix< 3, 4 > mat, const Math::Vector< 3 > vec )
-{
-	Math::Vector< 4 > hom( vec(0), vec(1), vec(2), 1.0 );
-	Math::Vector< 3 > tmp;
-	Math::Vector< 2 > res;
-
-	tmp = boost::numeric::ublas::prod( mat, hom );
-	double w = tmp[2];
-	tmp = tmp / w;
-	
-	res[0] = tmp[0];
-	res[1] = tmp[1];
-
-	return res;
-};
-
-
-Math::Vector< 2 > operator*( const Math::Matrix< 3, 3 > mat, const Math::Vector< 2 > vec )
-{
-	Math::Vector< 3 > hom( vec(0), vec(1), 1.0 );
-	Math::Vector< 2	> tmp;
-	Math::Vector< 2 > res;
-
-	tmp = boost::numeric::ublas::prod( mat, hom );
-	double w = tmp[1];
-	tmp = tmp / w;
-	
-	res[0] = tmp[0];
-	res[1] = tmp[1];
-
-	return res;
-};
-
-
-std::vector< Math::Vector< 2 > > operator*( const Math::Matrix< 3, 4 > mat, const std::vector< Math::Vector< 3 > > vecList )
-{
-	std::vector< Math::Vector< 2 > > result( vecList.size() );
-	for ( unsigned i = 0; i < vecList.size(); i++ )
-		result[ i ] = mat * vecList[i];
-	return result;
-};
-
-
-std::vector< Math::Vector< 2 > > operator*( const Math::Matrix< 3, 3 > mat, const std::vector< Math::Vector< 2 > > vecList )
-{
-	std::vector< Math::Vector< 2 > > result( vecList.size() );
-	for ( unsigned i = 0; i < vecList.size(); i++ )
-		result[ i ] = mat * vecList[i];
-	return result;
 };
 
 

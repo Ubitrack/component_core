@@ -37,7 +37,7 @@
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utCalibration/Projection.h>
+#include <utAlgorithm/Projection.h>
 
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Components.SPAAM" ) );
 
@@ -62,7 +62,7 @@ namespace Ubitrack { namespace Components {
  * @par Operation
  * The component computes the projection matrix from 3D to 2D,
  * given corresponding points in Input2D and Input3D. For details see 
- * \c Ubitrack::Calibration::projectionDLT.
+ * \c Ubitrack::Algorithm::projectionDLT.
  *
  * @par Instances
  * Registered for the following expansions and push/pull configurations:
@@ -102,15 +102,15 @@ public:
 		if ( m_inPort2D.get()->size() != m_inPort3D.get()->size() || m_inPort2D.get()->size() < 6 )
 			UBITRACK_THROW( "Illegal number of correspondences" );
 
-		Math::Matrix< 3, 4 > mat = Calibration::projectionDLT( *m_inPort3D.get(), *m_inPort2D.get() );
+		Math::Matrix< double, 3, 4 > mat = Algorithm::projectionDLT( *m_inPort3D.get(), *m_inPort2D.get() );
 
 		// print decomposed matrix to console if logging is enabled
 		if ( logger.isDebugEnabled() )
 		{
-			Math::Matrix< 3, 3 > K;
-			Math::Matrix< 3, 3 > R;
-			Math::Vector< 3 > t;
-			Calibration::decomposeProjection( K, R, t, mat );
+			Math::Matrix< double, 3, 3 > K;
+			Math::Matrix< double, 3, 3 > R;
+			Math::Vector< double, 3 > t;
+			Algorithm::decomposeProjection( K, R, t, mat );
 			LOG4CPP_DEBUG( logger, "K: " << K );
 			LOG4CPP_DEBUG( logger, "R: " << R );
 			LOG4CPP_DEBUG( logger, "t: " << t );
@@ -122,10 +122,10 @@ public:
 protected:
 
 	/** 2D Input port of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 2 > > m_inPort2D;
+	Dataflow::ExpansionInPort< Math::Vector< double, 2 > > m_inPort2D;
 
 	/** 3D Input port of the component. */
-	Dataflow::ExpansionInPort< Math::Vector< 3 > > m_inPort3D;
+	Dataflow::ExpansionInPort< Math::Vector< double, 3 > > m_inPort3D;
 
 	/** Output port of the component. */
 	Dataflow::TriggerOutPort< Measurement::Matrix3x4 > m_outPort;

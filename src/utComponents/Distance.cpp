@@ -42,8 +42,8 @@ namespace ublas = boost::numeric::ublas;
 namespace Ubitrack { namespace Components {
 
 // computes the distance for vectors
-template< int N >
-double doDistance( const Math::Vector< N >& a, const Math::Vector< N >& b )
+template< std::size_t N, typename T >
+double doDistance( const Math::Vector< T, N >& a, const Math::Vector< T, N >& b )
 {
 	return ublas::norm_2( a - b );
 }

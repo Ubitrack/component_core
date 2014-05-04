@@ -1,30 +1,32 @@
+# HOW TO BUILD (A) LIBRAR-Y/IES FROM A MODULE
+# Building libraries from modules should be consistent for each module.
+# Use the following scheme for each new library created:
+#
+# a) Check for required libraries. If they are not available return False and export flags if needed
+# b) Define the src-subdirectories for which the library should be compiled
+#    and glob all files in there
+# c) Define a [LIBRARY]_options variable for the library containing all dependencies
+#    from other libraries. Create a clone from the master environment and add those options.
+# d) WINDOWS ONLY: Create a header file which implements dll interface functionality
+#    dependent from a [LIBRARY]_DLL define. If the define is set, the dll should be exported,
+#    if not, the dll should be imported. Set the define in the preprocessor options for the environment.
+# e) Build the library!
+# f) Remove all entries for (at least) the LIBS and LIBPATH keys in the options and
+#    add only the newly-compiled library as a dependcy. This will avoid multiple includes
+#    of libraries. Also verify that the import/export-switch define is not set.
+# g) Export the options so that other libraries can base on this library. 
+# h) Optionally setup help and ide projects
+#
+# The use of options and possibility to export them makes hierarchical build environments
+# obsolete. Avoid exporting new environments to the build system.
+
 import sys
 import glob
 import os.path
 
 # import variables from other scons files
+have_utdataflow = False
 Import( '*' )
-
-# HOW TO BUILD (A) LIBRAR-Y/IES FROM A MODULE
-# Building libraries from modules should be consistent for each module.
-# Use the following scheme for each new library created:
-#
-# a) Define the src-subdirectories for which the library should be compiled
-#    and glob all files in there
-# b) Define a [LIBRARY]_options variable for the library containing all dependencies
-#    from other libraries. Create a clone from the master environment and add those options.
-# c) WINDOWS ONLY: Create a header file which implements dll interface functionality
-#    dependent from a [LIBRARY]_DLL define. If the define is set, the dll should be exported,
-#    if not, the dll should be imported. Set the define in the preprocessor options for the environment.
-# d) Build the library!
-# e) Remove all entries for (at least) the LIBS and LIBPATH keys in the options and
-#    add only the newly-compiled library as a dependcy. This will avoid multiple includes
-#    of libraries. Also verify that the import/export-switch define is not set.
-# f) Export the options so that other libraries can base on this library.
-#
-# The use of options and possibility to export them makes hierarchical build environments
-# obsolete. Avoid exporting new environments to the build system.
-
 
 # a)
 if not have_utdataflow:
@@ -32,42 +34,42 @@ if not have_utdataflow:
 	result = False
 	Return("result")
 	
-env = masterEnv.Clone()
 
-# automatically glob files from subdirectories
+
+# b)
 comp_sources = globSourceFiles( '*.cpp' )
 
-# remove components that require a not present feature
+# remove components that require a not present feature (alphabetical list)
 if not have_lapack:
-	for src in [ 'RotHecKalmanFilter.cpp', 'RotOnlyKalmanFilter.cpp', 'HomogeneousMatrixEstimation.cpp', 'DecomposeProjectionMatrix.cpp', 'SPAAM.cpp', 'AbsoluteOrientation.cpp', 'AbsoluteOrientationRANSAC.cpp', 'OnlineRotHec.cpp', '2D3DPoseEstimation.cpp', 'HandEyeCalibration.cpp', 'PoseKalmanFilter.cpp', 'TipCalibration.cpp', 'MultipleCameraPoseOptimization.cpp' ]:
+	for src in [ '2D3DPoseEstimation.cpp', 'AbsoluteOrientation.cpp', 'AbsoluteOrientationRANSAC.cpp', 'DecomposeProjectionMatrix.cpp',  'HandEyeCalibration.cpp', 'HomogeneousMatrixEstimation.cpp', 'MultipleCameraPoseOptimization.cpp', 'OnlineRotHec.cpp',  'PoseKalmanFilter.cpp', 'RotHecKalmanFilter.cpp', 'RotOnlyKalmanFilter.cpp', 'SPAAM.cpp', 'TimeDelayEstimation.cpp', 'TipCalibration.cpp' ]:
 		comp_sources.remove( src );
 
 
-# b)	
-# setup compiler and linker flags
-# Merge all options in one "ubitrack" option. Note that some options might be empty if its module is not available	
+# c)	
 component_options = mergeOptions( utdataflow_all_options)
-
+env = masterEnv.Clone()
 env.AppendUnique( **component_options )
 		
-# c)
-# nothing to do this time
+# d)
+# library is component, nothing to export
 
-# d)	
+# e)	
+# compile every single source files its own library
+# {buildenvironment, source files, build target}
 libs = setupComponentBuild(env, comp_sources, 'components')
 
-# e)
+# f)
 utcomponents_options = {}
 utcomponents_options[ 'CPPPATH' ] =  [ os.path.join( getCurrentPath(), '..') ]
-utcomponents_options[ 'LIBS' ] = []#libs
+utcomponents_options[ 'LIBS' ] = []
 utcomponents_options[ 'LIBPATH' ] = [ install_library_prefix ]
 
-have_utcomponents = libs != 0
 
-# f)
+# g)
+have_utcomponents = libs != 0
 Export( 'utcomponents_options', 'have_utcomponents' )
 
-# also create a visual studio project for the library	
+# h)
 sources = globSourceFiles( '*.cpp' )
 headers = globSourceFiles( '*.h' )
 createVisualStudioProject(env, sources, headers, 'utComponents')

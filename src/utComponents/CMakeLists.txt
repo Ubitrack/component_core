@@ -1,0 +1,5 @@
+set(the_description "The UbiTrack Components")
+ut_add_component(utcomponents DEPS utcore utdataflow)
+ut_component_include_directories(${UBITRACK_CORE_DEPS_INCLUDE_DIR})
+ut_glob_component_sources("HEADERS" "*.h" "SOURCES" "*.cpp")
+ut_create_multi_component()

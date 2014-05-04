@@ -30,7 +30,7 @@
  *
  * @author Daniel Pustka <daniel.pustka@in.tum.de>
  */
-#include <log4cpp/Category.hh>
+
 
 #include <utDataflow/TriggerComponent.h>
 #include <utDataflow/TriggerInPort.h>
@@ -39,21 +39,22 @@
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
 
-//#include <utCalibration/Function/MultipleCameraProjectionErrorART.h>
+//#include <utAlgorithm/Function/MultipleCameraProjectionErrorART.h>
 
 // get a logger
+#include <log4cpp/Category.hh>
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Events.Components.2D3DPoseEstimation" ) );
 //static log4cpp::Category& optLogger( log4cpp::Category::getInstance( "Ubitrack.Events.Components.2D3DPoseEstimation.LM" ) );
 
 //#define OPTIMIZATION_LOGGING
-#include <utMath/LevenbergMarquardt.h>
-#include <utMath/BackwardPropagation.h>
+#include <utMath/Optimization/LevenbergMarquardt.h>
+#include <utMath/Stochastic/BackwardPropagation.h>
 
-#include <utMath/NewFunction/Function.h>
-#include <utMath/NewFunction/Addition.h>
-#include <utMath/NewFunction/Dehomogenization.h>
-#include <utMath/NewFunction/LieRotation.h>
-#include <utMath/NewFunction/LinearTransformation.h>
+#include <utMath/Optimization/NewFunction/Function.h>
+#include <utMath/Optimization/NewFunction/Addition.h>
+#include <utMath/Optimization/NewFunction/Dehomogenization.h>
+#include <utMath/Optimization/NewFunction/LieRotation.h>
+#include <utMath/Optimization/NewFunction/LinearTransformation.h>
 
 
 namespace Ubitrack { namespace Components {
@@ -65,10 +66,10 @@ template< class VType = double >
 class ObjectiveFunction
 {
 public:
-	ObjectiveFunction( const std::vector< Math::Vector< 3, VType > >& p3D, 
-		const std::vector< Math::Matrix< 3, 3 > >& cameraRotations, 
-		const std::vector< Math::Vector< 3 > >& cameraTranslations, 
-		const std::vector< Math::Matrix< 3, 3, VType > >& cameraIntrinsics, 
+	ObjectiveFunction( const std::vector< Math::Vector< VType, 3 > >& p3D, 
+		const std::vector< Math::Matrix< double, 3, 3 > >& cameraRotations, 
+		const std::vector< Math::Vector< double, 3 > >& cameraTranslations, 
+		const std::vector< Math::Matrix< VType, 3, 3 > >& cameraIntrinsics, 
 		const std::vector< std::pair< unsigned, unsigned > > visibilities )
 		: m_p3D( p3D )
 		, m_camR( cameraRotations )
@@ -92,7 +93,7 @@ public:
 	template< class VT1, class VT2, class MT > 
 	void evaluateWithJacobian( VT1& result, const VT2& input, MT& J ) const
 	{
-		namespace NF = Math::Function;
+		namespace NF = Math::Optimization::Function;
 		namespace ublas = boost::numeric::ublas;
 		
 		for ( unsigned i = 0; i < m_vis.size(); i++ )
@@ -120,10 +121,10 @@ public:
 	}
 	
 protected:
-	const std::vector< Math::Vector< 3, VType > >& m_p3D;
-	const std::vector< Math::Matrix< 3, 3 > >& m_camR;
-	const std::vector< Math::Vector< 3 > >& m_camT;
-	const std::vector< Math::Matrix< 3, 3, VType > >& m_camI;
+	const std::vector< Math::Vector< VType, 3 > >& m_p3D;
+	const std::vector< Math::Matrix< double, 3, 3 > >& m_camR;
+	const std::vector< Math::Vector< double, 3 > >& m_camT;
+	const std::vector< Math::Matrix< VType, 3, 3 > >& m_camI;
 	const std::vector< std::pair< unsigned, unsigned > > m_vis;
 };
 
@@ -169,11 +170,11 @@ public:
 	{
 		namespace ublas = boost::numeric::ublas;
 
-		const std::vector< Math::Vector< 3 > >& p3d = *m_in3d.get();
-		const std::vector< std::vector< Math::Vector< 2 > > >& p2d = *m_in2d.get();
+		const std::vector< Math::Vector< double, 3 > >& p3d = *m_in3d.get();
+		const std::vector< std::vector< Math::Vector< double, 2 > > >& p2d = *m_in2d.get();
 		const std::vector< std::vector< Math::Scalar< double > > >& weights = *m_inWeights.get();
 		const std::vector< Math::Pose >& camPoses = *m_inCameraPoses.get();
-		const std::vector< Math::Matrix< 3, 3 > >& camMatrices = *m_inCameraMatrices.get();
+		const std::vector< Math::Matrix< double, 3, 3 > >& camMatrices = *m_inCameraMatrices.get();
 		const Math::Pose& initialPose = *m_inInitialPose.get();
 
 		if ( p3d.size() < 3 )
@@ -200,7 +201,7 @@ public:
 		
 		// create measurement and observations vectors
 		std::vector< std::pair< unsigned, unsigned > > observations;
-		ublas::vector< double > measurements( 2 * nObservations );
+		Math::Vector< double > measurements( 2 * nObservations );
 
 		int iObs = 0;
 		for ( unsigned iCam = 0; iCam < weights.size(); iCam++ )
@@ -215,11 +216,11 @@ public:
 				}
 
 		// create camera matrices and rotations
-		std::vector< Math::Matrix< 3, 3 > > camRotations( camPoses.size() );
-		std::vector< Math::Vector< 3 > > camTranslations( camPoses.size() );
+		std::vector< Math::Matrix< double, 3, 3 > > camRotations( camPoses.size() );
+		std::vector< Math::Vector< double, 3 > > camTranslations( camPoses.size() );
 		for ( unsigned iCam = 0; iCam < weights.size(); iCam++ )
 		{
-			camRotations[ iCam ] = Math::Matrix< 3, 3 >( camPoses[ iCam ].rotation() );
+			camRotations[ iCam ] = Math::Matrix< double, 3, 3 >( camPoses[ iCam ].rotation() );
 			camTranslations[ iCam ] = camPoses[ iCam ].translation();
 		}
 
@@ -227,11 +228,11 @@ public:
 		LOG4CPP_DEBUG( logger, "Optimizing pose over " << p2d.size() << " cameras using " << nObservations << " observations" );
 		
 		ObjectiveFunction< double > f( p3d, camRotations, camTranslations, camMatrices, observations );
-		Math::Vector< 6 > param;
+		Math::Vector< double, 6 > param;
 		ublas::subrange( param, 0, 3 ) = initialPose.translation();
 		ublas::subrange( param, 3, 6 ) = initialPose.rotation().toLogarithm();
 		
-		double res = Math::levenbergMarquardt( f, param, measurements, Math::OptTerminate( 10, 1e-6 ), Math::OptNoNormalize() );
+		double res = Math::Optimization::levenbergMarquardt( f, param, measurements, Math::Optimization::OptTerminate( 10, 1e-6 ), Math::Optimization::OptNoNormalize() );
 		
 		Math::Pose finalPose( Math::Quaternion::fromLogarithm( ublas::subrange( param, 3, 6 ) ), ublas::subrange( param, 0, 3 ) );
 		LOG4CPP_DEBUG( logger, "pose: " << finalPose << ", residual: " << res );
@@ -245,27 +246,27 @@ public:
 			LOG4CPP_DEBUG( logger, "Computing covariance" );
 			
 			// pose in exponential map representation
-			Math::Vector< 6 > expParam;
+			Math::Vector< double, 6 > expParam;
 			ublas::subrange( expParam, 0, 3 ) = ublas::subrange( param, 0, 3 );
 			ublas::subrange( expParam, 3, 6 ) = finalPose.rotation().toLogarithm();
 			
 			// initialize matrices
-			Math::Matrix< 6, 6 > cov;
+			Math::Matrix< double, 6, 6 > cov;
 			
 			// make 3x4 projection matrices
-			std::vector< Math::Matrix< 3, 4 > > camPs( camPoses.size() );
+			std::vector< Math::Matrix< double, 3, 4 > > camPs( camPoses.size() );
 			for ( unsigned i = 0; i < camPoses.size(); i++ )
-				camPs[ i ] = ublas::prod( camMatrices[ i ], Math::Matrix< 3, 4 >( camPoses[ i ] ) );
+				camPs[ i ] = ublas::prod( camMatrices[ i ], Math::Matrix< double, 3, 4 >( camPoses[ i ] ) );
 				
 			// backward propagation
-			Calibration::Function::MultipleCameraProjectionErrorART< double > fe( p3d, camPs, observations ); //, *m_inCenterOfGravity.get() );
-			Math::backwardPropagationIdentity( cov, 100.0, fe, expParam );
+			Algorithm::Function::MultipleCameraProjectionErrorART< double > fe( p3d, camPs, observations ); //, *m_inCenterOfGravity.get() );
+			Math::Stochastic::backwardPropagationIdentity( cov, 100.0, fe, expParam );
 			LOG4CPP_DEBUG( logger, "covariance: " << cov );
 			
 			m_outPortError.send( Measurement::ErrorPose( ts, Math::ErrorPose( finalPose, cov ) ) );
 		}
 		#else
-			m_outPortError.send( Measurement::ErrorPose( ts, Math::ErrorPose( finalPose, Math::Matrix< 6, 6 >() ) ) );
+			m_outPortError.send( Measurement::ErrorPose( ts, Math::ErrorPose( finalPose, Math::Matrix< double, 6, 6 >() ) ) );
 		#endif
 		
     }
@@ -276,7 +277,7 @@ protected:
 	Dataflow::TriggerInPort< Measurement::PositionList > m_in3d;
 
 	/** Input port: list of corresponding 2D points for each 3D point. */
-	Dataflow::ExpansionInPort< std::vector< Math::Vector< 2 > > > m_in2d;
+	Dataflow::ExpansionInPort< std::vector< Math::Vector< double, 2 > > > m_in2d;
 
 	/** 
 	 * Input port: list of weights (inverse variance) for each corresponding 2D-3D measurement of 
@@ -288,7 +289,7 @@ protected:
 	Dataflow::ExpansionInPort< Math::Pose > m_inCameraPoses;
 
 	/** Input port: Intrinsic matrices for each camera. */
-	Dataflow::ExpansionInPort< Math::Matrix< 3, 3 > > m_inCameraMatrices;
+	Dataflow::ExpansionInPort< Math::Matrix< double, 3, 3 > > m_inCameraMatrices;
 
 	/** Input port: Initial pose for optimization */
 	Dataflow::TriggerInPort< Measurement::Pose > m_inInitialPose;

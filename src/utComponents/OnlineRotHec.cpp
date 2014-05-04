@@ -39,7 +39,7 @@
 #include <utDataflow/PullSupplier.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utCalibration/OnlineRotHec.h>
+#include <utAlgorithm/OnlineRotHec.h>
 
 // get a logger
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Components.OnlineRotHec" ) );
@@ -203,7 +203,7 @@ protected:
 	Dataflow::PullSupplier< Measurement::Rotation > m_out;
 
 	// the kalman filter
-	Calibration::OnlineRotHec m_hec;
+	Algorithm::OnlineRotHec m_hec;
 };
 
 

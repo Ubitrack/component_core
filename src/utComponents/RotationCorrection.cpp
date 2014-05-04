@@ -35,10 +35,10 @@
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utMath/Vector.h>
-#include <boost/numeric/ublas/vector.hpp>
+#include <utMath/VectorFunctions.h>
 
 // get a logger
+#include <log4cpp/Category.hh>
 static log4cpp::Category& eventsLogger( log4cpp::Category::getInstance( "Ubitrack.Events.Components.RotationCorrection" ) );
 
 namespace Ubitrack { namespace Components {
@@ -70,7 +70,7 @@ public:
 	  Measurement::Position errPos = m_errPort.get();
 	  
 	  // 1. Calc normalized correction axis
-	  Math::Vector< 3 > axis = cross_prod( *errPos, *refPos );
+	  Math::Vector< double, 3 > axis = cross_product( *errPos, *refPos );
 
 	  // 2. Calc correction angle. It always is between 0 and 180°
 	  double angle = acos( inner_prod(*errPos, *refPos) / ( norm_2(*errPos) * norm_2(*refPos) ) );
@@ -122,10 +122,10 @@ public:
 	void compute( Measurement::Timestamp t )
 	{
 	  // Fetch data
-	  Math::Vector< 3 > refPointA = *(m_refPortA.get());
-	  Math::Vector< 3 > errPointA = *(m_errPortA.get());
-	  Math::Vector< 3 > refPointB = *(m_refPortB.get());
-	  Math::Vector< 3 > errPointB = *(m_errPortB.get());
+	  Math::Vector< double, 3 > refPointA = *(m_refPortA.get());
+	  Math::Vector< double, 3 > errPointA = *(m_errPortA.get());
+	  Math::Vector< double, 3 > refPointB = *(m_refPortB.get());
+	  Math::Vector< double, 3 > errPointB = *(m_errPortB.get());
 
 	  /* 
 	   * Compute normal for reference plane defined by center of
@@ -134,11 +134,11 @@ public:
 	   * measurements. Then compute axis/angle for mapping the
 	   * erroneous plane to the reference plane
 	   */
-	  Math::Vector< 3 > refAxis = cross_prod( refPointB, refPointA );
+	  Math::Vector< double, 3 > refAxis = cross_product( refPointB, refPointA );
 	  refAxis /= norm_2( refAxis );
-	  Math::Vector< 3 > errAxis = cross_prod( errPointB, errPointA );
+	  Math::Vector< double, 3 > errAxis = cross_product( errPointB, errPointA );
 	  errAxis /= norm_2( errAxis );
-	  Math::Vector< 3 > planeAxis = cross_prod( errAxis, refAxis );
+	  Math::Vector< double, 3 > planeAxis = cross_product( errAxis, refAxis );
 	  planeAxis /= norm_2( planeAxis );
 	  double planeAngle = acos( inner_prod(errAxis, refAxis) / ( norm_2(errAxis) * norm_2(refAxis) ) );
 	  LOG4CPP_TRACE( eventsLogger, "plane mapping: axis: " << planeAxis << ", angle: " << planeAngle << ", timestamp: " << t );
@@ -163,7 +163,7 @@ public:
 	   * axis is arbitrary. It is not sufficient to use the plane
 	   * normal refAxis from above due to sign ambiguity!
 	   */
-	  Math::Vector< 3 > ptAxis = cross_prod( errPointA, refPointA );
+	  Math::Vector< double, 3 > ptAxis = cross_product( errPointA, refPointA );
 	  ptAxis /= norm_2( ptAxis );
 	  double ptAngleA = acos( inner_prod(errPointA, refPointA) / ( norm_2(errPointA) * norm_2(refPointA) ) );
 	  double ptAngleB = acos( inner_prod(errPointB, refPointB) / ( norm_2(errPointB) * norm_2(refPointB) ) );

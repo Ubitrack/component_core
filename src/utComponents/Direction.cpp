@@ -35,6 +35,7 @@
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
+#include <utMath/VectorFunctions.h> // cross_product
 
 namespace ublas = boost::numeric::ublas;
 
@@ -42,17 +43,17 @@ namespace Ubitrack { namespace Components {
 
 
 /** Method to calculate rotation from unit vector to other pose */
-template< class Type > Math::Quaternion calculate( Math::Vector<3>& orig, Math::Pose& pose1, Type& t2 )
+template< class Type > Math::Quaternion calculate( Math::Vector< double, 3 >& orig, Math::Pose& pose1, Type& t2 )
 {
 	return Math::Quaternion();
 }
 
-template<> Math::Quaternion calculate< Math::Vector<3> >( Math::Vector<3>& orig, Math::Pose& pose1, Math::Vector<3>& pos2 )
+template<> Math::Quaternion calculate< Math::Vector< double, 3 > >( Math::Vector< double, 3 >& orig, Math::Pose& pose1, Math::Vector< double, 3 >& pos2 )
 {
-	Math::Vector<3> dir = (~pose1) * pos2;
+	Math::Vector< double, 3 > dir = (~pose1) * pos2;
 	dir = dir / ublas::norm_2( dir );
 
-	Math::Vector<3> axis = cross_prod( orig, dir );
+	Math::Vector< double, 3 > axis = cross_product( orig, dir );
 	
 	Math::Quaternion q( axis[0], axis[1], axis[2], 1 + ublas::inner_prod( orig, dir ) );
 	q.normalize();
@@ -60,9 +61,9 @@ template<> Math::Quaternion calculate< Math::Vector<3> >( Math::Vector<3>& orig,
 	return pose1.rotation() * q;
 }
 
-template<> Math::Quaternion calculate< Math::Pose >( Math::Vector<3>& orig, Math::Pose& pose1, Math::Pose& pose2 )
+template<> Math::Quaternion calculate< Math::Pose >( Math::Vector< double, 3 >& orig, Math::Pose& pose1, Math::Pose& pose2 )
 {
-	Math::Vector<3> pos2 = pose2.translation();
+	Math::Vector< double, 3 > pos2 = pose2.translation();
 	return calculate( orig, pose1, pos2 );
 }
 

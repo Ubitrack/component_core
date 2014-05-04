@@ -402,6 +402,77 @@
         </DataflowConfiguration>
     </Pattern>
 
+	<Pattern name="Matrix4x4Buffer" displayName="Buffer (Matrix4x4)">
+    	<Description><p xmlns="http://www.w3.org/1999/xhtml">This file contains a buffer component which is the
+			most simple push-pull adapter. The component accepts an event via a push input port
+			and sends the last received event for any request via the pull output port.<br/>
+			This may be useful for static spatial relationships which are
+			can be calibrated at runtime.<br/>
+			Whenever an event is received via the input port it is buffered in an internal member variable.
+			Whenever an event is requested via the output port,	the last received event is replayed with an adapted
+			timestamp. If no event has been received so far	the output port cannot deliver.
+		</p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Push Input">
+            	<Description><h:p>Push input</h:p></Description>
+                <Predicate>type=='4x4Matrix'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Pull Output">
+            	<Description><h:p>The last received event. The timestamp is adapted to the requested one.</h:p></Description>
+                <Attribute name="type" value="4x4Matrix" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="Matrix4x4Buffer"/>
+            <Attribute name="maxAge" displayName="maximum event age" default="0" min="0" xsi:type="IntAttributeDeclarationType">
+            	<Description><h:p>Maximum age of events in ms. The component will not return a measurement, if the last stored event is older than this.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+
+	<Pattern name="Matrix3x4Buffer" displayName="Buffer (Matrix3x4)">
+    	<Description><p xmlns="http://www.w3.org/1999/xhtml">This file contains a buffer component which is the
+			most simple push-pull adapter. The component accepts an event via a push input port
+			and sends the last received event for any request via the pull output port.<br/>
+			This may be useful for static spatial relationships which are
+			can be calibrated at runtime.<br/>
+			Whenever an event is received via the input port it is buffered in an internal member variable.
+			Whenever an event is requested via the output port,	the last received event is replayed with an adapted
+			timestamp. If no event has been received so far	the output port cannot deliver.
+		</p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Push Input">
+            	<Description><h:p>Push input</h:p></Description>
+                <Predicate>type=='3x4Matrix'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Pull Output">
+            	<Description><h:p>The last received event. The timestamp is adapted to the requested one.</h:p></Description>
+                <Attribute name="type" value="3x4Matrix" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="Matrix3x4Buffer"/>
+            <Attribute name="maxAge" displayName="maximum event age" default="0" min="0" xsi:type="IntAttributeDeclarationType">
+            	<Description><h:p>Maximum age of events in ms. The component will not return a measurement, if the last stored event is older than this.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
 
 	<Pattern name="Matrix3x3Buffer" displayName="Buffer (Matrix3x3)">
     	<Description><p xmlns="http://www.w3.org/1999/xhtml">This file contains a buffer component which is the
@@ -438,8 +509,6 @@
             </Attribute>
         </DataflowConfiguration>
     </Pattern>
-
-
     <!-- Attribute declarations -->
     
     <GlobalNodeAttributeDeclarations>

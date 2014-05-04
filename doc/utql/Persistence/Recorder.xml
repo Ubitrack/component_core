@@ -195,6 +195,23 @@
         </DataflowConfiguration>
     </Pattern>
     
+	<Pattern name="Matrix3x3Recorder" displayName="Recorder (Matrix3x3)">
+        <Description><p xmlns="http://www.w3.org/1999/xhtml">Records a 3x3 Matrix</p></Description>
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" displayName="Recorder" source="A" destination="B">
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        <DataflowConfiguration>
+            <UbitrackLib class="Matrix3x3Recorder"/>
+            <Attribute name="file" displayName="Logfile" xsi:type="PathAttributeDeclarationType">
+                <Description><p xmlns="http://www.w3.org/1999/xhtml">Logfile where 3x3 Matrix data will be written to</p></Description>                
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+    
     <!-- Attribute declarations -->
     
     <GlobalNodeAttributeDeclarations>

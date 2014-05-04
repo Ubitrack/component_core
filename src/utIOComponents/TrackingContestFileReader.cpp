@@ -51,7 +51,7 @@ class TrackingContestFileReader
 			
 				//Ubitrack::Math::Vector < 3 >  posXYZ (x, y, z);
 				//const Ubitrack::Math::Quaternion Rot( 0.0, 0.0, 0.0, 1.0 );
-				Ubitrack::Math::Vector< 3 > position( x, y, z );
+				Ubitrack::Math::Vector< double, 3 > position( x, y, z );
 
 				PositionList . push_back ( position );
 				m_counter++;
@@ -74,7 +74,7 @@ class TrackingContestFileReader
 
 		unsigned int m_position;
 
-		std::vector<Ubitrack::Math::Vector< 3 > >	PositionList; //vector mit allen Punkten
+		std::vector<Ubitrack::Math::Vector< double, 3 > >	PositionList; //vector mit allen Punkten
 
 		Ubitrack::Dataflow::PullSupplier< Measurement::Position > m_outPort;	
 	
@@ -102,7 +102,7 @@ class TrackingContestPositionListReader
 			
 				//Ubitrack::Math::Vector < 3 >  posXYZ (x, y, z);
 				//const Ubitrack::Math::Quaternion Rot( 0.0, 0.0, 0.0, 1.0 );
-				Ubitrack::Math::Vector< 3 > position( x, y, z );
+				Ubitrack::Math::Vector< double, 3 > position( x, y, z );
 
 				PositionList . push_back ( position );
 			
@@ -120,7 +120,7 @@ class TrackingContestPositionListReader
 
 		
 
-		std::vector<Ubitrack::Math::Vector< 3 > >	PositionList; //vector mit allen Punkten
+		std::vector<Ubitrack::Math::Vector< double, 3 > >	PositionList; //vector mit allen Punkten
 
 		Ubitrack::Dataflow::PullSupplier< Measurement::PositionList > m_outPort;	
 	

@@ -40,7 +40,7 @@ namespace Ubitrack { namespace Components {
 namespace {
 
 /** reads the covariance from attributes */
-Math::Matrix< 6, 6 > readConfiguration( boost::shared_ptr< Graph::UTQLSubgraph > subgraph
+Math::Matrix< double, 6, 6 > readConfiguration( boost::shared_ptr< Graph::UTQLSubgraph > subgraph
 	, const Measurement::ErrorPose& )
 {
 	double posSigma = 1e-3;
@@ -48,7 +48,7 @@ Math::Matrix< 6, 6 > readConfiguration( boost::shared_ptr< Graph::UTQLSubgraph >
 	subgraph->m_DataflowAttributes.getAttributeData( "posSigma", posSigma );
 	subgraph->m_DataflowAttributes.getAttributeData( "rotSigma", rotSigma );
 
-	Math::Matrix< 6, 6 > cov( boost::numeric::ublas::zero_matrix< double >( 6, 6 ) );
+	Math::Matrix< double, 6, 6 > cov( Math::Matrix< double, 6, 6 >::zeros( ) );
 	cov( 0, 0 ) = cov( 1, 1 ) = cov( 2, 2 ) = posSigma * posSigma;
 	cov( 3, 3 ) = cov( 4, 4 ) = cov( 5, 5 ) = rotSigma * rotSigma;
 
@@ -119,7 +119,7 @@ public:
 
 protected:
 	/** static covariance */
-	Math::Matrix< nErrSize, nErrSize > m_staticError;
+	Math::Matrix< double, nErrSize, nErrSize > m_staticError;
 
 	/** Input port of the component. */
 	Dataflow::TriggerInPort< EventTypeIn > m_inPort;
