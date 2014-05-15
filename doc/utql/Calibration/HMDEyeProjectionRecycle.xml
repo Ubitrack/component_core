@@ -6,37 +6,43 @@
                       xmlns:h="http://www.w3.org/1999/xhtml"
                       xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
 
-    <Pattern name="ProjectionWithEyePosition" displayName="HMD Calibration">
+    <Pattern name="ProjectionWithEyePositionRecycle" displayName="HMD Calibration (with an old intrinsic matrix)">
     	<Description><h:p>Test..</h:p></Description>
 		    	
         <Input>
             <Node name="Eye"    displayName="Eye"/>
-            <Node name="EyeCam" displayName="EyeCam"/>
+            <Node name="EyeTracker" displayName="EyeTracker"/>
             <Node name="World"  displayName="World"/>
 
-            <Edge name="InputIntrinsicsEye"       source="World"  destination="Eye"   displayName="Intrinsics">
+            <Edge name="InputIntrinsicsEye"       source="World"  destination="Eye"   displayName="Intrinsics (K_E0)">
                 <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
             </Edge>
-            <Edge name="InputPoseWorld2EyeCam" source="World" destination="EyeCam" displayName="Pose">
+            <Edge name="InputPoseWorld2EyeTracker" source="World" destination="EyeTracker" displayName="Pose (R_WT,t_WT)">
                 <Predicate>type=='6D'&amp;&amp;mode=='pull'</Predicate>
             </Edge>
-            <Edge name="InputRotationWorld2Eye"   source="World"  destination="Eye"   displayName="Rotation">
+            <Edge name="InputRotationWorld2EyeOld"   source="World"  destination="Eye"   displayName="Rotation (R_WE)">
                 <Predicate>type=='3DRotation'&amp;&amp;mode=='pull'</Predicate>
             </Edge>
-            <Edge name="InputPositionEyeCam2Eye"  source="EyeCam" destination="Eye"   displayName="Position">
-              <Description><h:p>Movie images, converted to grey scale.</h:p></Description>
+            <Edge name="InputPositionWorld2EyeOld"   source="World"  destination="Eye"   displayName="Position (t_WE)">
+                <Predicate>type=='3DPosition'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="InputPositionEye2EyeTracker"  source="Eye" destination="EyeTracker"   displayName="Position (t_ET)">
+                <Description><h:p>Eye position relative to the tracker.</h:p></Description>
                 <Predicate>type=='3DPosition'&amp;&amp;mode=='push'</Predicate>
             </Edge>
         </Input>
         <Output>
             <Node name="EyeImage"    displayName="EyeImage"/>
-            <Edge name="OutputProjection"  source="Eye" destination="EyeImage"   displayName="Projection">
+            <Edge name="OutputProjection"  source="World" destination="EyeImage"   displayName="Projection">
               <Attribute name="type" value="3x4Matrix" xsi:type="EnumAttributeReferenceType"/>
-	      <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+              <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
             </Edge>
         </Output>
         <DataflowConfiguration>
-            <UbitrackLib class="ProjectionWithEyePosition"/>
+            <UbitrackLib class="ProjectionWithEyePositionRecycle"/>
+	    <Attribute name="t_WS_z" default="1.0" min="0.0" displayName="[t_WS]_z" xsi:type="DoubleAttributeDeclarationType">
+	      <Description><h:p>Depth to the world camera from the virtual screen in the screen  coordinate system. </h:p></Description>
+	    </Attribute>
         </DataflowConfiguration>
     </Pattern>
     

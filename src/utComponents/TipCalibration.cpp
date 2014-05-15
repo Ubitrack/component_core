@@ -34,10 +34,7 @@
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utCalibration/TipCalibration.h>
-#include <utMath/Stochastic/Average.h>
-
-static log4cpp::Category& logger( log4cpp::Category::getInstance( "Components.TipCalibrationComponent" ) );
+#include <utAlgorithm/ToolTip/TipCalibration.h>
 
 namespace Ubitrack { namespace Components {
 
@@ -57,7 +54,7 @@ namespace Ubitrack { namespace Components {
  * @par Operation
  * The component computes the location of a tip in the coordinate frame of a marker,
  * given a list of at least three marker poses. For details see
- * \c Ubitrack::Calibration::tipCalibration.
+ * \c Ubitrack::Algorithm::tipCalibration.
  *
  * @par Instances
  * Registered for the following expansions and push/pull configurations:
@@ -90,27 +87,7 @@ public:
 
 		Math::Vector< double, 3 > pm;
 		Math::Vector< double, 3 > pw;
-		Calibration::tipCalibration( *m_inPort.get(), pm, pw );
-		
-		const std::vector< Math::Pose >& poses = *m_inPort.get();
-		std::vector< Math::Vector3d > result( poses.size() );
-		for ( unsigned i = 0; i < poses.size(); i++ )
-			result[ i ] = poses[i] * pm;
-		
-		Math::Stochastic::Average< Math::Vector3d, Math::ErrorVector< double, 3 > > average;
-		
-		Math::ErrorVector< double, 3 > tmp = average.mean( result );
-		
-		double maxDist = -1;
-		for ( unsigned i = 0; i < poses.size(); i++ ){
-			double pDist = norm_2( tmp.value - result[ i ]);
-			if(pDist > maxDist)
-				maxDist = pDist;
-		}
-			
-		
-		LOG4CPP_INFO(logger, "RMS:" << tmp.getRMS());
-		LOG4CPP_INFO(logger, "Max Error:" << maxDist);
+		Algorithm::ToolTip::tipCalibration( *m_inPort.get(), pm, pw );
 
 		m_outPort.send( Measurement::Position( t, pm ) );
     }

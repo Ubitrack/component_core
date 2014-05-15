@@ -35,7 +35,7 @@
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utCalibration/AbsoluteOrientation.h>
+#include <utAlgorithm/AbsoluteOrientation.h>
 
 namespace Ubitrack { namespace Components {
 
@@ -57,7 +57,7 @@ namespace Ubitrack { namespace Components {
  * @par Operation
  * The component computes the transformation from a coordinate system A to a coordinate system B,
  * given corresponding points in A (InputA) and B (InputB). For details see
- * \c Ubitrack::Calibration::calculateAbsoluteOrientation.
+ * \c Ubitrack::Algorithm::calculateAbsoluteOrientation.
  */
 template< class ResultType >
 class AbsoluteOrientationComponent
@@ -94,9 +94,9 @@ public:
 		const std::vector< Math::Vector< double, 3 > >& left = *m_inPortA.get();
 		const std::vector< Math::Vector< double, 3 > >& right = *m_inPortB.get();	
 			
-		Math::Pose pose = Calibration::calculateAbsoluteOrientation( left, right );
+		Math::Pose pose = Algorithm::calculateAbsoluteOrientation( left, right );
 				
-		Calibration::EvaluateAbsoluteOrientation< double > evaluator;
+		Algorithm::EvaluateAbsoluteOrientation< double > evaluator;
 		double m_error_distance = 0;
 		for( unsigned int i = 0; i < left.size(); i++ ) {
 			m_error_distance += evaluator( pose, left[i], right[i] );

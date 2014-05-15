@@ -39,7 +39,7 @@
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
 
-//#include <utCalibration/Function/MultipleCameraProjectionErrorART.h>
+//#include <utAlgorithm/Function/MultipleCameraProjectionErrorART.h>
 
 // get a logger
 #include <log4cpp/Category.hh>
@@ -259,7 +259,7 @@ public:
 				camPs[ i ] = ublas::prod( camMatrices[ i ], Math::Matrix< double, 3, 4 >( camPoses[ i ] ) );
 				
 			// backward propagation
-			Calibration::Function::MultipleCameraProjectionErrorART< double > fe( p3d, camPs, observations ); //, *m_inCenterOfGravity.get() );
+			Algorithm::Function::MultipleCameraProjectionErrorART< double > fe( p3d, camPs, observations ); //, *m_inCenterOfGravity.get() );
 			Math::Stochastic::backwardPropagationIdentity( cov, 100.0, fe, expParam );
 			LOG4CPP_DEBUG( logger, "covariance: " << cov );
 			

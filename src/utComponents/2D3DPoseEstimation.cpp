@@ -32,14 +32,14 @@
 #include <log4cpp/Category.hh>
 
 #include <utMath/MatrixOperations.h>
-#include <utCalibration/2D3DPoseEstimation.h>
+#include <utAlgorithm/2D3DPoseEstimation.h>
 #include <utDataflow/TriggerComponent.h>
 #include <utDataflow/TriggerInPort.h>
 #include <utDataflow/ExpansionInPort.h>
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utCalibration/2D3DPoseEstimation.h>
+#include <utAlgorithm/2D3DPoseEstimation.h>
 
 #include <boost/lexical_cast.hpp>
 
@@ -78,7 +78,7 @@ public:
 		, m_inCam( "Intrinsics", *this )
 		, m_errOutPort( "Output", *this )
 		, m_iMinCorrespondences( 4 )
-		, m_method( (enum Calibration::InitializationMethod)Calibration::PLANAR_HOMOGRAPHY )
+		, m_method( (enum Algorithm::InitializationMethod)Algorithm::PLANAR_HOMOGRAPHY )
     {
 		config->m_DataflowAttributes.getAttributeData( "initPoseMethod", (unsigned int &)m_method );
 		config->m_DataflowAttributes.getAttributeData( "min2d3dCorresp", m_iMinCorrespondences );
@@ -102,7 +102,7 @@ public:
 			UBITRACK_THROW( "2D3D pose estimation configured to use at least " + boost::lexical_cast<std::string>( m_iMinCorrespondences ) + " points" );
 		}
 		
-		Math::ErrorPose errPose = Calibration::computePose( p2d, p3d, cam, m_method );
+		Math::ErrorPose errPose = Algorithm::computePose( p2d, p3d, cam, m_method );
 		
 		m_errOutPort.send( Measurement::ErrorPose( ts, errPose ) );		
     }
@@ -124,7 +124,7 @@ protected:
 	unsigned int m_iMinCorrespondences;
 
 	/** Method used for computation of initial pose */
-	enum Calibration::InitializationMethod m_method;
+	enum Algorithm::InitializationMethod m_method;
 };
 
 

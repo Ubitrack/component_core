@@ -34,7 +34,7 @@
 #include <utDataflow/PushSupplier.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utCalibration/Projection.h>
+#include <utAlgorithm/Projection.h>
 #include <log4cpp/Category.hh>
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Components.DecomposeProjectionMatrix" ) );
 
@@ -85,7 +85,7 @@ public:
 			Math::Vector< double, 3 > t;
 			
 			 	
-			Calibration::decomposeProjection( K, R, t,*p);
+			Algorithm::decomposeProjection( K, R, t,*p);
 			Math::Quaternion rq=Math::Quaternion(R);
 			Math::Pose aPose= Math::Pose(rq,t);
 		m_outIntrinsic.send(  Measurement::Matrix3x3(p.time(),K));
