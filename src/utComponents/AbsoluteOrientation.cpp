@@ -35,7 +35,7 @@
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utAlgorithm/AbsoluteOrientation/AbsoluteOrientation.h>
+#include <utAlgorithm/PoseEstimation3D3D/AbsoluteOrientation.h>
 
 namespace Ubitrack { namespace Components {
 
@@ -94,9 +94,9 @@ public:
 		const std::vector< Math::Vector< double, 3 > >& left = *m_inPortA.get();
 		const std::vector< Math::Vector< double, 3 > >& right = *m_inPortB.get();	
 			
-		Math::Pose pose = Algorithm::AbsoluteOrientation::calculateAbsoluteOrientation( left, right );
+		Math::Pose pose = Algorithm::PoseEstimation3D3D::calculateAbsoluteOrientation( left, right );
 				
-		Algorithm::AbsoluteOrientation::EvaluateAbsoluteOrientation< double > evaluator;
+		Algorithm::PoseEstimation3D3D::EvaluateAbsoluteOrientation< double > evaluator;
 		double m_error_distance = 0;
 		for( unsigned int i = 0; i < left.size(); i++ ) {
 			m_error_distance += evaluator( pose, left[i], right[i] );

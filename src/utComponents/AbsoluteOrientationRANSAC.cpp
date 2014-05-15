@@ -46,7 +46,7 @@ static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Abso
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utAlgorithm/AbsoluteOrientation/AbsoluteOrientation.h>
+#include <utAlgorithm/PoseEstimation3D3D/AbsoluteOrientation.h>
 
 
 namespace Ubitrack { namespace Components {
@@ -116,8 +116,8 @@ public:
 			, *m_inPortA.get(), *m_inPortB.get()
 			, m_threshold,  m_nSetSize, m_nMinInliers
 			, m_nMinRuns, m_nMaxRuns
-			, Algorithm::AbsoluteOrientation::EstimateAbsoluteOrientation< double >()
-			, Algorithm::AbsoluteOrientation::EvaluateAbsoluteOrientation< double >() );
+			, Algorithm::PoseEstimation3D3D::EstimateAbsoluteOrientation< double >()
+			, Algorithm::PoseEstimation3D3D::EvaluateAbsoluteOrientation< double >() );
 
 		LOG4CPP_INFO( logger, "Robust absolute orientation performed with " << number << " iterations" );
 
