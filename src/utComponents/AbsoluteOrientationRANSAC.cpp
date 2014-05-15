@@ -119,7 +119,7 @@ public:
 			, Calibration::EstimateAbsoluteOrientation< double >()
 			, Calibration::EvaluateAbsoluteOrientation< double >() );
 
-		LOG4CPP_INFO( logger, "Robust absolute orientation performed with " << number << " iterations" );
+		LOG4CPP_INFO( logger, "Robust absolute orientation performed, " << number << " inliers of " << m_inPortA.get()->size());
 
 		m_outPort.send( Measurement::Pose( t, p ) );
     }

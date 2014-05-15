@@ -29,8 +29,70 @@
             <UbitrackLib class="PlayerPose"/>
         </DataflowConfiguration>
     </Pattern>
+	
+	<Pattern name="PosePlayerWithSignal" displayName="Player with signal(Pose)">
+        <Description>
+            <p xmlns="http://www.w3.org/1999/xhtml">Plays pose data that has been recorded with PoseRecorder before</p>
+        </Description>
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+			<Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+            <Edge name="Output" displayName="Played Pose" source="A" destination="B">
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="offset" min="0" default="0" xsi:type="IntAttributeDeclarationType" displayName="TimeOffset"/>
+                <Attribute name="speedup" min="0.01" default="1" xsi:type="DoubleAttributeDeclarationType" displayName="Speed up factor"/>
+                <Attribute name="file" displayName="Logfile" xsi:type="PathAttributeDeclarationType">
+                    <Description>
+                        <p xmlns="http://www.w3.org/1999/xhtml">Logfile where pose data will be read from</p>
+                    </Description>
+                </Attribute>
+            </Edge>
+			
+			
+			<Edge name="OutputFinished" displayName="Finished signal" source="Event" destination="EventSpace">
+				<Attribute name="type" value="Button" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+			</Edge>
+        </Output>
+        <DataflowConfiguration>
+            <UbitrackLib class="PlayerPose"/>
+        </DataflowConfiguration>
+    </Pattern>
     
-    <Pattern name="PositionPlayer" displayName="Player (3D Position)">
+    <Pattern name="PositionPlayerWithSignal" displayName="Player with signal(3D Position)">
+        <Description>
+            <p xmlns="http://www.w3.org/1999/xhtml">Plays 3D position data that has been recorded with PositionRecorder before</p>
+        </Description>
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+			<Node name="Event" displayName="Event"/>
+            <Node name="EventSpace" displayName="Event Space"/>
+            <Edge name="Output" displayName="Played Position" source="A" destination="B">
+                <Attribute name="type" value="3DPosition" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="offset" min="0" default="0" xsi:type="IntAttributeDeclarationType" displayName="TimeOffset"/>
+                <Attribute name="speedup" min="0.01" default="1" xsi:type="DoubleAttributeDeclarationType" displayName="Speed up factor"/>
+                <Attribute name="file" displayName="Logfile" xsi:type="PathAttributeDeclarationType">
+                    <Description>
+                        <p xmlns="http://www.w3.org/1999/xhtml">Logfile where 3d position data will be read from</p>
+                    </Description>
+                </Attribute>
+            </Edge>			
+			<Edge name="OutputFinished" displayName="Finished signal" source="Event" destination="EventSpace">
+				<Attribute name="type" value="Button" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+			</Edge>
+        </Output>
+        <DataflowConfiguration>
+            <UbitrackLib class="PlayerPosition"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="PositionPlayer" displayName="Player (3D Position)">
         <Description>
             <p xmlns="http://www.w3.org/1999/xhtml">Plays 3D position data that has been recorded with PositionRecorder before</p>
         </Description>
@@ -48,11 +110,14 @@
                     </Description>
                 </Attribute>
             </Edge>
+			
         </Output>
         <DataflowConfiguration>
             <UbitrackLib class="PlayerPosition"/>
         </DataflowConfiguration>
     </Pattern>
+	
+	
 
     <Pattern name="Position2DPlayer" displayName="Player (2D Position)">
         <Description>

@@ -153,6 +153,10 @@ public:
 	/** send the next event with the given offset */
 	virtual void sendNext( Measurement::Timestamp recordStart, Measurement::Timestamp playbackStart )
 	{ assert( false ); }
+	
+	virtual void sendFinished() {
+		assert( false );
+	}
 
 	virtual void start()
 	{
@@ -200,6 +204,7 @@ public:
 		, m_offset( 0 )
 		, m_speedup( 1.0 )
 		, m_outPort( "Output", *this )
+		, m_outPortFinished( "OutputFinished", *this )
 	{
 		LOG4CPP_INFO( logger, "Created PlayerComponent for file=" << key.get() );
 
@@ -254,6 +259,11 @@ public:
 		m_outPort.send( EventType( recordTimeToReal( m_iterator->time(), recordStart, playbackStart ), *m_iterator ) );
 		m_iterator++;
 	}
+	
+	void sendFinished() {
+		m_outPortFinished.send( Measurement::Button(Measurement::now(), ' '));
+	}
+	
 
 protected:
 
@@ -274,6 +284,8 @@ protected:
 
 	/** output port */
 	Dataflow::PushSupplier< EventType > m_outPort;
+	
+	Dataflow::PushSupplier< Measurement::Button > m_outPortFinished;
 
 	/** list of all events */
 	std::vector< EventType > m_events;
@@ -523,6 +535,8 @@ void PlayerModule::mainloop()
 		}
 	}
 	LOG4CPP_DEBUG( logger, "Starting main loop" );
+	
+	LOG4CPP_INFO( logger, "Starting main loop" << nextEventTime);
 
 	// main loop
 	while ( !m_bStop && nextEventTime )
@@ -535,30 +549,41 @@ void PlayerModule::mainloop()
 		if ( sleepdur > 0 )
 		{
 			LOG4CPP_DEBUG( logger, "sleeping " << sleepdur / 1000000 << "ms" );
-			Util::sleep( int( sleepdur / 1000000 ), int( sleepdur % 1000000 ) );
+			//LOG4CPP_INFO( logger, "sleeping " << sleepdur / 1000000 << "ms" );
+			//Util::sleep( int( sleepdur / 1000000 ), int( sleepdur % 1000000 ) );
 		}
 
-		now = Measurement::now();
+		now = nextEventTime;//Measurement::now();
+		//now = Measurement::now();
 		nextEventTime = 0;
 
 		// iterate all components
 		ComponentList l( getAllComponents() );
+		int count = 0;
 		for ( ComponentList::iterator it = l.begin(); it != l.end(); it++ )
 		{
 			// send all events due until now
 			Measurement::Timestamp t = (*it)->getNextTime( recordStart, playbackStart );
+			
 			for ( ; t && t <= now; )
 			{
+				//LOG4CPP_DEBUG( logger,  (*it)->getName() << "sending " << t  );
+				//LOG4CPP_INFO( logger, (*it)->getName() << "sending " << t  );
 				(*it)->sendNext( recordStart, playbackStart );
 				t = (*it)->getNextTime( recordStart, playbackStart );
-				if ( !t )
+				if ( !t ){
 					LOG4CPP_NOTICE( logger, (*it)->getName() << " reached end of recording" );
+					(*it)->sendFinished();
+				}
+				count++;
 			}
+			
 
 			// update next event time
 			if ( t && ( nextEventTime == 0 || t < nextEventTime ) )
 				nextEventTime = t;
 		}
+		//LOG4CPP_NOTICE(logger, "count of send events:"<< count);
 	}
 }
 

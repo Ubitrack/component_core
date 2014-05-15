@@ -221,7 +221,7 @@ void TimeDelayEstimation::threadProc(){
 		Math::ErrorVector<double, 3 > meanWithError = averageData.mean(tmpData);
 
 		//LOG4CPP_INFO(logger, "RMS: "<< meanWithError.getRMS() << " : " << meanWithError.covariance );
-		if(meanWithError.getRMS() < 0.05){
+		if(meanWithError.getRMS() < 0.03){
 			LOG4CPP_INFO(logger, "too little movement, RMS:" << meanWithError.getRMS());
 			delete data1;
 			delete data2;
