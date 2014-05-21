@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
+
+    <Pattern name="ProjectionWithEyePositionFull" displayName="HMD Calibration (with full display parameters)">
+    	<Description><h:p>Test..</h:p></Description>
+		    	
+        <Input>
+            <Node name="Eye"    displayName="Eye"/>
+            <Node name="EyeTracker" displayName="EyeTracker"/>
+            <Node name="World"  displayName="World"/>
+            <Node name="Screen"  displayName="Screen"/>
+            <Edge name="InputPoseWorld2Screen"   source="World"  destination="Screen"   displayName="Pose (R_WS,t_WS)">
+                <Predicate>type=='6D'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="InputPoseWorld2EyeTracker" source="World" destination="EyeTracker" displayName="Pose (R_WT,t_WT)">
+                <Predicate>type=='6D'&amp;&amp;mode=='pull'</Predicate>
+            </Edge>
+            <Edge name="InputPositionEye2EyeTracker"  source="Eye" destination="EyeTracker"   displayName="Position (t_ET)">
+                <Description><h:p>Eye position relative to the tracker.</h:p></Description>
+                <Predicate>type=='3DPosition'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        <Output>
+            <Node name="EyeImage"    displayName="EyeImage"/>
+            <Edge name="OutputProjection"  source="World" destination="EyeImage"   displayName="Projection">
+              <Attribute name="type" value="3x4Matrix" xsi:type="EnumAttributeReferenceType"/>
+              <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        <DataflowConfiguration>
+            <UbitrackLib class="ProjectionWithEyePositionFull"/>
+	    <Attribute name="alpha" default="1.0" min="0.0" displayName="alpha" xsi:type="DoubleAttributeDeclarationType">
+	      <Description><h:p>A scale paramter from the real world to the image pixel. </h:p></Description>
+	    </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/4)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/5)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/6)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/7)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/8)"/>
+    </GlobalEdgeAttributeDeclarations> 
+
+    <GlobalDataflowAttributeDeclarations>
+        <!-- Unfortunately, the xpointer used in Xinclude is currently restricted to the element scheme and absolute element indices in Xerces (and thus XMLBeans) -->
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/2)"/>
+    </GlobalDataflowAttributeDeclarations>
+
+</UTQLPatternTemplates>
