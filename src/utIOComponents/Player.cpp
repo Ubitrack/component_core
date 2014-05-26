@@ -29,27 +29,34 @@
  * @author Daniel Pustka <daniel.pustka@in.tum.de>
  */
 
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <fstream>
-#include <vector>
-
-#include <boost/thread.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/serialization/string.hpp>
-
+// Ubitrack
 #include <utUtil/OS.h>
 #include <utMeasurement/Measurement.h>
 #include <utMeasurement/Timestamp.h>
 #include <utDataflow/Module.h>
 #include <utDataflow/PushSupplier.h>
 
+// std
+#include <deque> // for image queue
+#include <vector>
+#include <string>
+#include <sstream>
+#include <fstream>
+#include <iostream>
+
+// Boost
+#include <boost/thread.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/string.hpp>
+
+
+
 #ifdef HAVE_OPENCV
 	#include <utVision/Image.h>
 	#include <opencv/highgui.h>
 #endif
+
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Drivers.Player" ) );
 
 namespace Ubitrack { namespace Drivers {
@@ -322,7 +329,7 @@ public:
 		, m_speedup( 1.0 )
 		, m_outPort( "Output", *this )
 	{
-		LOG4CPP_INFO( logger, "Created PlayerComponentImage for file = " << key.get() );
+		LOG4CPP_INFO( logger, "Created PlayerComponentImage using file \"" << key.get() << "\"." );
 
 		// read configuration
 		pConfig->getEdge( "Output" )->getAttributeData( "offset", m_offset );
@@ -330,54 +337,67 @@ public:
 
 		// get the file which describes the timestamps and filenames
 		pConfig->getEdge( "Output" )->getAttributeData( "file", m_tsFile );
-
+		
+		// start loading images in a thread
+		if ( !m_pLoadThread )
+			m_pLoadThread.reset( new boost::thread( boost::bind( &PlayerComponentImage::loadImages, this ) ) );
+			
+		// before starting the component let the tread do some work on loading 
+		Util::sleep( 1 );
+	}
+	
+	void loadImages()
+	{
 		boost::filesystem::path tsFile( m_tsFile );
 		if( !boost::filesystem::exists( tsFile ) )
-			UBITRACK_THROW( "file with timestamps does not exist, please check the path: " + m_tsFile );
-		
+			UBITRACK_THROW( "file with timestamps does not exist, please check the path: \"" + m_tsFile + "\"");
+			
+
 		// read file with timestamps and filenames
 		std::ifstream ifs( m_tsFile.c_str() );
-
 		if( !ifs.is_open ( ) )
 			UBITRACK_THROW( "Could not open file \"" + m_tsFile  + "\". This file should contain the timestamps and filenames of the images." );
-	
 
-		// declare and initialize the variable for the timestamp and the file name string of the pictures
-		Measurement::Timestamp timeStamp = 0;
-		std::string fileName("");
+		LOG4CPP_INFO( logger, "Starting to load images defined in file \"" << m_tsFile << "\"." );
 
-
-		// read contents line by line
-		// read the image file and add the image and the timestamp to an event queue
-		std::string temp;
-		LOG4CPP_INFO( logger, "Starting loading images for file = " << key.get() );
-
-		while( getline( ifs, temp ) )
+		while( ifs.good() ) // && this->isRunning() ) <- "isRunning" does not work here, but not really necessary
 		{
+			// read contents line by line
+			// read the image file and add the image and the timestamp to an event queue
+			std::string temp;
+			getline( ifs, temp );
+			
+			LOG4CPP_TRACE( logger, "Loading image file for log line " <<  temp );
 
-		  LOG4CPP_NOTICE( logger, "Loading image file for log line " <<  temp );
+			// parsing line with stringstreams
+			// we have the fileformat "1272966027407 CameraRaw01249.jpg"
+			std::stringstream ss ( std::stringstream::in | std::stringstream::out );
+			ss << temp; // parse the line
+			
+			// declare and initialize the variable for the timestamp 
+			Measurement::Timestamp timeStamp = 0;
+			ss >> timeStamp;
+			
+			// declare and initialize the variable for the name of the image 
+			std::string fileName;
+			ss >> fileName;
+			
+			if ( fileName.empty() )
+				continue;
 
-		  // parsing line with stringstreams
-		  // we have the fileformat "1272966027407 CameraRaw01249.jpg"
-		  std::stringstream ss (std::stringstream::in | std::stringstream::out);
-		  ss << temp; // parse the line
-		  ss >> timeStamp;
-		  ss >> fileName;
-
-		  if ( fileName.begin() == fileName.end() )
-		  	continue;
-
-		  // mh: uses c++11 standard
+		  // mh: "front()" is c++11 standard
 		  // if ( fileName.front() == '"' ) {
 
-		  if ( *(fileName.begin()) == '"' ) {
-			fileName.erase( 0, 1 ); // erase the first character
-			fileName.erase( fileName.size() - 1 ); // erase the last character
-		}
+			if ( *(fileName.begin()) == '"' )
+			{
+				fileName.erase( 0, 1 ); // erase the first character
+				fileName.erase( fileName.size() - 1 ); // erase the last character
+			}
   		  
-		 	// check for length of timestamp to deside if timestamp is ms or ns
+		 	// check for length of timestamp to decide if timestamp is ms or ns
 			// (we just need ms here, no need to be more accurate)
-			timeStamp = ( timeStamp > 1e13 ) ? timeStamp * 1e-06 : timeStamp;
+			if( timeStamp > 1e13 )
+				timeStamp = static_cast< Measurement::Timestamp >( timeStamp * 1e-06 );
 			
 			boost::filesystem::path file( fileName );
 			boost::filesystem::file_status fstatus( boost::filesystem::status( file ) );
@@ -385,7 +405,7 @@ public:
 			//check if path to file is given absolute
 			if( !boost::filesystem::exists( fstatus ) )
 			{
-				//no absolute path, check reltive path to timestampfile:
+				//no absolute path, check relative path to timestampfile:
 				file = boost::filesystem::path( tsFile.parent_path().string() + "/" + fileName );
 				if( !boost::filesystem::exists( file ) )
 					continue;
@@ -404,7 +424,6 @@ public:
 			catch( std::exception& e )
 			{
 				LOG4CPP_ERROR( logger, "loading image file \"" << file.string() << "\" failed: " << e.what() );
-				LOG4CPP_ERROR( logger, "loading image file \"" << file.string() << "\" failed: " << e.what() );
 				continue;
 			}
 			
@@ -415,31 +434,42 @@ public:
 			}
 
 			// convert loaded image into the required pImage class
-			boost::shared_ptr< Vision::Image > pImage( new Vision::Image( pIpl->width, pIpl->height, 3 ) );
-			cvConvertImage( pIpl, *pImage );
-			pImage->origin = pIpl->origin;
-			pImage->channelSeq[0]='B';
-			pImage->channelSeq[1]='G';
-			pImage->channelSeq[2]='R';
-
+			boost::shared_ptr< Vision::Image > pImage( new Vision::Image( pIpl, true ) );
+			
+			{	//2015-05-26, CW: commented following block, too much unnecessary image copying&changing
+				// boost::shared_ptr< Vision::Image > pImage( new Vision::Image( pIpl->width, pIpl->height, pIpl->nChannels ) );
+				
+				// cvConvertImage( pIpl, *pImage );
+				// releasing memory
+				// cvReleaseImage(&pIpl);
+				
+				// pImage->origin = pIpl->origin;
+				
+				// 2014-05-26,CW: OpenCV's doku sais that "channelSeq" is ignored, see yourself:
+				// http://docs.opencv.org/modules/core/doc/old_basic_structures.html#char[]%20channelSeq
+				// so is this still necessary here?
+				// if( pIpl->nChannels == 3 )
+				// {
+					// pImage->channelSeq[ 0 ]='B';
+					// pImage->channelSeq[ 1 ]='G';
+					// pImage->channelSeq[ 2 ]='R';
+				// }
+			}
 
 			// Building the event and packing timestamp and image into it
-			Measurement::ImageMeasurement e( (Measurement::Timestamp) ( 1e6 * timeStamp), pImage );
+			Measurement::ImageMeasurement e( static_cast< Measurement::Timestamp>( 1e6 * timeStamp), pImage );
 
 			// Store it
-			m_events.push_back(e);
-
-			// releasing memory
-			cvReleaseImage(&pIpl);
+			m_events.push_back( e );
 		}
-
-		m_iterator = m_events.begin();
+		LOG4CPP_INFO( logger, "Done loading " << m_events.size() << " images defined in file \"" << m_tsFile << "\"." );
+		
 	}
 
 	Measurement::Timestamp getFirstTime() const
 	{
 		if ( !m_events.empty() )
-			return m_events.front().time() + 1000000LL * m_offset;
+			return m_events.begin()->time() + 1000000LL * m_offset;
 		else
 			return 0;
 	}
@@ -447,8 +477,8 @@ public:
 	/** return time of the next measurement to be played or 0 if no events */
 	Measurement::Timestamp getNextTime( Measurement::Timestamp recordStart, Measurement::Timestamp playbackStart )
 	{
-		if ( m_iterator != m_events.end() )
-			return recordTimeToReal( m_iterator->time(), recordStart, playbackStart );
+		if( !m_events.empty() )
+			return recordTimeToReal( m_events.begin()->time(), recordStart, playbackStart );
 		else
 			return 0;
 	}
@@ -456,8 +486,11 @@ public:
 	/** send the next event */
 	void sendNext( Measurement::Timestamp recordStart, Measurement::Timestamp playbackStart )
 	{
-		m_outPort.send( Measurement::ImageMeasurement( recordTimeToReal( m_iterator->time(), recordStart, playbackStart ), *m_iterator ) );
-		m_iterator++;
+		if( !m_events.empty() )
+		{
+			m_outPort.send( Measurement::ImageMeasurement( recordTimeToReal( m_events.begin()->time(), recordStart, playbackStart ), m_events.front() ) );
+			m_events.pop_front();
+		}
 	}
 
 protected:
@@ -479,15 +512,15 @@ protected:
 
 	/** speedup factor */
 	double m_speedup;
+	
+	/** a thread for loading images */
+	boost::shared_ptr< boost::thread > m_pLoadThread;
 
 	/** output port */
 	Dataflow::PushSupplier< Measurement::ImageMeasurement > m_outPort;
 
-	/** list of all events */
-	std::vector< Measurement::ImageMeasurement > m_events;
-
-	/** iterator to next event */
-	std::vector< Measurement::ImageMeasurement >::iterator m_iterator;
+	/** queue for the images being loaded, @todo add mutex for accessing m_events */
+	std::deque< Measurement::ImageMeasurement > m_events;
 };
 #endif
 
