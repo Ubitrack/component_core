@@ -29,21 +29,23 @@
  *
  * @author Daniel Pustka <daniel.pustka@in.tum.de>
  */
-#include <log4cpp/Category.hh>
 
-#include <utMath/MatrixOperations.h>
-#include <utAlgorithm/2D3DPoseEstimation.h>
+// Ubitrack
 #include <utDataflow/TriggerComponent.h>
 #include <utDataflow/TriggerInPort.h>
 #include <utDataflow/ExpansionInPort.h>
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utAlgorithm/2D3DPoseEstimation.h>
 
+#include <utMath/MatrixOperations.h>
+#include <utAlgorithm/PoseEstimation2D3D/2D3DPoseEstimation.h>
+
+// Boost
 #include <boost/lexical_cast.hpp>
 
 // get a logger
+#include <log4cpp/Category.hh>
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Events.Components.2D3DPoseEstimation" ) );
 
 namespace Ubitrack { namespace Components {
@@ -78,7 +80,7 @@ public:
 		, m_inCam( "Intrinsics", *this )
 		, m_errOutPort( "Output", *this )
 		, m_iMinCorrespondences( 4 )
-		, m_method( (enum Algorithm::InitializationMethod)Algorithm::PLANAR_HOMOGRAPHY )
+		, m_method( Algorithm::PoseEstimation2D3D::PLANAR_HOMOGRAPHY )
     {
 		config->m_DataflowAttributes.getAttributeData( "initPoseMethod", (unsigned int &)m_method );
 		config->m_DataflowAttributes.getAttributeData( "min2d3dCorresp", m_iMinCorrespondences );
@@ -102,7 +104,7 @@ public:
 			UBITRACK_THROW( "2D3D pose estimation configured to use at least " + boost::lexical_cast<std::string>( m_iMinCorrespondences ) + " points" );
 		}
 		
-		Math::ErrorPose errPose = Algorithm::computePose( p2d, p3d, cam, m_method );
+		Math::ErrorPose errPose = Algorithm::PoseEstimation2D3D::computePose( p2d, p3d, cam, m_method );
 		
 		m_errOutPort.send( Measurement::ErrorPose( ts, errPose ) );		
     }
@@ -124,7 +126,7 @@ protected:
 	unsigned int m_iMinCorrespondences;
 
 	/** Method used for computation of initial pose */
-	enum Algorithm::InitializationMethod m_method;
+	enum Algorithm::PoseEstimation2D3D::InitializationMethod m_method;
 };
 
 
