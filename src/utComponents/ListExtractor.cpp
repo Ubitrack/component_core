@@ -111,7 +111,7 @@ protected:
 		const EventTypeListMeasurement& list = m_listPort.get( t );
 		const std::size_t n = std::distance( list->begin(), list->end() );
 		
-		LOG4CPP_INFO( logger, getName() << " Current index: " << m_conainerIndex << ", wrap around at: " << n );
+		LOG4CPP_DEBUG( logger, getName() << " Current index: " << m_conainerIndex << ", wrap around at: " << n );
 
 		// Wrap around
 		m_conainerIndex = m_conainerIndex % n;
