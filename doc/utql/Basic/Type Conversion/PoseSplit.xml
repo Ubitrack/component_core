@@ -6,7 +6,7 @@
                       xmlns:h="http://www.w3.org/1999/xhtml"
                       xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
     
-    <Pattern name="PoseSplit" displayName="Pose Splitter (Deprecated)">
+    <Pattern name="PoseSplit" displayName="Deprecated: Pose Splitter">
     	<Description><h:p>This component splits incoming pose measurements into rotation and translation parts.
 		 This Component is deprecated. Please use "CastPose2Position" and "CastPose2Rotation" instead.
 		</h:p></Description>
