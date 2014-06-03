@@ -117,7 +117,7 @@ protected:
 		m_conainerIndex = m_conainerIndex % n;
 		
 		// set pointer to element pointed to by index
-		EventTypeList::const_iterator it = list->begin();
+		typename EventTypeList::const_iterator it = list->begin();
 		std::advance( it, m_conainerIndex++ );
 		
 		// return only valid elements, otherwise throw an error
