@@ -39,7 +39,7 @@
 #include <utMeasurement/Measurement.h>
 
 #include <utMath/MatrixOperations.h>
-#include <utAlgorithm/PoseEstimation2D3D/2D3DPoseEstimation.h>
+#include <utAlgorithm/PoseEstimation2D3D/PlanarPoseEstimation.h>
 
 // Boost
 #include <boost/lexical_cast.hpp>
