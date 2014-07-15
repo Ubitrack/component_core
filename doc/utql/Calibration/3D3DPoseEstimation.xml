@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<UTQLPatternTemplates xmlns='http://ar.in.tum.de/ubitrack/utql'
+                      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+                      xmlns:xi='http://www.w3.org/2001/XInclude'
+                      xmlns:h="http://www.w3.org/1999/xhtml"
+                      xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../schema/utql_templates.xsd'>
+    
+    <Pattern name="3D3DPoseEstimationTime" displayName="Experimental: 3D-3D Pose Estimation aka. Absolute Orientation (time-expansion)">
+    	<Description><h:p>This pattern describes the the 3D-3D pose estimation, also known as the absolute orientation
+    	 problem, which takes corresponding 3D location measurements of a Feature in two coordinate systems A and B. 
+    	 If measurement-pairs of at least three points are available, the rotation and translation between the 
+    	 coordinate systems can be computed. In practice, such an algorithm can be applied in two different situations:
+    	 
+    	 <h:br/><h:b>Real-time tracking (space expansion):</h:b> When tracking a moving object, its position and 
+    	 orientation with respect to some tracker 
+    	 coordinate system must be computed for every point in time when a measurement is made. Therefore, the 
+    	 locations of at least three points on the object must be tracked simultaneously. One could, for example, 
+    	 attach three ultrasound emitters in a known, rigid configuration to the object, track each emitter 
+    	 independently and use the 3D-3D pose estimation algorithm to obtain the full 6D pose of the object.
+
+		 <h:br/><h:b>Tracker alignment (time expansion):</h:b> In order to compute a rigid transformation between 
+		 two tracking systems, it is sufficient to have only one point that can be tracked by both systems 
+		 simultaneously over time. After obtaining at least three different (non-collinear) measurement pairs, in 
+		 this case sequentially, the same 3D-3D pose estimation algorithm can be applied to compute the relationship 
+		 between the two trackers.</h:p></Description>
+			    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="Feature" displayName="Point Correspondences"/>
+            <Edge name="InputA" source="A" destination="Feature" displayName="Input A">
+                <Predicate>type=='3DPosition'</Predicate>
+            </Edge>
+            <Edge name="InputB" source="B" destination="Feature" displayName="Input B">
+                <Predicate>type=='3DPosition'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="B" destination="A" displayName="Resulting Pose">
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+			<Edge name="ErrorPose" source="B" destination="A" displayName="Resulting Error Pose">
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+            <Correspondence name="pointCorrespondences" minMultiplicity="3">
+                <Edge edge-ref="InputA"/>
+                <Edge edge-ref="InputB"/>
+            </Correspondence>
+
+            <TriggerGroup>
+                <Edge edge-ref="InputA"/>
+                <Edge edge-ref="InputB"/>
+				<Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="3D3DPoseEstimation"/>
+             <!-- remove when expansion works... -->
+            <Attribute name="expansion" value="time" xsi:type="EnumAttributeReferenceType"/>
+			
+			<Attribute name="enableRANSAC" displayName="Apply RANSAC" default="false" xsi:type="EnumAttributeDeclarationType">
+				<Description><h:p>If true this component uses RANSAC by the additional specified parameters.
+				</h:p></Description>
+					<EnumValue name="false" displayName="False"/>
+					<EnumValue name="true"  displayName="True"/>
+			</Attribute>
+			<Attribute name="threshold" displayName="Threshold [m] defines the limit (tolerance area) for accepting a value as an inlier." default="0.025" min="0.0" xsi:type="DoubleAttributeDeclarationType"/>
+			<Attribute name="minSetSize" displayName="Minimal size of the consensus set of corresponding measurements." default="3" min="3" max="65535" xsi:type="IntAttributeDeclarationType"/>
+			<Attribute name="percentOutlier" displayName="Percentage of maximal amount of expected outlier." default="0.4" min="0.0" max="1.0" xsi:type="DoubleAttributeDeclarationType"/>
+			<Attribute name="successProbability" displayName="probability that the algorithm returns a valid result." default="0.99" min="0.0" max="0.99999" xsi:type="DoubleAttributeDeclarationType"/>
+
+        </DataflowConfiguration>
+    </Pattern>
+    
+    
+    <Pattern name="3D3DPoseEstimationSpace" displayName="Experimental: 3D-3D Pose Estimation aka. Absolute Orientation (space-expansion)">
+    	<Description><h:p>This pattern describes the the 3D-3D pose estimation, also known as the absolute orientation
+    	 problem, which takes corresponding 3D location measurements of a Feature in two coordinate systems A and B. 
+    	 If measurement-pairs of at least three points are available, the rotation and translation between the 
+    	 coordinate systems can be computed. In practice, such an algorithm can be applied in two different situations:
+    	 
+    	 <h:br/><h:b>Real-time tracking (space expansion):</h:b> When tracking a moving object, its position and 
+    	 orientation with respect to some tracker 
+    	 coordinate system must be computed for every point in time when a measurement is made. Therefore, the 
+    	 locations of at least three points on the object must be tracked simultaneously. One could, for example, 
+    	 attach three ultrasound emitters in a known, rigid configuration to the object, track each emitter 
+    	 independently and use the 3D-3D pose estimation algorithm to obtain the full 6D pose of the object.
+
+		 <h:br/><h:b>Tracker alignment (time expansion):</h:b> In order to compute a rigid transformation between 
+		 two tracking systems, it is sufficient to have only one point that can be tracked by both systems 
+		 simultaneously over time. After obtaining at least three different (non-collinear) measurement pairs, in 
+		 this case sequentially, the same 3D-3D pose estimation algorithm can be applied to compute the relationship 
+		 between the two trackers.</h:p></Description>
+			    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Node name="Feature" displayName="Point Correspondences"/>
+            <Edge name="InputA" source="A" destination="Feature" displayName="Point Cloud A">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+            <Edge name="InputB" source="B" destination="Feature" displayName="Point Cloud B">
+                <Predicate>type=='3DPositionList'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="B" destination="A" displayName="Resulting Pose">
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+			<Edge name="ErrorPose" source="B" destination="A" displayName="Resulting Error Pose">
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <Constraints>
+            <Correspondence name="pointCorrespondences" minMultiplicity="3">
+                <Edge edge-ref="InputA"/>
+                <Edge edge-ref="InputB"/>
+            </Correspondence>
+
+            <TriggerGroup>
+                <Edge edge-ref="InputA"/>
+                <Edge edge-ref="InputB"/>
+				<Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="3D3DPoseEstimation"/>
+            
+            <!-- remove when expansion works... -->
+            <Attribute name="expansion" value="space" xsi:type="EnumAttributeReferenceType"/>
+			
+			<Attribute name="enableRANSAC" displayName="Apply RANSAC" default="false" xsi:type="EnumAttributeDeclarationType">
+				<Description><h:p>If true this component uses RANSAC by the additional specified parameters.
+				</h:p></Description>
+					<EnumValue name="false" displayName="False"/>
+					<EnumValue name="true"  displayName="True"/>
+			</Attribute>
+			<Attribute name="threshold" displayName="Threshold [m] defines the limit (tolerance area) for accepting a value as an inlier." default="0.025" min="0.0" xsi:type="DoubleAttributeDeclarationType"/>
+			<Attribute name="minSetSize" displayName="Minimal size of the consensus set of corresponding measurements." default="3" min="3" max="65535" xsi:type="IntAttributeDeclarationType"/>
+			<Attribute name="percentOutlier" displayName="Percentage of maximal amount of expected outlier." default="0.4" min="0.0" max="1.0" xsi:type="DoubleAttributeDeclarationType"/>
+			<Attribute name="successProbability" displayName="probability that the algorithm returns a valid result." default="0.99" min="0.0" max="0.99999" xsi:type="DoubleAttributeDeclarationType"/>
+            
+        </DataflowConfiguration>
+    </Pattern>
+
+    
+    <!-- Attribute declarations -->
+    
+    <GlobalNodeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
+    </GlobalNodeAttributeDeclarations>
+    
+    <GlobalEdgeAttributeDeclarations>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/2)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/3)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/4)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/5)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/6)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/7)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/2/8)"/>
+    </GlobalEdgeAttributeDeclarations> 
+
+    <GlobalDataflowAttributeDeclarations>
+        <!-- Unfortunately, the xpointer used in Xinclude is currently restricted to the element scheme and absolute element indices in Xerces (and thus XMLBeans) -->
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/1)"/>
+        <xi:include href="file:GlobalAttrSpec.xml" xpointer="element(/1/3/2)"/>
+    </GlobalDataflowAttributeDeclarations>
+
+</UTQLPatternTemplates>
