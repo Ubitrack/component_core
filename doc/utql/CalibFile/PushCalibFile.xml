@@ -169,6 +169,306 @@
             </Attribute>
         </DataflowConfiguration>
     </Pattern>
+
+	<Pattern name="DistancePushCalibReaderWriter" displayName="Calibration Push Reader/Writer (Distance)">
+        <Description><h:p>This component writes a single measurement to a file.</h:p></Description>
+		<Input>  
+			<Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>		
+            <Edge name="Input" source="A" destination="B" displayName="MeasurementInput">
+                <Description><h:p>Push input for measurement.</h:p></Description>
+                <Predicate>type=='Distance'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+		<Output>
+            
+            <Edge name="Output" source="A" destination="B" displayName="MeasurementPush">
+                <Description><h:p>Push output of read measurement.</h:p></Description>
+                <Attribute name="type" value="Distance" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+			<Edge name="OutputPull" source="A" destination="B" displayName="MeasurementPull">
+                <Description><h:p>Pull output of read measurement.</h:p></Description>
+                <Attribute name="type" value="Distance" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="DistancePushCalibReaderWriter"/>
+            <Attribute name="file" displayName="File" xsi:type="PathAttributeDeclarationType">
+                <Description><h:p>The measurement file.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="ErrorPositionPushCalibReaderWriter" displayName="Calibration Push Reader/Writer (ErrorPosition)">
+        <Description><h:p>This component writes a single measurement to a file.</h:p></Description>
+		<Input>  
+			<Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>		
+            <Edge name="Input" source="A" destination="B" displayName="MeasurementInput">
+                <Description><h:p>Push input for measurement.</h:p></Description>
+                <Predicate>type=='3DPositionError'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+		<Output>
+            
+            <Edge name="Output" source="A" destination="B" displayName="MeasurementPush">
+                <Description><h:p>Push output of read measurement.</h:p></Description>
+                <Attribute name="type" value="3DPositionError" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+			<Edge name="OutputPull" source="A" destination="B" displayName="MeasurementPull">
+                <Description><h:p>Pull output of read measurement.</h:p></Description>
+                <Attribute name="type" value="3DPositionError" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="ErrorPositionPushCalibReaderWriter"/>
+            <Attribute name="file" displayName="File" xsi:type="PathAttributeDeclarationType">
+                <Description><h:p>The measurement file.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="PositionPushCalibReaderWriter" displayName="Calibration Push Reader/Writer (Position)">
+        <Description><h:p>This component writes a single measurement to a file.</h:p></Description>
+		<Input>  
+			<Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>		
+            <Edge name="Input" source="A" destination="B" displayName="MeasurementInput">
+                <Description><h:p>Push input for measurement.</h:p></Description>
+                <Predicate>type=='3DPosition'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+		<Output>
+            
+            <Edge name="Output" source="A" destination="B" displayName="MeasurementPush">
+                <Description><h:p>Push output of read measurement.</h:p></Description>
+                <Attribute name="type" value="3DPosition" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+			<Edge name="OutputPull" source="A" destination="B" displayName="MeasurementPull">
+                <Description><h:p>Pull output of read measurement.</h:p></Description>
+                <Attribute name="type" value="3DPosition" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionPushCalibReaderWriter"/>
+            <Attribute name="file" displayName="File" xsi:type="PathAttributeDeclarationType">
+                <Description><h:p>The measurement file.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="RotationPushCalibReaderWriter" displayName="Calibration Push Reader/Writer (Rotation)">
+        <Description><h:p>This component writes a single measurement to a file.</h:p></Description>
+		<Input>  
+			<Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>		
+            <Edge name="Input" source="A" destination="B" displayName="MeasurementInput">
+                <Description><h:p>Push input for measurement.</h:p></Description>
+                <Predicate>type=='3DRotation'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+		<Output>
+            
+            <Edge name="Output" source="A" destination="B" displayName="MeasurementPush">
+                <Description><h:p>Push output of read measurement.</h:p></Description>
+                <Attribute name="type" value="3DRotation" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+			<Edge name="OutputPull" source="A" destination="B" displayName="MeasurementPull">
+                <Description><h:p>Pull output of read measurement.</h:p></Description>
+                <Attribute name="type" value="3DRotation" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="RotationPushCalibReaderWriter"/>
+            <Attribute name="file" displayName="File" xsi:type="PathAttributeDeclarationType">
+                <Description><h:p>The measurement file.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="Matrix4x4PushCalibReaderWriter" displayName="Calibration Push Reader/Writer (Matrix4x4)">
+        <Description><h:p>This component writes a single measurement to a file.</h:p></Description>
+		<Input>  
+			<Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>		
+            <Edge name="Input" source="A" destination="B" displayName="MeasurementInput">
+                <Description><h:p>Push input for measurement.</h:p></Description>
+                <Predicate>type=='4x4Matrix'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+		<Output>
+            
+            <Edge name="Output" source="A" destination="B" displayName="MeasurementPush">
+                <Description><h:p>Push output of read measurement.</h:p></Description>
+                <Attribute name="type" value="4x4Matrix" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+			<Edge name="OutputPull" source="A" destination="B" displayName="MeasurementPull">
+                <Description><h:p>Pull output of read measurement.</h:p></Description>
+                <Attribute name="type" value="4x4Matrix" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="Matrix4x4PushCalibReaderWriter"/>
+            <Attribute name="file" displayName="File" xsi:type="PathAttributeDeclarationType">
+                <Description><h:p>The measurement file.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="PositionListPushCalibReaderWriter" displayName="Calibration Push Reader/Writer (PositionList)">
+        <Description><h:p>This component writes a single measurement to a file.</h:p></Description>
+		<Input>  
+			<Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>		
+            <Edge name="Input" source="A" destination="B" displayName="MeasurementInput">
+                <Description><h:p>Push input for measurement.</h:p></Description>
+                <Predicate>type=='3DPositionList'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+		<Output>
+            
+            <Edge name="Output" source="A" destination="B" displayName="MeasurementPush">
+                <Description><h:p>Push output of read measurement.</h:p></Description>
+                <Attribute name="type" value="3DPositionList" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+			<Edge name="OutputPull" source="A" destination="B" displayName="MeasurementPull">
+                <Description><h:p>Pull output of read measurement.</h:p></Description>
+                <Attribute name="type" value="3DPositionList" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionListPushCalibReaderWriter"/>
+            <Attribute name="file" displayName="File" xsi:type="PathAttributeDeclarationType">
+                <Description><h:p>The measurement file.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="PositionList2PushCalibReaderWriter" displayName="Calibration Push Reader/Writer (PositionList2)">
+        <Description><h:p>This component writes a single measurement to a file.</h:p></Description>
+		<Input>  
+			<Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>		
+            <Edge name="Input" source="A" destination="B" displayName="MeasurementInput">
+                <Description><h:p>Push input for measurement.</h:p></Description>
+                <Predicate>type=='2DPositionList'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+		<Output>
+            
+            <Edge name="Output" source="A" destination="B" displayName="MeasurementPush">
+                <Description><h:p>Push output of read measurement.</h:p></Description>
+                <Attribute name="type" value="2DPositionList" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+			<Edge name="OutputPull" source="A" destination="B" displayName="MeasurementPull">
+                <Description><h:p>Pull output of read measurement.</h:p></Description>
+                <Attribute name="type" value="2DPositionList" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PositionList2PushCalibReaderWriter"/>
+            <Attribute name="file" displayName="File" xsi:type="PathAttributeDeclarationType">
+                <Description><h:p>The measurement file.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="PoseListPushCalibReaderWriter" displayName="Calibration Push Reader/Writer (PoseList)">
+        <Description><h:p>This component writes a single measurement to a file.</h:p></Description>
+		<Input>  
+			<Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>		
+            <Edge name="Input" source="A" destination="B" displayName="MeasurementInput">
+                <Description><h:p>Push input for measurement.</h:p></Description>
+                <Predicate>type=='PoseList'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+		<Output>
+            
+            <Edge name="Output" source="A" destination="B" displayName="MeasurementPush">
+                <Description><h:p>Push output of read measurement.</h:p></Description>
+                <Attribute name="type" value="PoseList" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+			<Edge name="OutputPull" source="A" destination="B" displayName="MeasurementPull">
+                <Description><h:p>Pull output of read measurement.</h:p></Description>
+                <Attribute name="type" value="PoseList" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseListPushCalibReaderWriter"/>
+            <Attribute name="file" displayName="File" xsi:type="PathAttributeDeclarationType">
+                <Description><h:p>The measurement file.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	<Pattern name="DistanceListPushCalibReaderWriter" displayName="Calibration Push Reader/Writer (DistanceList)">
+        <Description><h:p>This component writes a single measurement to a file.</h:p></Description>
+		<Input>  
+			<Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>		
+            <Edge name="Input" source="A" destination="B" displayName="MeasurementInput">
+                <Description><h:p>Push input for measurement.</h:p></Description>
+                <Predicate>type=='DistanceList'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+		<Output>
+            
+            <Edge name="Output" source="A" destination="B" displayName="MeasurementPush">
+                <Description><h:p>Push output of read measurement.</h:p></Description>
+                <Attribute name="type" value="DistanceList" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+			<Edge name="OutputPull" source="A" destination="B" displayName="MeasurementPull">
+                <Description><h:p>Pull output of read measurement.</h:p></Description>
+                <Attribute name="type" value="DistanceList" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="DistanceListPushCalibReaderWriter"/>
+            <Attribute name="file" displayName="File" xsi:type="PathAttributeDeclarationType">
+                <Description><h:p>The measurement file.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	
+
     
     
     <!-- Attribute declarations -->
