@@ -213,12 +213,15 @@ void TimeDelayEstimation::threadProc(){
 		LOG4CPP_INFO(logger, "new data");
 		
 		// check if data is useable
-		Math::Stochastic::Average<Math::Vector3d, Math::ErrorVector<double, 3 > > averageData;
+		// Math::Stochastic::Average<Math::Vector3d, Math::ErrorVector<double, 3 > > averageData;
+		Math::Stochastic::Average< Math::ErrorVector<double, 3 > > averageData;
+		
 		std::vector< Math::Vector3d > tmpData;
 		for(int i=0;i < data1->size();i++){
 			tmpData.push_back(*(data1->at(i)));
 		}
-		Math::ErrorVector<double, 3 > meanWithError = averageData.mean(tmpData);
+		averageData = std::for_each( tmpData.begin(), tmpData.end(), averageData );
+		Math::ErrorVector<double, 3 > meanWithError = averageData.getAverage();
 
 		//LOG4CPP_INFO(logger, "RMS: "<< meanWithError.getRMS() << " : " << meanWithError.covariance );
 		if(meanWithError.getRMS() < 0.05){
@@ -354,9 +357,12 @@ void TimeDelayEstimation::threadProc(){
 		for(;it != m_correlationData.end();++it){
 
 		
-			Math::Stochastic::Average<double, double> average;
+			// Math::Stochastic::Average<double, double> average;
+			Math::Stochastic::Average< double > average;
 			
-			double value = average.mean(it->second);
+			// double value = average.mean(it->second);
+			average = std::for_each( it->second.begin(), it->second.end(), average );
+			const double value = average.getAverage();
 			if(correlation < value)
 			{
 				correlation = value;
