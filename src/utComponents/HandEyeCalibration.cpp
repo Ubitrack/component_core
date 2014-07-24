@@ -36,7 +36,7 @@
 #include <utMeasurement/Measurement.h>
 #include <utMath/Vector.h>
 
-#include <utAlgorithm/PoseEstimation6D6D/HandEyeCalibration.h>
+#include <utAlgorithm/PoseEstimation6D6D/TsaiLenz.h>
 
 // get a logger
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Components.PoseEstimation6D6D" ) );
