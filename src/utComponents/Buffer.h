@@ -173,6 +173,7 @@ typedef Buffer< Measurement::Button > SkalarBuffer;
 typedef Buffer< Measurement::Matrix4x4 > Matrix4x4Buffer;
 typedef Buffer< Measurement::Matrix3x4 > Matrix3x4Buffer;
 typedef Buffer< Measurement::Matrix3x3 > Matrix3x3Buffer;
+typedef Buffer< Measurement::Distance > DistanceBuffer;
 
 
 } } // namespace Ubitrack::Components
