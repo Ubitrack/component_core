@@ -549,12 +549,10 @@ void PlayerModule::mainloop()
 		if ( sleepdur > 0 )
 		{
 			LOG4CPP_DEBUG( logger, "sleeping " << sleepdur / 1000000 << "ms" );
-			//LOG4CPP_INFO( logger, "sleeping " << sleepdur / 1000000 << "ms" );
-			//Util::sleep( int( sleepdur / 1000000 ), int( sleepdur % 1000000 ) );
+			Util::sleep( int( sleepdur / 1000000 ), int( sleepdur % 1000000 ) );
 		}
 
-		now = nextEventTime;//Measurement::now();
-		//now = Measurement::now();
+		now = Measurement::now();
 		nextEventTime = 0;
 
 		// iterate all components
@@ -568,7 +566,6 @@ void PlayerModule::mainloop()
 			for ( ; t && t <= now; )
 			{
 				//LOG4CPP_DEBUG( logger,  (*it)->getName() << "sending " << t  );
-				//LOG4CPP_INFO( logger, (*it)->getName() << "sending " << t  );
 				(*it)->sendNext( recordStart, playbackStart );
 				t = (*it)->getNextTime( recordStart, playbackStart );
 				if ( !t ){
@@ -616,6 +613,8 @@ boost::shared_ptr< PlayerComponentBase > PlayerModule::createComponent( const st
 		return boost::shared_ptr< PlayerComponentBase >( new PlayerComponent< Measurement::PoseList >( name, pConfig, key, pModule ) );
 	else if ( type == "PlayerRotationVelocity" )
 		return boost::shared_ptr< PlayerComponentBase >( new PlayerComponent< Measurement::RotationVelocity >( name, pConfig, key, pModule ) );
+	else if ( type == "PlayerMatrix3x3" )
+		return boost::shared_ptr< PlayerComponentBase >( new PlayerComponent< Measurement::Matrix3x3 >( name, pConfig, key, pModule ) );
 
 	UBITRACK_THROW( "Class " + type + " not supported by player module" );
 }
@@ -637,6 +636,7 @@ UBITRACK_REGISTER_COMPONENT( Ubitrack::Dataflow::ComponentFactory* const cf ) {
 	playerComponents.push_back( "PlayerPositionList2" );
 	playerComponents.push_back( "PlayerPoseList" );
 	playerComponents.push_back( "PlayerRotationVelocity" );
+	playerComponents.push_back( "PlayerMatrix3x3" );
 #ifdef HAVE_OPENCV
 	playerComponents.push_back( "PlayerImage" );
 #endif
