@@ -57,6 +57,7 @@ UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
 	cf->registerComponent< Matrix4x4Buffer > ( "Matrix4x4Buffer" );	
 	cf->registerComponent< Matrix3x4Buffer > ( "Matrix3x4Buffer" );	
 	cf->registerComponent< Matrix3x3Buffer > ( "Matrix3x3Buffer" );	
+	cf->registerComponent< DistanceBuffer > ( "DistanceBuffer" );	
 	
 }
 

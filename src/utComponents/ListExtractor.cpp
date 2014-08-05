@@ -31,15 +31,18 @@
  * @author Peter Keitler <keitler@in.tum.de>
  */
 
-#include <boost/bind.hpp>
-#include <log4cpp/Category.hh>
-
+// Ubitrack
 #include <utDataflow/PullConsumer.h>
 #include <utDataflow/PullSupplier.h>
 #include <utDataflow/Component.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
 
+// Boost
+#include <boost/bind.hpp>
+
+// Log4cpp
+#include <log4cpp/Category.hh>
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Components.ListExtractor" ) );
 
 namespace Ubitrack { namespace Components {
@@ -66,8 +69,27 @@ using namespace Dataflow;
  * - Ubitrack::Measurement::PositionList2 : 2DPointCloudExtractor
  */		
 
-template< class EventType > class ListExtractor : public Component
+template< class EventType >
+class ListExtractor
+	: public Component
 {
+	/// shortcut to the container type used for more measurements
+	typedef typename std::vector< typename EventType::value_type > EventTypeList;
+	
+	/// shortcut to the measurement type that includes the container
+	typedef typename Measurement::Measurement< EventTypeList> EventTypeListMeasurement;
+	
+protected:
+
+	/** an index pointing to the next position in container to extract */
+	std::size_t m_conainerIndex;
+
+	/** Incoming port to container including the \c EventType elements */
+	PullConsumer< EventTypeListMeasurement > m_listPort;
+	
+	/** Outgoing port providing extracted element */
+	PullSupplier< EventType > m_nextEventPort;
+
 public:
 	/**
 	 * Standard component constructor.
@@ -77,7 +99,7 @@ public:
 	 */
 	ListExtractor( const std::string& nm, boost::shared_ptr< Graph::UTQLSubgraph > pCfg )
         : Ubitrack::Dataflow::Component( nm )
-		, m_inCount( 0 )
+		, m_conainerIndex( 0 )
 		, m_listPort( "Coordinates", *this )
 		, m_nextEventPort( "NextCoordinate", *this, boost::bind( &ListExtractor::getNextEvent, this, _1 ) )
 	{}
@@ -86,24 +108,24 @@ protected:
 
 	EventType getNextEvent( Measurement::Timestamp t )
 	{
-		Measurement::Measurement< std::vector< typename EventType::value_type > > list = m_listPort.get( t );
-
-		LOG4CPP_DEBUG( logger, getName() << " Current counter: " << m_inCount << ", wrap around at: " << list->size() );
+		const EventTypeListMeasurement& list = m_listPort.get( t );
+		const std::size_t n = std::distance( list->begin(), list->end() );
+		
+		LOG4CPP_DEBUG( logger, getName() << " Current index: " << m_conainerIndex << ", wrap around at: " << n );
 
 		// Wrap around
-		if ( m_inCount == list->size() )
-			m_inCount = 0;
-			
-		m_inCount++;
-		return EventType( t, list->at( m_inCount - 1 ) );
+		m_conainerIndex = m_conainerIndex % n;
+		
+		// set pointer to element pointed to by index
+		typename EventTypeList::const_iterator it = list->begin();
+		std::advance( it, m_conainerIndex++ );
+		
+		// return only valid elements, otherwise throw an error
+		if( it != list->end() )
+			return EventType( t, *it );
+		else
+			UBITRACK_THROW( "Cannot extract an element from container, index points to invalid position." );
 	}
-	
-	/** Properties of the gate */
-	unsigned int m_inCount;
-
-	/** Ports of the component */
-	PullConsumer< Measurement::Measurement< typename std::vector< typename EventType::value_type > > > m_listPort;
-	PullSupplier< EventType > m_nextEventPort;
 };
 
 UBITRACK_REGISTER_COMPONENT( ComponentFactory* const cf ) 

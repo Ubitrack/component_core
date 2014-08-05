@@ -32,7 +32,7 @@ UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
     cf->registerComponent< Trigger< Measurement::RotationVelocity > > ( "ButtonTriggerRotationVelocity" );
     cf->registerComponent< Trigger< Measurement::Position > > ( "ButtonTriggerPosition" );
     cf->registerComponent< Trigger< Measurement::Position2D > > ( "ButtonTriggerPosition2" );
-    cf->registerComponent< Trigger< Measurement::Position2D > > ( "ButtonTriggerDistance" );
+    cf->registerComponent< Trigger< Measurement::Distance > > ( "ButtonTriggerDistance" );
     cf->registerComponent< Trigger< Measurement::Pose > > ( "ButtonTriggerPose" );
     cf->registerComponent< Trigger< Measurement::PositionList > > ( "ButtonTriggerPositionList" );
     cf->registerComponent< Trigger< Measurement::PositionList2 > > ( "ButtonTriggerPositionList2" );

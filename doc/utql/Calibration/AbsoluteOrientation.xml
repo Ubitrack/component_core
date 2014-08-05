@@ -6,7 +6,7 @@
                       xmlns:h="http://www.w3.org/1999/xhtml"
                       xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../schema/utql_templates.xsd'>
     
-    <Pattern name="AbsoluteOrientation" displayName="Absolute Orientation (time-expansion)">
+    <Pattern name="AbsoluteOrientation" displayName="Deprecated: Absolute Orientation (time-expansion)">
     	<Description><h:p>This pattern describes the the 3D-3D pose estimation, also known as the absolute orientation
     	 problem, which takes corresponding 3D location measurements of a Feature in two coordinate systems A and B. 
     	 If measurement-pairs of at least three points are available, the rotation and translation between the 
@@ -41,6 +41,9 @@
             <Edge name="Output" source="B" destination="A" displayName="Resulting Pose">
                 <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
             </Edge>
+			<Edge name="ErrorPose" source="B" destination="A" displayName="Resulting Pose">
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
         </Output>
         
         <Constraints>
@@ -53,6 +56,7 @@
                 <Edge edge-ref="InputA"/>
                 <Edge edge-ref="InputB"/>
                 <Edge edge-ref="Output"/>
+				<Edge edge-ref="ErrorPose"/>
             </TriggerGroup>
         </Constraints>
         
@@ -65,7 +69,7 @@
     </Pattern>
     
     
-    <Pattern name="AbsoluteOrientationSpace" displayName="Absolute Orientation (space-expansion)">
+    <Pattern name="AbsoluteOrientationSpace" displayName="Deprecated: Absolute Orientation (space-expansion)">
     	<Description><h:p>This pattern describes the the 3D-3D pose estimation, also known as the absolute orientation
     	 problem, which takes corresponding 3D location measurements of a Feature in two coordinate systems A and B. 
     	 If measurement-pairs of at least three points are available, the rotation and translation between the 
@@ -100,6 +104,9 @@
             <Edge name="Output" source="B" destination="A" displayName="Resulting Pose">
                 <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
             </Edge>
+			<Edge name="ErrorPose" source="B" destination="A" displayName="Resulting Pose">
+                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
         </Output>
         
         <Constraints>
@@ -112,6 +119,7 @@
                 <Edge edge-ref="InputA"/>
                 <Edge edge-ref="InputB"/>
                 <Edge edge-ref="Output"/>
+				<Edge edge-ref="ErrorPose"/>
             </TriggerGroup>
         </Constraints>
         
@@ -123,7 +131,7 @@
         </DataflowConfiguration>
     </Pattern>
 
-    <Pattern name="AbsoluteOrientation7" displayName="Absolute Orientation (7 point-features)">
+    <Pattern name="AbsoluteOrientation7" displayName="Deprecated: Absolute Orientation (7 point-features)">
     	<Description><h:p>This is a temporary test pattern...</h:p></Description>
 
         <Input>
@@ -225,7 +233,7 @@
     </Pattern>
 
 
-        <Pattern name="AbsoluteOrientationRANSAC" displayName="Absolute Orientation using RANSAC(time-expansion)">
+        <Pattern name="AbsoluteOrientationRANSAC" displayName="Deprecated: Absolute Orientation using RANSAC(time-expansion)">
     	<Description><h:p>This pattern describes the the 3D-3D pose estimation, also known as the absolute orientation
     	 problem, which takes corresponding 3D location measurements of a Feature in two coordinate systems A and B. 
     	 If measurement-pairs of at least three points are available, the rotation and translation between the 
@@ -288,7 +296,7 @@
     </Pattern>
     
     
-    <Pattern name="AbsoluteOrientationRANSACSpace" displayName="Absolute Orientation using RANSAC(space-expansion)">
+    <Pattern name="AbsoluteOrientationRANSACSpace" displayName="Deprecated: Absolute Orientation using RANSAC(space-expansion)">
     	<Description><h:p>This pattern describes the the 3D-3D pose estimation, also known as the absolute orientation
     	 problem, which takes corresponding 3D location measurements of a Feature in two coordinate systems A and B. 
     	 If measurement-pairs of at least three points are available, the rotation and translation between the 

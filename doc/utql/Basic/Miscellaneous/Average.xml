@@ -109,6 +109,74 @@
         </DataflowConfiguration>
     </Pattern>
 	
+	<!-- add the pattern when 3DRotationList gets available -->
+	<!--Pattern name="RotationListAverage" displayName="3D Rotation List Average (3D Rotation, space-expansion)">
+    	<Description><h:p>This class calculates the average of a RotationList measurement.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input Rotation List">
+            	<Description><h:p>The input Rotation.</h:p></Description>
+                <Predicate>type=='3DRotationList'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Average Rotation">
+            	<Description><h:p>The averaged rotations.</h:p></Description>
+                <Attribute name="type" value="3DRotation" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+		
+		<Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="Input"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="RotationListAverage"/>
+			
+            <Attribute name="expansion" value="space" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern-->
+	
+	 <Pattern name="RotationAverage" displayName="3D Rotation  Average (3D Rotation, time-expansion)">
+    	<Description><h:p>This class calculates the average of 3D Rotation measurements.</h:p></Description>
+    	
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Input Rotation List">
+            	<Description><h:p>The input rotations.</h:p></Description>
+                <Predicate>type=='3DRotation'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Average Rotation">
+            	<Description><h:p>The averaged rotation.</h:p></Description>
+                <Attribute name="type" value="3DRotation" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+		
+		<Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="Input"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="RotationListAverage"/>
+			
+			<!-- remove when expansion works... -->
+            <Attribute name="expansion" value="time" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
 	<Pattern name="PoseListAverageError" displayName="PoseList Average (6D Pose, space-expansion)">
     	<Description><h:p>This class calculates the average of a PoseList measurement.</h:p></Description>
     	

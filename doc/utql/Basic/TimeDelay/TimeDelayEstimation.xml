@@ -5,40 +5,40 @@
                       xmlns:xi='http://www.w3.org/2001/XInclude'
                       xmlns:h="http://www.w3.org/1999/xhtml"
                       xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
-    
-    <Pattern name="TimeDelayEstimationPosition3D" displayName="TimeDelayEstimation (Position3D, Position3D)">
-    	<Description><h:p>The component estimates the time delay betwenn two sensors</h:p></Description>
-    	
-        <Input>
-            <Node name="A" displayName="A"/>
-            <Node name="B" displayName="B"/>
-            
-            <Edge name="AB1" source="A" destination="B" displayName="First Sensor">
-            	<Description><h:p>The first input.</h:p></Description>
-                <Predicate>type=='3DPosition'&amp;&amp;mode=='push'</Predicate>
-            </Edge>
-            <Edge name="AB2" source="A" destination="B" displayName="Second Sensor">
-            	<Description><h:p>The second input.</h:p></Description>
-                <Predicate>type=='3DPosition'&amp;&amp;mode=='push'</Predicate>
-            </Edge>
-        </Input>
-              
-        
-        <Constraints>
 
-        </Constraints>
-        
-        <DataflowConfiguration>
-            <UbitrackLib class="TimeDelayEstimationPosition3D"/>
-        </DataflowConfiguration>
-    </Pattern>
-    
-    
-    
-   
-    
-    <!-- Attribute declarations -->
-    
+	<Pattern name="TimeDelayEstimationPosition3D" displayName="TimeDelayEstimation (Position3D, Position3D)">
+		<Description><h:p>The component estimates the time delay betwenn two sensors</h:p></Description>
+
+		<Input>
+			<Node name="A" displayName="A"/>
+			<Node name="B" displayName="B"/>
+
+			<Edge name="AB1" source="A" destination="B" displayName="First Sensor">
+				<Description><h:p>The first input.</h:p></Description>
+				<Predicate>type=='3DPosition'&amp;&amp;mode=='push'</Predicate>
+			</Edge>
+			<Edge name="AB2" source="A" destination="B" displayName="Second Sensor">
+				<Description><h:p>The second input.</h:p></Description>
+				<Predicate>type=='3DPosition'&amp;&amp;mode=='push'</Predicate>
+			</Edge>
+		</Input>
+		<Output>
+			<Node name="C" displayName="Sensor 1 (Reference)"/>
+			<Node name="D" displayName="Sensor 2 (Difference)"/>
+			
+			<Edge name="Output" source="C" destination="D" displayName="Time difference [ms]">
+				<Description><h:p>The delay between the first and the second sensors' data measurements.</h:p></Description>
+				<Attribute name="type" value="Distance" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+			</Edge>
+		</Output>
+		<DataflowConfiguration>
+			<UbitrackLib class="TimeDelayEstimationPosition3D"/>
+		</DataflowConfiguration>
+	</Pattern>
+
+
+	<!-- Attribute declarations -->
     <GlobalNodeAttributeDeclarations>
         <xi:include href="../../GlobalAttrSpec.xml" xpointer="element(/1/1/1)"/>
     </GlobalNodeAttributeDeclarations>
