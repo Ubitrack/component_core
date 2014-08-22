@@ -467,7 +467,40 @@
         </DataflowConfiguration>
     </Pattern>
 	
+	<Pattern name="CameraIntrinsicsPushCalibReaderWriter" displayName="Calibration Push Reader/Writer (CameraIntrinsics)">
+        <Description><h:p>This component writes a single measurement to a file.</h:p></Description>
+		<Input>  
+			<Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>		
+            <Edge name="Input" source="A" destination="B" displayName="MeasurementInput">
+                <Description><h:p>Push input for measurement.</h:p></Description>
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+		<Output>
+            
+            <Edge name="Output" source="A" destination="B" displayName="MeasurementPush">
+                <Description><h:p>Push output of read measurement.</h:p></Description>
+                <Attribute name="type" value="3x3Matrix" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+			<Edge name="OutputPull" source="A" destination="B" displayName="MeasurementPull">
+                <Description><h:p>Pull output of read measurement.</h:p></Description>
+                <Attribute name="type" value="3x3Matrix" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="CameraIntrinsicsPushCalibReaderWriter"/>
+            <Attribute name="file" displayName="File" xsi:type="PathAttributeDeclarationType">
+                <Description><h:p>The measurement file.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
 	
+
 
     
     

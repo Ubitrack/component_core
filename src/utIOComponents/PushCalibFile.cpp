@@ -178,5 +178,6 @@ UBITRACK_REGISTER_COMPONENT( Ubitrack::Dataflow::ComponentFactory* const cf )
 	cf->registerComponent< Ubitrack::Drivers::PushCalibReaderWriter< Ubitrack::Measurement::PositionList2 > > ( "PositionList2DPushCalibReaderWriter" );
 	cf->registerComponent< Ubitrack::Drivers::PushCalibReaderWriter< Ubitrack::Measurement::PoseList > > ( "PoseListPushCalibReaderWriter" );
 	cf->registerComponent< Ubitrack::Drivers::PushCalibReaderWriter< Ubitrack::Measurement::DistanceList > > ( "DistanceListPushCalibReaderWriter" );
+	cf->registerComponent< Ubitrack::Drivers::PushCalibReaderWriter< Ubitrack::Measurement::CameraIntrinsics > > ( "CameraIntrinsicsPushCalibReaderWriter" );
 	
 }
