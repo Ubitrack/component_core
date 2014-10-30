@@ -95,6 +95,11 @@ protected:
 	/// stores all measurements from 2nd sensor being pushed to the component.
 	EventList m_dataIn2;
 	
+	/// stores all measurements from 1st sensor being pushed to the component.
+	EventList m_threadData1;
+	/// stores all measurements from 2nd sensor being pushed to the component.
+	EventList m_threadData2;
+	
 	/// Stores interpolated data from 1st sensor.
 	TypeList m_interpolatedData1;
 	
@@ -155,36 +160,38 @@ public:
 	
 	void receiveSensor1( const EventType& p )
 	{
-		
-		{	// safely adding data to the sequence
-			boost::mutex::scoped_lock lock( m_mutexThread );
-			m_dataIn1.push_back( p );
-		}
-		
+		m_dataIn1.push_back( p );
 		startThread();
 	}
 
 	void receiveSensor2( const EventType& p )
 	{
-		
-		{	// safely adding data to the sequence
-			boost::mutex::scoped_lock lock( m_mutexThread );
-			m_dataIn2.push_back( p );
-		}
-
+		m_dataIn2.push_back( p );
 		startThread();
 	}
 	
 	/// this functions starts the thread if not already running
 	void startThread()
 	{
-		if( boost::mutex::scoped_try_lock ( m_mutexThread ) )
+
+		// do not interpolate if no data is available
+		if( m_dataIn1.empty() || m_dataIn2.empty() )
+			return;
+	
+		// do not interpolate data that is too short
+		if( m_dataIn1.size() < 100 || m_dataIn2.size() < 100 )
+			return;
+
+		if( boost::mutex::scoped_try_lock ( m_mutexThread ) ) {
+			m_threadData1 = m_dataIn1;
+			m_threadData2 = m_dataIn2;
 			m_pThread.reset( new boost::thread( boost::bind( &TimeDelayEstimation::computeTimedelay, this ) ) );
-		else
-		{
-			LOG4CPP_WARN( logger, "Cannot perform cross-correlation, thread is still busy, sending old calibration data instead." );
-			//std::cerr << "Cannot perform cross-correlation, thread is still busy, sending old calibration data instead.\n";
-		}
+		} 
+		//else
+		//{
+		//	LOG4CPP_WARN( logger, "Cannot perform cross-correlation, thread is still busy, sending old calibration data instead." );
+		//	//std::cerr << "Cannot perform cross-correlation, thread is still busy, sending old calibration data instead.\n";
+		//}
 	}
 	
 	/// main function that performs all single steps after the other, should be called whenever a new measurement is added to the queues
@@ -372,24 +379,17 @@ void TimeDelayEstimation< EventType >::computeTimedelay( )
 {
 	boost::mutex::scoped_lock lock( m_mutexThread );
 	
-	// do not interpolate if no data is available
-	if( m_dataIn1.empty() || m_dataIn2.empty() )
-		return;
-	
-	// do not interpolate data that is too short
-	if( m_dataIn1.size() < 3 || m_dataIn2.size() < 3 )
-		return;
 	
 	// check if there is a change in internal storage that can be used and perform the change
 		
-	const Measurement::Timestamp startTime = m_tNextInterpolation ? m_tNextInterpolation : std::max( m_dataIn1.front().time(), m_dataIn2.front().time() );
-	const Measurement::Timestamp endTime = std::min( m_dataIn1.back().time(), m_dataIn2.back().time() );
+	const Measurement::Timestamp startTime = m_tNextInterpolation ? m_tNextInterpolation : std::max( m_threadData1.front().time(), m_threadData2.front().time() );
+	const Measurement::Timestamp endTime = std::min( m_threadData1.back().time(), m_threadData2.back().time() );
 	if( !(startTime < endTime) )
 		return;
 
 	{	// starting to interpolate data for further processing
-		updateInterpolatedData( startTime, endTime, m_dataIn1, m_interpolatedData1 );
-		m_tNextInterpolation = updateInterpolatedData( startTime, endTime, m_dataIn2, m_interpolatedData2 );
+		updateInterpolatedData( startTime, endTime, m_threadData1, m_interpolatedData1 );
+		m_tNextInterpolation = updateInterpolatedData( startTime, endTime, m_threadData2, m_interpolatedData2 );
 		
 		LOG4CPP_DEBUG( logger, "Storing now " << m_interpolatedData1.size() << " values of interpolated \"" << typeid( math_type ).name() << "\" values." );
 	}
@@ -408,8 +408,9 @@ void TimeDelayEstimation< EventType >::computeTimedelay( )
 	}
 	{
 		const std::ptrdiff_t offset = selectBestMatch( m_correlationData );
-		m_outPort.send( Measurement::Distance( Measurement::now(), static_cast< double >( offset ) ) );
-		LOG4CPP_INFO( logger, "The delay between the sensor measurements has been estimated to " << offset << " ms, or briefly : time(1st sensor) == time(2nd sensor) + (" << offset << ") [ms]." );
+		double result = static_cast< double >( offset );
+		m_outPort.send( Measurement::Distance( Measurement::now(), Math::Scalar<double>(result) ) );
+		LOG4CPP_INFO( logger, "[" << getName() << "]The delay between the sensor measurements has been estimated to " << offset << " ms, or briefly : time(1st sensor) == time(2nd sensor) + (result=" << result << ") [ms]." );
 	}
 }
 
