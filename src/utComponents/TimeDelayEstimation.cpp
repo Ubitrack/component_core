@@ -26,115 +26,43 @@
  * @ingroup dataflow_components
  * @file
  * TimeDelayEstimation component.
- * This file contains a TimeDelayEstimation of two asynchonious input ports
+ * This file contains a TimeDelayEstimation of two inputs implemented as a \c TriggerComponent.
  *
- * @author Frieder Pankratz <pankratz@in.tum.de>
- * @author Christian Waechter <christian.waechter@in.tum.de>
+ * @author Daniel Pustka <daniel.pustka@in.tum.de> ?really?
  */
  
+#include <utUtil/OS.h>
+#include <utUtil/CalibFile.h>
+
+
 #include <utDataflow/Component.h>
 #include <utDataflow/PushConsumer.h>
 #include <utDataflow/PushSupplier.h>
 #include <utDataflow/ComponentFactory.h>
-
-#include <utMath/Blas1.h>  // norm_2
-#include <utMath/Stochastic/Average.h>
-#include <utMath/Stochastic/Correlation.h>
 #include <utMeasurement/Measurement.h>
 
+#include <utMath/Stochastic/Average.h>
+#include <utMath/Stochastic/Correlation.h>
 
-// std
-#include <map> // std::map
-#include <vector> // std::vector
-#include <string> // std::string
-#include <algorithm> // std::transform
+#include <queue> // std::queue
 
-// log4cpp
 #include <log4cpp/Category.hh>
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Components.TimeDelayEstimation" ) );
 
+namespace ublas = boost::numeric::ublas;
+
 namespace Ubitrack { namespace Components {
 
-/**
- * This class supports the estimation of time delays between two different sensors with similar types of measurement data.
- */
-template< typename EventType >
+typedef struct{
+	double corr;
+	Measurement::Timestamp offset;
+} CorrData;
+
 class TimeDelayEstimation
 	: public Dataflow::Component
 {
-	
-	typedef std::vector<double>::iterator vec_iter;
-	
-	/** underlying math type that is encapsulated from measurement */
-	typedef typename EventType::value_type math_type;
-	
-	/** underlying built-in type that specifies the precision (e.g. \c double or \c float )  */
-	typedef typename math_type::value_type precision_type;
-	
-	/** type of the sequence container that stores all events which are pushed to the component*/
-	typedef typename std::vector< EventType > EventList;
-	
-	/** defines the sequence container of the mathematical datatype of the corresponding \c EventType */
-	typedef typename std::vector< math_type > TypeList;
-	
-	/** type used to map time offsets [ms] to correlation . */
-	typedef typename std::map< std::ptrdiff_t, std::vector< precision_type > > CorrelationMap;
-	
-protected:
-	/** Reference port, time difference is calculated in respect to this port. */
-	Dataflow::PushConsumer< EventType > m_inPortA;
-
-	/** Input port B of the component. */
-	Dataflow::PushConsumer< EventType > m_inPortB;
-	
-	/** Provides the estimated time difference */
-	Dataflow::PushSupplier< Measurement::Distance > m_outPort;
-
-	/// stores all measurements from 1st sensor being pushed to the component.
-	EventList m_dataIn1;
-	/// stores all measurements from 2nd sensor being pushed to the component.
-	EventList m_dataIn2;
-	
-	/// stores all measurements from 1st sensor being pushed to the component.
-	EventList m_threadData1;
-	/// stores all measurements from 2nd sensor being pushed to the component.
-	EventList m_threadData2;
-	
-	/// Stores interpolated data from 1st sensor.
-	TypeList m_interpolatedData1;
-	
-	/// Stores interpolated data from 2nd sensor.
-	TypeList m_interpolatedData2;
-	
-	/// remembers last common timestamp such that not every information needs to be recalculated.
-	Measurement::Timestamp m_tNextInterpolation;
-	
-	/// stores the one-dimensional data from projected measurements of the 1st sensor.
-	std::vector< precision_type > m_projectedData1;
-	
-	/// stores the one-dimensional data from projected measurements of the 2nd sensor.
-	std::vector< precision_type > m_projectedData2;
-	
-	/// maps time differences [ms] to correlation factor
-	CorrelationMap m_correlationData;
-	
-	// Mutex to check if storage is being filled (not used at the moment)
-	// boost::mutex m_mutexStorage;
-	
-	/// Mutex to check if thread is already running
-	boost::mutex m_mutexThread;
-	
-	/// Thread that handles calculation of cross-correlation
-	boost::scoped_ptr< boost::thread > m_pThread;
-
-	/// defines the time interval the time delay can maximaly reach.
-	std::size_t m_maxTimeOffsetInMs;
-	
-	/// defines the length of the data chunks used for time delay estimation.
-	std::size_t m_sliceSizeInMs;
-	
-	
 public:
+	typedef std::vector<double>::iterator vec_iter;
 
 	/**
 	 * UTQL component constructor.
@@ -147,304 +75,410 @@ public:
 		, m_inPortA( "AB1", *this, boost::bind( &TimeDelayEstimation::receiveSensor1, this, _1 )  )
 		, m_inPortB( "AB2", *this, boost::bind( &TimeDelayEstimation::receiveSensor2, this, _1 )  )		
 		, m_outPort( "Output", *this )
-		, m_tNextInterpolation( 0 )
-		, m_maxTimeOffsetInMs( 200 ) // <- size of window that will be moved across the data
-		, m_sliceSizeInMs ( 2000 ) // <- size of a data chunk for comparison
     {
-		LOG4CPP_INFO( logger, "Cross-correlation will use chunks of " <<  m_sliceSizeInMs << " ms and moving them across a " << m_maxTimeOffsetInMs << " ms sliding window." );
+		stop();
+		m_data1 = new std::vector<Measurement::Position>();
+		m_data2 = new std::vector<Measurement::Position>();
+
+		m_recordSizeInMs = 3 * 1000;
+		m_sliceSizeInMs =  2000;		
+		m_maxTimeOffsetInMs = 200;		
     }
 
-	~TimeDelayEstimation()
-	{
-	}
-	
-	void receiveSensor1( const EventType& p )
-	{
-		m_dataIn1.push_back( p );
-		startThread();
+	~TimeDelayEstimation(){
+		stop();
 	}
 
-	void receiveSensor2( const EventType& p )
-	{
-		m_dataIn2.push_back( p );
-		startThread();
+	void receiveSensor1(const Measurement::Position& p){
+		m_data1->push_back(p);
+		//LOG4CPP_INFO(logger, m_data1->size() << " : " << m_data2->size());
+		checkData();
 	}
-	
-	/// this functions starts the thread if not already running
-	void startThread()
-	{
 
-		// do not interpolate if no data is available
-		if( m_dataIn1.empty() || m_dataIn2.empty() )
-			return;
-	
-		// do not interpolate data that is too short
-		if( m_dataIn1.size() < 100 || m_dataIn2.size() < 100 )
-			return;
-
-		if( boost::mutex::scoped_try_lock ( m_mutexThread ) ) {
-			m_threadData1 = m_dataIn1;
-			m_threadData2 = m_dataIn2;
-			m_pThread.reset( new boost::thread( boost::bind( &TimeDelayEstimation::computeTimedelay, this ) ) );
-		} 
-		//else
-		//{
-		//	LOG4CPP_WARN( logger, "Cannot perform cross-correlation, thread is still busy, sending old calibration data instead." );
-		//	//std::cerr << "Cannot perform cross-correlation, thread is still busy, sending old calibration data instead.\n";
-		//}
+	void receiveSensor2(const Measurement::Position& p){
+		m_data2->push_back(p);
+		checkData();
 	}
-	
-	/// main function that performs all single steps after the other, should be called whenever a new measurement is added to the queues
-	void computeTimedelay();
-	
-	/// function that interpolates data from the measurements to have a measurement at each single millisecond.
-	Measurement::Timestamp updateInterpolatedData( const Measurement::Timestamp tStart, const Measurement::Timestamp tEnd, const EventList& eList, TypeList& interpolatedData ) const;
-	
-	/// function that projects all these single measurements to a single dimensional value
-	void updateProjectedData( const TypeList& interpolatedSequence, std::vector< precision_type > &projected ) const;
-	
-	/**
-	 * Function that projects the multi-dimensional data to a single dimension.
-	 *
-	 * Several template specialization for the various measurement types exist.
-	 * @tparam InputIterator
-	 * @tparam OutputIterator an iterator pointing to the container where the single dimensional data from the projection is stored.
-	 * @param itBegin An iterator pointing to the beginning of a sequence, that stores the values that are projected.
-	 * @param itEnd  An iterator pointing to the end of a sequence, that stores the values that are projected.
-	 * @param itOut An iterator pointing to the sequence container, that stores the projected data, where new values will be inserted.
-	 * @return An iterator pointing to the element that follows the last element written in the result sequence.
-	 */
-	template< typename InputIterator, typename OutputIterator >
-	OutputIterator projectData( const InputIterator itBegin, const InputIterator itEnd, OutputIterator iOut ) const;
 
-	/// performs the cross-correlation several times on different data chunks
-	void updateDelayMap( std::vector< precision_type >& projected1, std::vector< precision_type >& projected2, CorrelationMap &mapping ) const;
-
-	/**
-	 * Function that performs the cross correlation by shifting chunks of measurements from one sensor along the other sensor's measurements
-	 * within a time window of a certain length.
-	 *
-	 * @tparam InputIterator an iterator pointing to the sequence container with the single dimensional data.
-	 * @param itBegin1 An iterator pointing to the beginning of the sequence that contains the 1st sensor's measurements.
-	 * @param itEnd1 An iterator pointing to the end of the sequence that contains the 1st sensor's measurements.
-	 * @param itBegin2 An iterator pointing to the beginning of the sequence that contains the 2nd sensor's measurements.
-	 * @param itEnd2 An iterator pointing to the end of the sequence that contains the 2nd sensor's measurements.
-	 * @param timeOffsetInMs 
-	 * @param timeSliceInMs
-	 * @param mapping
-	 */
-	template< typename InputIterator >
-	void correlateBySlidingWindow( const InputIterator itBegin1, const InputIterator itEnd1
-		, const InputIterator itBegin2
-		, const std::size_t timeOffsetInMs
-		, CorrelationMap& mapping ) const;
-		
-	/// selects the best matching offset, by comparing all so far estimated correlation factors.
-	std::ptrdiff_t selectBestMatch( const CorrelationMap& mapping ) const;
-};
-
-template< typename EventType >
-Measurement::Timestamp TimeDelayEstimation< EventType >::updateInterpolatedData( const Measurement::Timestamp tStart, const Measurement::Timestamp tEnd, const EventList& eList, TypeList& interpolatedData ) const
-{
-	const Measurement::Timestamp incOneMs = 1000000LL; // <- timestamp for 1 ms, used for incrementation and determination of steps
-
-	const std::size_t numTimeSteps = ( tEnd - tStart ) / incOneMs;
-	LOG4CPP_DEBUG( logger, "Starting to interpolate at " << numTimeSteps << " steps, each of one ms time in between." );
-
-	// reserve some space for adding new elements
-	interpolatedData.reserve( interpolatedData.size() + numTimeSteps );
-	
-	typename EventList::const_iterator it1;
-	typename EventList::const_iterator it2 = eList.begin();
-	typename EventList::const_iterator itLast = eList.begin();
-	
-	for( Measurement::Timestamp t_n = tStart; t_n<tEnd; t_n += incOneMs )
-	{
-		it1 = itLast;
-		
-		while( it1->time() < t_n )
-			itLast = it1++;
-		
-		it2 = itLast;
-		//or alternatively (but not really better):
-		//std::advance( it2, std::distance( eList.begin(), itLast ) );
-		
-		while( it2->time() < t_n )
-			++it2;
-			
-		assert( it2 != eList.end() );
-		assert( itLast->time() <= it2->time() );
-		
-		const Measurement::Timestamp eventTimeDifference = it2->time() - itLast->time();
-		const Measurement::Timestamp timeDiff = t_n - itLast->time();
-		const double factor = (eventTimeDifference) ? static_cast< double >( timeDiff ) / static_cast< double >( eventTimeDifference ) : 1;
-		
-		LOG4CPP_TRACE( logger, "interpolating between " << (*(*it1)) << " and " << (*(*it2)) << " with following factor t=" << factor << " [0,1]." );
-		const math_type value = (factor == 1) ? *( *it1 ) : linearInterpolate( *(*it1), *(*it2), factor );
-		interpolatedData.push_back( value );
-	}
-	
-	return tEnd;// + incOneMs;
-}
-
-template< typename EventType >
-void TimeDelayEstimation< EventType >::updateProjectedData( const TypeList& interpolatedSequence, std::vector< precision_type > &projected ) const
-{
-	// project the interpolated data to one-dimensional values to perform the cross-correlation
-	const std::size_t ni = interpolatedSequence.size();
-	const std::size_t np = projected.size();
-	
-	// reserve some more space
-	projected.reserve( ni );
-	
-	// set the iterator to the correct position within the sequence interpolation data sequence
-	typename TypeList::const_iterator itBegin = interpolatedSequence.begin();
-	std::advance( itBegin, np );
-	
-	// perform the projection using the iterators (==pointers)
-	projectData( itBegin, interpolatedSequence.end(), std::back_inserter( projected ) );
-}
-
-template<>
-template< typename InputIterator, typename OutputIterator >
-OutputIterator TimeDelayEstimation< Measurement::Position >::projectData( const InputIterator itBegin, const InputIterator itEnd, OutputIterator iOut ) const
-{
-	// choose one of the following alternatives (should all do the same)
-	// return std::transform( itBegin, itEnd, iOut, &Math::norm_2< math_type > );
-	return std::transform( itBegin, itEnd, iOut, std::ptr_fun( &Math::norm_2< math_type > ) );
-	// return std::transform( itBegin, itEnd, iOut, boost::numeric::ublas::norm_2< typename math_type::base_type > );
-}
-
-template< typename EventType >
-void TimeDelayEstimation< EventType >::updateDelayMap( std::vector< precision_type >& projected1, std::vector< precision_type >& projected2, CorrelationMap& mapping ) const
-{
-	const std::size_t n = projected1.size();
-	// this should be validated
-	assert( n>0 );
-	assert( n == projected2.size() );
-	
-	if( n < (m_maxTimeOffsetInMs*2) )
-		return;
-	
-	LOG4CPP_DEBUG( logger, "Using " << n << " data values at one ms timestamps for cross-correlation." );
-	
-	
-	// take chunks that are twice as big as the maximal offset is moved along the data
-	const std::size_t numChunks = (n - m_maxTimeOffsetInMs*2) / m_sliceSizeInMs;
-
-	LOG4CPP_INFO( logger, "Estimated " << numChunks << " chunks to perform cross-correlation");
-	
-	typename std::vector< precision_type >::iterator itBegin1 = projected1.begin();
-	typename std::vector< precision_type >::iterator itBegin2 = projected2.begin();
-
-	for( std::size_t i = 0; i<numChunks; ++i )
-	{
-		// shift the iterators of the first measurements to the starting position, slightly behind the second ones
-		std::advance( itBegin1, m_maxTimeOffsetInMs );
-		typename std::vector< precision_type >::iterator itEnd1 ( itBegin1 );
-		std::advance( itEnd1, m_sliceSizeInMs );
-		
-		// do not shift the second ones right now, first estimate the offset
-		correlateBySlidingWindow( itBegin1, itEnd1, itBegin2, m_maxTimeOffsetInMs, mapping );
-		
-		// and now shift them to a later position
-		std::advance( itBegin2, m_maxTimeOffsetInMs );
-		typename std::vector< precision_type >::iterator itEnd2 ( itBegin2 );
-		std::advance( itEnd2, m_sliceSizeInMs );
-	}
-}
-
-template< typename EventType >
-template< typename InputIterator >
-void TimeDelayEstimation< EventType >::correlateBySlidingWindow( const InputIterator itBegin1, const InputIterator itEnd1
-	, const InputIterator itBegin2
-	, const std::size_t timeOffsetInMs, CorrelationMap& mapping ) const
-{
-	typedef typename InputIterator::value_type value_type;
-	
-	InputIterator itBegin = itBegin2;
-	InputIterator itEnd = itBegin;
-	std::advance( itEnd, std::distance( itBegin1, itEnd1 ) );
-	
-	for( std::ptrdiff_t j = - static_cast< ptrdiff_t > ( timeOffsetInMs ); j< static_cast< ptrdiff_t > ( timeOffsetInMs ); ++j, ++itBegin, ++itEnd )
-	{
-		// use carefully, works only with random access iterator at the moment:
-		const value_type corr = Math::Stochastic::correlation( itBegin1, itEnd1, itBegin, itEnd );
-		mapping[ j ].push_back( corr );
-	}
-}
-
-template< typename EventType >
-void TimeDelayEstimation< EventType >::computeTimedelay( )
-{
-	boost::mutex::scoped_lock lock( m_mutexThread );
-	
-	
-	// check if there is a change in internal storage that can be used and perform the change
-		
-	const Measurement::Timestamp startTime = m_tNextInterpolation ? m_tNextInterpolation : std::max( m_threadData1.front().time(), m_threadData2.front().time() );
-	const Measurement::Timestamp endTime = std::min( m_threadData1.back().time(), m_threadData2.back().time() );
-	if( !(startTime < endTime) )
-		return;
-
-	{	// starting to interpolate data for further processing
-		updateInterpolatedData( startTime, endTime, m_threadData1, m_interpolatedData1 );
-		m_tNextInterpolation = updateInterpolatedData( startTime, endTime, m_threadData2, m_interpolatedData2 );
-		
-		LOG4CPP_DEBUG( logger, "Storing now " << m_interpolatedData1.size() << " values of interpolated \"" << typeid( math_type ).name() << "\" values." );
-	}
-	
-	{	//project the interpolated data to one dimensional values
-		const std::size_t nDiff = m_interpolatedData1.size() - m_projectedData1.size();
-		
-		updateProjectedData( m_interpolatedData1, m_projectedData1 );
-		updateProjectedData( m_interpolatedData2, m_projectedData2 );
-		LOG4CPP_DEBUG( logger, nDiff << " values have been projected to one-dimensional data and added to internal storage for cross-correlation." );
-	}
-	
-	m_correlationData.clear();
-	{
-		updateDelayMap( m_projectedData1, m_projectedData2, m_correlationData );
-	}
-	{
-		const std::ptrdiff_t offset = selectBestMatch( m_correlationData );
-		double result = static_cast< double >( offset );
-		m_outPort.send( Measurement::Distance( Measurement::now(), Math::Scalar<double>(result) ) );
-		LOG4CPP_INFO( logger, "[" << getName() << "]The delay between the sensor measurements has been estimated to " << offset << " ms, or briefly : time(1st sensor) == time(2nd sensor) + (result=" << result << ") [ms]." );
-	}
-}
-
-template< typename EventType >
-std::ptrdiff_t TimeDelayEstimation< EventType >::selectBestMatch( const CorrelationMap& mapping ) const
-{
-	std::ptrdiff_t bestOffset = 0;
-	precision_type bestCorrelation = 0;
-	
-	const typename CorrelationMap::const_iterator itEnd = mapping.end();
-	for( typename CorrelationMap::const_iterator it = mapping.begin(); it != itEnd; ++it )
-	{
-		Math::Stochastic::Average< double > averager;
-		averager = std::for_each( it->second.begin(), it->second.end(), averager );
-		const precision_type value = averager.getAverage();
-		
-		if( bestCorrelation < value )
-		{
-			bestCorrelation = value;
-			bestOffset = it->first;
+	void checkData(){
+		if(m_data1->size() > 0 && m_data2->size() > 0){
+			bool avail1 = (m_data1->back().time() - m_data1->front().time()) >= m_recordSizeInMs*1000000LL;
+			bool avail2 = (m_data2->back().time() - m_data2->front().time()) >= m_recordSizeInMs*1000000LL;
+			if(avail1 && avail2){
+				addDataToThread();
+			}
 		}
 	}
-	LOG4CPP_DEBUG( logger, "The highest correlation factor " << bestCorrelation << " was estimated for a time offset of " << bestOffset << " [ms]." );
-	return bestOffset;
+
+	void addDataToThread(){
+		
+		boost::mutex::scoped_lock l( m_mutex );		
+		m_threadData1.push(m_data1);
+		m_threadData2.push(m_data2);
+		
+		m_data1 = new std::vector<Measurement::Position>();
+		m_data2 = new std::vector<Measurement::Position>();
+	}
+
+	void threadProc();
+
+	void estimateTimeDelay(vec_iter data1First, vec_iter data1Last, vec_iter data2First, vec_iter data2Last);
+
+	Math::Vector3d interpolate(const std::vector<Measurement::Position>& data, Measurement::Timestamp t);
+	
+	/** Component start method. starts the thread */
+	virtual void start();
+
+	/** Component stop method, stops thread */
+	virtual void stop();
+protected:
+	/** Input port A of the component. */
+	Dataflow::PushConsumer< Measurement::Position > m_inPortA;
+
+	/** Input port B of the component. */
+	Dataflow::PushConsumer< Measurement::Position > m_inPortB;
+	
+		/** Provides the estimated time difference */
+	Dataflow::PushSupplier< Measurement::Distance > m_outPort;
+
+	std::vector<Measurement::Position>* m_data1;
+	std::vector<Measurement::Position>* m_data2;
+
+	boost::mutex m_mutex;
+	boost::condition_variable m_cond;
+	std::queue<std::vector<Measurement::Position>*> m_threadData1;
+	std::queue<std::vector<Measurement::Position>*> m_threadData2;
+
+	std::map< int, std::vector< double > > m_correlationData;
+
+
+	// the thread
+	boost::scoped_ptr< boost::thread > m_Thread;
+
+	// stop the thread?
+	volatile bool m_bStop;
+
+	long m_recordSizeInMs;	
+	long m_maxTimeOffsetInMs;
+	long m_sliceSizeInMs;
+	
+	
+	
+};
+
+void TimeDelayEstimation::stop()
+{
+	if ( m_running )
+	{
+		m_running = false;
+		m_bStop = true;
+		LOG4CPP_INFO( logger, "Trying to stop TimeDelayEstimation");
+		if ( m_Thread )
+		{
+			m_Thread->join();
+			LOG4CPP_INFO( logger, "Trying to stop TimeDelayEstimation, thread joined");
+		}
+	}
+}
+
+void TimeDelayEstimation::start()
+{
+	if ( !m_running )
+	{
+		m_running = true;
+		m_bStop = false;
+		m_Thread.reset( new boost::thread( boost::bind ( &TimeDelayEstimation::threadProc, this ) ) );
+	}
+}
+
+void TimeDelayEstimation::threadProc(){
+
+	int superindex = 0;
+
+	while ( !m_bStop )
+	{
+		std::vector<Measurement::Position>* data1 = 0;
+		std::vector<Measurement::Position>* data2 = 0;
+		{
+			boost::mutex::scoped_lock l( m_mutex );
+			if(m_threadData1.size() > 0){
+				data1 = m_threadData1.front();
+				data2 = m_threadData2.front();
+				m_threadData1.pop();
+				m_threadData2.pop();
+			}			
+		}
+
+		if(data1 == 0){
+			LOG4CPP_INFO(logger, "no new data");
+			Ubitrack::Util::sleep(m_recordSizeInMs/4);
+			continue;
+		}
+		//new data available
+		LOG4CPP_INFO(logger, "new data");
+		
+		// check if data is useable
+		Math::Stochastic::Average<Math::ErrorVector<double, 3 > > averageData;
+		std::vector< Math::Vector3d > tmpData;
+		for(int i=0;i < data1->size();i++){
+			tmpData.push_back(*(data1->at(i)));
+		}
+		averageData = std::for_each( tmpData.begin(), tmpData.end(), averageData );
+		Math::ErrorVector<double, 3 > meanWithError = averageData.getAverage();
+
+		LOG4CPP_INFO(logger, "RMS: "<< meanWithError.getRMS() << " : " << meanWithError.covariance );
+		if(meanWithError.getRMS() < 0.05){
+			LOG4CPP_INFO(logger, "too little movement, RMS:" << meanWithError.getRMS());
+			delete data1;
+			delete data2;
+			continue;
+		}
+
+		
+		/*double length = 0;
+		for(int i=1;i < data1->size();i++){
+			length += ublas::norm_2(*(data1->at(i)) - *(data1->at(i-1))) ;
+		}
+		if(length < 0.7){
+			LOG4CPP_INFO(logger, "too short:" << length);
+			delete data1;
+			delete data2;
+			continue;
+		}
+		LOG4CPP_INFO(logger, "length:" << length);
+		*/
+
+		// get first common timestamp
+		Measurement::Timestamp startTime = std::max(data1->front().time(), data2->front().time());
+		Measurement::Timestamp endTime = std::min(data1->back().time(), data2->back().time());
+		
+		// interpolate data in ms steps
+		std::vector<double>::size_type totalCount = (endTime - startTime) / 1000000L;
+		LOG4CPP_INFO(logger, "totalCount:"<<totalCount);
+		std::vector<double> corr_data1;
+		corr_data1.reserve(totalCount);
+		std::vector<double> corr_data2;
+		corr_data2.reserve(totalCount);
+
+		//std::vector<Math::Scalar<double> > corr_data1Test1;
+		//std::vector<Math::Scalar<double> > corr_data1Test2;
+
+		for(std::vector<double>::size_type i=0;i<totalCount;i++){
+			Measurement::Timestamp t = startTime+i*1000000LL;
+			Math::Vector3d p1 = interpolate(*data1, t);
+			Math::Vector3d p2 = interpolate(*data2, t);
+
+			//LOG4CPP_INFO(logger, "time:" << t << " value" << p1 );
+						
+			// reduce to one dimension
+			corr_data1.push_back( ublas::norm_2(p1) );
+			corr_data2.push_back( ublas::norm_2(p2) );
+			//corr_data1Test1.push_back( Math::Scalar<double>(ublas::norm_2(p1)));
+			//corr_data1Test2.push_back( Math::Scalar<double>(ublas::norm_2(p2)));
+		}
+		/*
+		Measurement::DistanceList n1(startTime, corr_data1Test1);
+		Measurement::DistanceList n2(startTime, corr_data1Test2);
+		
+		std::stringstream ss1;
+		ss1 << "d:\\temp\\corr1" << startTime << ".txt";
+		Util::writeCalibFile( ss1.str(), n1 );
+
+		std::stringstream ss2;
+		ss2 << "d:\\temp\\corr2" << startTime << ".txt";
+		Util::writeCalibFile( ss2.str(), n2 );
+		*/
+	
+
+		delete data1;
+		delete data2;
+
+		
+
+		// select slices and estimate time delay
+		LOG4CPP_INFO(logger, "corr_data1:"<<corr_data1.size());
+
+		int countSlices = (corr_data1.size() - m_maxTimeOffsetInMs*2) / m_sliceSizeInMs;
+
+		LOG4CPP_INFO(logger, "count of slices:" << countSlices);
+
+		 vec_iter data1First = corr_data1.begin(); 
+		 vec_iter data2First = corr_data2.begin();
+
+		for(int i=0;i<countSlices;i++){
+			data1First = data1First + m_maxTimeOffsetInMs;
+			data2First = data2First + m_maxTimeOffsetInMs;
+
+			estimateTimeDelay(data1First, data1First+m_sliceSizeInMs, data2First, data2First+m_sliceSizeInMs);
+
+			/*
+			std::stringstream ss1;
+			ss1 << "d:\\temp\\corrdata\\corr1_"<< superindex << "_" << i << ".txt";			
+
+			std::stringstream ss2;
+			ss2 << "d:\\temp\\corrdata\\corr2_"<< superindex << "_" << i << ".txt";
+
+			
+			std::ofstream stream1(ss1.str());		
+			std::ofstream stream2(ss2.str());		
+						
+			std::string linesep( "\n" );
+
+			vec_iter tmp1 = data1First;
+			int index = 0;
+			
+			for(;tmp1 != data1First+m_sliceSizeInMs;++tmp1){
+				stream1 << index;
+				stream1 << ";";
+				stream1 << *tmp1;
+				stream1 << linesep;
+				index++;
+			}
+			vec_iter tmp2 = data2First;
+			index = 0;
+			for(;tmp2 != data2First+m_sliceSizeInMs;++tmp2){
+				stream2 << index;
+				stream2 << ";";
+				stream2 << *tmp2;
+				stream2 << linesep;
+				index++;
+			}
+			stream1.close();
+			stream2.close();
+			*/
+		}
+
+		std::map< int, std::vector< double > >::iterator it = m_correlationData.begin();
+		int offset=0;
+		double correlation=0;
+
+		/*
+		std::stringstream ss1;
+		ss1 << "d:\\temp\\corrdata\\correlation.txt";		
+		std::ofstream stream1(ss1.str());		
+		*/
+		for(;it != m_correlationData.end();++it){
+
+		
+			Math::Stochastic::Average<double> average;
+			average = std::for_each( it->second.begin(), it->second.end(), average );
+			
+			double value = average.getAverage();
+			if(correlation < value)
+			{
+				correlation = value;
+				offset = it->first;
+			}
+			//LOG4CPP_INFO(logger, "offset:" << it->first << " corr:" << value);
+							
+			/*			
+			std::string linesep( "\n" );
+			
+			stream1 << it->first;
+			stream1 << ";";
+			stream1 << value;
+			stream1 << linesep;			
+			*/
+		
+		}
+		//stream1.close();
+
+		LOG4CPP_INFO(logger, "Result: offset:" << offset << " corr:" << correlation);
+
+		m_outPort.send( Measurement::Distance( Measurement::now(), Math::Scalar<double>(offset) ) );
+		
+		superindex++;
+		
+		
+	}
+}
+
+Math::Vector3d TimeDelayEstimation::interpolate(const std::vector<Measurement::Position>& data, Measurement::Timestamp t){
+		Measurement::Position p1,p2;
+		double factor = 1.0;		
+		for(int i=0; i<data.size();i++){
+			if(data[i].time() > t){				
+
+				p1 = data[i-1];
+				p2 = data[i];
+				Measurement::Timestamp eventDifference = p2.time() - p1.time();
+				Measurement::Timestamp timeDiff = t - p1.time();
+
+				// check for timeout
+								
+				if ( eventDifference )
+					factor = double( timeDiff ) / double( eventDifference );
+				else
+					factor = 1.0;
+
+				break;
+
+			}
+		}
+		//LOG4CPP_INFO(logger, p1 << " : " << p2 << " : " << factor);
+		return linearInterpolate(*p1, *p2, factor );
+	}
+
+void TimeDelayEstimation::estimateTimeDelay(vec_iter data1First, vec_iter data1Last, vec_iter data2First, vec_iter data2Last){
+	
+	std::vector<double> data1(data1First, data1Last);
+
+	Measurement::Timestamp ts = Measurement::now();
+	
+	for(int j=-m_maxTimeOffsetInMs;j<m_maxTimeOffsetInMs;j++){
+		std::vector<double> data2(data2First+j, data2Last+j);		
+
+		double corr = Math::Stochastic::correlation(data1.begin(), data1.end(), data2.begin(), data2.end());
+		
+				
+		//LOG4CPP_INFO(logger, "estimateTimeDelay:"<< j << ":" << corr << " : " << output.at<float>(0,0) << " : " << corr - output.at<float>(0,0));
+		/*
+		std::stringstream ss1;
+		ss1 << "d:\\temp\\corrdata\\tmpdata\\corr1_" << j << ".txt";			
+
+		std::stringstream ss2;
+		ss2 << "d:\\temp\\corrdata\\tmpdata\\corr2_" << j << ".txt";
+
+			
+		std::ofstream stream1(ss1.str());		
+		std::ofstream stream2(ss2.str());		
+						
+		std::string linesep( "\n" );
+
+		vec_iter tmp1 = data1First;			
+			
+		for(int i=0;i<data1.size();i++)	{
+			stream1 << i;
+			stream1 << ";";
+			stream1 << data1[i];
+			stream1 << ";";
+			stream1 << corr;			
+			stream1 << linesep;			
+		}
+		vec_iter tmp2 = data2First;
+		
+		for(int i=0;i<data2.size();i++)	{
+			stream2 << i;
+			stream2 << ";";
+			stream2 << data2[i];
+			stream2 << linesep;			
+		}
+		stream1.close();
+		stream2.close();
+		
+		*/
+		m_correlationData[j].push_back(corr);
+
+
+	}
+
 }
 
 
-UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf )
-{
-	// the following two components first need a corresponding projectData to compile
-	// cf->registerComponent< TimeDelayEstimation< Measurement::Pose > > ( "TimeDelayEstimationPose" );
-	// cf->registerComponent< TimeDelayEstimation< Measurement::Rotation > > ( "TimeDelayEstimationRotation3D" );
-	cf->registerComponent< TimeDelayEstimation< Measurement::Position > > ( "TimeDelayEstimationPosition3D" );
+UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
 	
+	cf->registerComponent< TimeDelayEstimation > ( "TimeDelayEstimationPosition3D" );
+
 }
 
 } } // namespace Ubitrack::Components
