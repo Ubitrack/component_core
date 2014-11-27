@@ -23,12 +23,16 @@
             <Edge name="Output" source="Marker" destination="Tip" displayName="Tip Position">
                 <Attribute name="type" value="3DPosition" xsi:type="EnumAttributeReferenceType"/>
             </Edge>
+			<Edge name="OutputPose" source="Marker" destination="Tip" displayName="Tip Pose">
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+				<Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
         </Output>
 
         <Constraints>
             <TriggerGroup>
                 <Edge edge-ref="Input"/>
-                <Edge edge-ref="Output"/>
+                <Edge edge-ref="Output"/>				
             </TriggerGroup>
         </Constraints>
 
