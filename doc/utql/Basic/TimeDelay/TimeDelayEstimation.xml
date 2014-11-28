@@ -34,6 +34,18 @@
 		</Output>
 		<DataflowConfiguration>
 			<UbitrackLib class="TimeDelayEstimationPosition3D"/>
+			<Attribute name="minSTDforMovement" displayName="minSTDforMovement in m" default="0.05" xsi:type="StringAttributeDeclarationType">
+            	<Description><h:p>minimum  position std of record to be used for tde</h:p></Description>
+            </Attribute>
+			<Attribute name="recordSize" displayName="recordSize in ms" default="3000" xsi:type="StringAttributeDeclarationType">
+            	<Description><h:p>size of record to be used for tde</h:p></Description>
+            </Attribute>
+			<Attribute name="sliceSize" displayName="sliceSize in ms" default="2000" xsi:type="StringAttributeDeclarationType">
+            	<Description><h:p>size of slice from record to extimate time delay</h:p></Description>
+            </Attribute>
+			<Attribute name="maxOffset" displayName="maxOffset in ms" default="100" xsi:type="StringAttributeDeclarationType">
+            	<Description><h:p>maximum offset of timedelay (-maxOffset, maxOffset )</h:p></Description>
+            </Attribute>
 		</DataflowConfiguration>
 	</Pattern>
 

@@ -75,6 +75,7 @@ public:
 		, m_inPortA( "AB1", *this, boost::bind( &TimeDelayEstimation::receiveSensor1, this, _1 )  )
 		, m_inPortB( "AB2", *this, boost::bind( &TimeDelayEstimation::receiveSensor2, this, _1 )  )		
 		, m_outPort( "Output", *this )
+		, m_minSTDforMovement(0.05)
     {
 		stop();
 		m_data1 = new std::vector<Measurement::Position>();
@@ -82,7 +83,13 @@ public:
 
 		m_recordSizeInMs = 3 * 1000;
 		m_sliceSizeInMs =  2000;		
-		m_maxTimeOffsetInMs = 200;		
+		m_maxTimeOffsetInMs = 100;		
+
+
+		pConfig->m_DataflowAttributes.getAttributeData( "minSTDforMovement", m_minSTDforMovement );
+		pConfig->m_DataflowAttributes.getAttributeData( "recordSize", m_recordSizeInMs );
+		pConfig->m_DataflowAttributes.getAttributeData( "sliceSize", m_sliceSizeInMs );
+		pConfig->m_DataflowAttributes.getAttributeData( "maxOffset", m_maxTimeOffsetInMs );
     }
 
 	~TimeDelayEstimation(){
@@ -162,6 +169,7 @@ protected:
 	long m_maxTimeOffsetInMs;
 	long m_sliceSizeInMs;
 	
+	double m_minSTDforMovement;
 	
 	
 };
@@ -227,7 +235,7 @@ void TimeDelayEstimation::threadProc(){
 		Math::ErrorVector<double, 3 > meanWithError = averageData.getAverage();
 
 		LOG4CPP_INFO(logger, "RMS: "<< meanWithError.getRMS() << " : " << meanWithError.covariance );
-		if(meanWithError.getRMS() < 0.05){
+		if(meanWithError.getRMS() < m_minSTDforMovement){
 			LOG4CPP_INFO(logger, "too little movement, RMS:" << meanWithError.getRMS());
 			delete data1;
 			delete data2;
