@@ -567,9 +567,8 @@ void PlayerModule::mainloop()
 				nextEventTime = t;
 		}
 	}
-	LOG4CPP_DEBUG( logger, "Starting main loop" );
-	
-	LOG4CPP_INFO( logger, "Starting main loop" << nextEventTime);
+	LOG4CPP_INFO( logger, "Starting main loop" );
+	LOG4CPP_DEBUG( logger, "Starting main loop at " << nextEventTime );
 
 	// main loop
 	while ( !m_bStop && nextEventTime )
