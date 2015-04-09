@@ -23,6 +23,7 @@
             <Edge name="Output" source="Marker" destination="Tip" displayName="Tip Position">
                 <Attribute name="type" value="3DPosition" xsi:type="EnumAttributeReferenceType"/>
             </Edge>
+	
         </Output>
 
         <Constraints>
@@ -37,6 +38,43 @@
             <Attribute name="expansion" value="time" xsi:type="EnumAttributeReferenceType"/>
         </DataflowConfiguration>
     </Pattern>
+	
+	 <Pattern name="TipCalibrationError" displayName="Tip Calibration Error">
+    	<Description><h:p>Allows the calibration of tip position on a pointing device. The tip must be placed at
+    	a fixed position while the pointing device is rotated around it.</h:p></Description>
+			    	
+        <Input>
+            <Node name="Tracker" displayName="Tracker"/>
+            <Node name="Marker" displayName="Marker"/>
+            <Edge name="Input" source="Tracker" destination="Marker" displayName="Tracker Input">
+                <Predicate>type=='6D'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Node name="Tip" displayName="Tip"/>
+			 <Edge name="Output" source="Marker" destination="Tip" displayName="Tip Position">
+                <Attribute name="type" value="3DPosition" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+			<Edge name="ErrorOutput" source="Marker" destination="Tip" displayName="Tip Position">
+                <Attribute name="type" value="3DPositionError" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <Constraints>
+            <TriggerGroup>
+                <Edge edge-ref="Input"/>
+				<Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="TipCalibration"/>
+            <Attribute name="expansion" value="time" xsi:type="EnumAttributeReferenceType"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
+	
     
     
     <!-- Attribute declarations -->

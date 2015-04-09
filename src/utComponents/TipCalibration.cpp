@@ -32,9 +32,11 @@
 #include <utDataflow/TriggerComponent.h>
 #include <utDataflow/ExpansionInPort.h>
 #include <utDataflow/TriggerOutPort.h>
+#include <utDataflow/PushSupplier.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
 #include <utAlgorithm/ToolTip/TipCalibration.h>
+#include <utMath/Stochastic/Average.h>
 
 namespace Ubitrack { namespace Components {
 
@@ -76,6 +78,7 @@ public:
 		: Dataflow::TriggerComponent( sName, pConfig )
 		, m_inPort( "Input", *this )
 		, m_outPort( "Output", *this )
+		, m_outErrorPort( "ErrorOutput", *this )		
     {
     }
 
@@ -88,8 +91,24 @@ public:
 		Math::Vector< double, 3 > pm;
 		Math::Vector< double, 3 > pw;
 		Algorithm::ToolTip::tipCalibration( *m_inPort.get(), pm, pw );
+		
+		const std::vector< Math::Pose >& poses = *m_inPort.get();
+		std::vector< Math::Vector3d > result( poses.size() );
+		for ( unsigned i = 0; i < poses.size(); i++ )
+			result[ i ] = poses[i] * pm;
+		
+		Math::Stochastic::Average< Math::ErrorVector< double, 3 > > average;
+
+		average = std::for_each(result.begin(), result.end(), average);
+		
+		
+		Math::ErrorVector< double, 3 > tmp = average.getAverage();
+		
 
 		m_outPort.send( Measurement::Position( t, pm ) );
+
+		m_outErrorPort.send(Measurement::ErrorPosition(t, Math::ErrorVector< double, 3 >(pm, tmp.covariance)));
+
     }
 
 protected:
@@ -98,6 +117,9 @@ protected:
 
 	/** Output port of the component. */
 	Dataflow::TriggerOutPort< Measurement::Position > m_outPort;
+	
+	Dataflow::PushSupplier< Measurement::ErrorPosition > m_outErrorPort;
+
 };
 
 

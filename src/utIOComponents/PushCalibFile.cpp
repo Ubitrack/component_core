@@ -146,11 +146,11 @@ void PushCalibReaderWriter< EventType >::eventIn( const EventType& n )
 	boost::mutex::scoped_lock l( m_fileMutex );
 	m_lastMeasurement = n;
 	m_outPort.send(m_lastMeasurement);
-	if ( m_lastTS + s_minWriteDistance < n.time() )		{
+	//if ( m_lastTS + s_minWriteDistance < n.time() )		{
 
 		Util::writeCalibFile( m_sFilename, n );	
 		m_lastTS = n.time();
-	}
+	//}
 	
 }
 
@@ -162,8 +162,6 @@ void PushCalibReaderWriter< EventType >::eventIn( const EventType& n )
 
 UBITRACK_REGISTER_COMPONENT( Ubitrack::Dataflow::ComponentFactory* const cf )
 {
-	// // cf->registerComponent< Ubitrack::Drivers::CalibWriterXML< Ubitrack::Measurement::Pose > > ( "PoseCalibWriterXML" );
-
 	cf->registerComponent< Ubitrack::Drivers::PushCalibReaderWriter< Ubitrack::Measurement::Distance > > ( "DistancePushCalibReaderWriter" );
 	cf->registerComponent< Ubitrack::Drivers::PushCalibReaderWriter< Ubitrack::Measurement::Pose > > ( "PosePushCalibReaderWriter" );
 	cf->registerComponent< Ubitrack::Drivers::PushCalibReaderWriter< Ubitrack::Measurement::ErrorPose > > ( "ErrorPosePushCalibReaderWriter" );
@@ -178,5 +176,6 @@ UBITRACK_REGISTER_COMPONENT( Ubitrack::Dataflow::ComponentFactory* const cf )
 	cf->registerComponent< Ubitrack::Drivers::PushCalibReaderWriter< Ubitrack::Measurement::PositionList2 > > ( "PositionList2DPushCalibReaderWriter" );
 	cf->registerComponent< Ubitrack::Drivers::PushCalibReaderWriter< Ubitrack::Measurement::PoseList > > ( "PoseListPushCalibReaderWriter" );
 	cf->registerComponent< Ubitrack::Drivers::PushCalibReaderWriter< Ubitrack::Measurement::DistanceList > > ( "DistanceListPushCalibReaderWriter" );
+	cf->registerComponent< Ubitrack::Drivers::PushCalibReaderWriter< Ubitrack::Measurement::CameraIntrinsics > >("CameraIntrinsicsPushCalibReaderWriter");
 	
 }
