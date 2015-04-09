@@ -41,7 +41,7 @@ comp_sources = globSourceFiles( '*.cpp' )
 
 # remove components that require a not present feature (alphabetical list)
 if not have_lapack:
-	for src in [ '2D3DPoseEstimation.cpp', 'AbsoluteOrientation.cpp', 'AbsoluteOrientationRANSAC.cpp', 'DecomposeProjectionMatrix.cpp',  'HandEyeCalibration.cpp', 'HomogeneousMatrixEstimation.cpp', 'MultipleCameraPoseOptimization.cpp', 'OnlineRotHec.cpp',  'PoseKalmanFilter.cpp', 'RotHecKalmanFilter.cpp', 'RotOnlyKalmanFilter.cpp', 'SPAAM.cpp', 'TimeDelayEstimation.cpp', 'TipCalibration.cpp' ]:
+	for src in [ '2D3DPoseEstimation.cpp', 'AbsoluteOrientation.cpp', 'AbsoluteOrientationRANSAC.cpp', 'DecomposeProjectionMatrix.cpp',  'HandEyeCalibration.cpp', 'HomogeneousMatrixEstimation.cpp', 'MultipleCameraPoseOptimization.cpp', 'OnlineRotHec.cpp',  'PoseKalmanFilter.cpp', 'RotHecKalmanFilter.cpp', 'RotOnlyKalmanFilter.cpp', 'SPAAM.cpp', 'TimeDelayEstimation.cpp', 'TipCalibration.cpp', 'UndistortPoints.cpp' ]:
 		comp_sources.remove( src );
 
 

@@ -24,15 +24,18 @@
 /**
  * @ingroup vision_components
  * @file
- * Implements a component that unwarps images.
+ * Implements a component that points in an image.
  *
  * @author Christian Waechter <christian.waechter@in.tum.de>
  */
 
+// std
+#include <string> 
+ 
 // Ubitrack Math
 #include <utMath/Vector.h>
 #include <utMath/CameraIntrinsics.h>
-#include <utMath/Geometry/PointUndistortion.h>
+#include <utAlgorithm/CameraLens/Correction.h>
 
 // Ubitrack Dataflow
 #include <utDataflow/TriggerComponent.h>
@@ -40,8 +43,6 @@
 #include <utDataflow/TriggerOutPort.h>
 #include <utDataflow/ComponentFactory.h>
 
-// std
-#include <string>
 
 // log4cpp
 #include <log4cpp/Category.hh>
@@ -86,21 +87,25 @@ public:
 		if( !m_intrinsicsPort.isConnected() )
 			UBITRACK_THROW( "Cannot start undistortion of point(s), no camera intrinsic parameters are available." );
 			
-		//support for new camera intrinsics measurement
-		Math::CameraIntrinsics< value_type > camIntrinsics = *m_intrinsicsPort.get( t );
-		
 		try
 		{
-			const std::vector< Math::Vector< value_type, 2 > > &vectorIn = *m_pointsIn.get( );
-			std::vector< Math::Vector< value_type, 2 > > vectorOut;
-			vectorOut.reserve( vectorIn.size() );
 			
-			Math::Geometry::undistort_points( camIntrinsics, vectorIn.begin(), vectorIn.end(), std::back_inserter( vectorOut ) );
+			//support for new camera intrinsics measurement
+			const Math::CameraIntrinsics< value_type >& camIntrinsics = *m_intrinsicsPort.get( t );
+			
+			const std::vector< Math::Vector< value_type, 2 > > &vectorIn = *m_pointsIn.get( );
+			
+			std::vector< Math::Vector< value_type, 2 > > vectorOut( vectorIn.size() );
+			Algorithm::CameraLens::undistort( camIntrinsics, vectorIn, vectorOut );
+			
+			// alternative does not work at the moment, so stick to the solution above
+			//vectorOut.reserve( vectorIn.size() );
+			//Algorithm::CameraLens::undistort( camIntrinsics, vectorIn.begin(), vectorIn.end(), std::back_inserter( vectorOut ) );
 			m_pointsOut.send( Measurement::PositionList2( t, vectorOut ) );
 		}
 		catch( const std::exception &e )
 		{
-			LOG4CPP_WARN( logger, "Could not undistort point(s), no point(s) available.\n" << e.what() );
+			LOG4CPP_WARN( logger, "Could not undistort point(s), no point(s) or intrinsics available.\n" << e.what() );
 			return;
 		}
 	}
