@@ -30,13 +30,13 @@
  * @author Daniel Pustka <daniel.pustka@in.tum.de>
  */
 #include <utDataflow/TriggerComponent.h>
-#include <utDataflow/PushSupplier.h>
 #include <utDataflow/ExpansionInPort.h>
 #include <utDataflow/TriggerOutPort.h>
+#include <utDataflow/PushSupplier.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
 #include <utAlgorithm/ToolTip/TipCalibration.h>
-#include <utMath/VectorFunctions.h>
+#include <utMath/Stochastic/Average.h>
 
 namespace Ubitrack { namespace Components {
 
@@ -78,7 +78,7 @@ public:
 		: Dataflow::TriggerComponent( sName, pConfig )
 		, m_inPort( "Input", *this )
 		, m_outPort( "Output", *this )
-		, m_outPosePort( "OutputPose", *this )
+		, m_outErrorPort( "ErrorOutput", *this )		
     {
     }
 
@@ -91,27 +91,24 @@ public:
 		Math::Vector< double, 3 > pm;
 		Math::Vector< double, 3 > pw;
 		Algorithm::ToolTip::tipCalibration( *m_inPort.get(), pm, pw );
+		
+		const std::vector< Math::Pose >& poses = *m_inPort.get();
+		std::vector< Math::Vector3d > result( poses.size() );
+		for ( unsigned i = 0; i < poses.size(); i++ )
+			result[ i ] = poses[i] * pm;
+		
+		Math::Stochastic::Average< Math::ErrorVector< double, 3 > > average;
+
+		average = std::for_each(result.begin(), result.end(), average);
+		
+		
+		Math::ErrorVector< double, 3 > tmp = average.getAverage();
+		
 
 		m_outPort.send( Measurement::Position( t, pm ) );
 
-		
-	
+		m_outErrorPort.send(Measurement::ErrorPosition(t, Math::ErrorVector< double, 3 >(pm, tmp.covariance)));
 
-		
-		double length = norm_2(pm);
-		Math::Vector< double, 3 >  refPos =  -pm / length;
-		Math::Vector< double, 3 >  errPos(0,0,1);
-	  
-		// 1. Calc normalized correction axis
-		Math::Vector< double, 3 > axis = cross_product( errPos, refPos );
-
-		// 2. Calc correction angle. It always is between 0 and 180°
-		double angle = acos( inner_prod(errPos, refPos) / ( norm_2(errPos) * norm_2(refPos) ) );
-
-		// 3. Calc orientational correction. The axis will be normed by the constructor
-		Math::Quaternion corrRot( axis, angle );
-
-		m_outPosePort.send( Measurement::Pose( t, Math::Pose(corrRot, pm) ) );
     }
 
 protected:
@@ -120,7 +117,9 @@ protected:
 
 	/** Output port of the component. */
 	Dataflow::TriggerOutPort< Measurement::Position > m_outPort;
-	Dataflow::PushSupplier< Measurement::Pose > m_outPosePort;
+	
+	Dataflow::PushSupplier< Measurement::ErrorPosition > m_outErrorPort;
+
 };
 
 

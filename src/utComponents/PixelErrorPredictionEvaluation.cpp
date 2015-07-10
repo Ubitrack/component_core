@@ -88,7 +88,7 @@ public:
 		try
 		{
 			Measurement::Matrix3x3 intrinsics( m_inIntrinsics.get( raw.time() ) );
-			Measurement::Pose predicted( m_inPredictor.get( raw.time() ) );
+			MT predicted( m_inPredictor.get( raw.time() ) );
 			
 			// pixel position
 			Math::Vector< double, 3 > posRaw( ublas::prod( *intrinsics, raw->translation() ) );

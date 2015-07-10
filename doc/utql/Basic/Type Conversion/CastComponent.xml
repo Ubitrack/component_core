@@ -193,6 +193,37 @@
             <UbitrackLib class="CastPose2Matrix3x4"/>
         </DataflowConfiguration>
     </Pattern>
+	
+	<Pattern name="CastErrorPosition2Position" displayName="Converter (ErrorPosition to Position)">
+    	<Description><h:p>The component converts Pose to Matrix3x4 measurements</h:p></Description>
+
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Pose">
+            	<Description><h:p>The input error position</h:p></Description>
+                <Predicate>type=='3DPositionError'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Converted Matrix3x4">
+            	<Description><h:p>The converted position</h:p></Description>
+                <Attribute name="type" value="3DPosition" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <Constraints>
+        	<TriggerGroup>
+                <Edge edge-ref="Input"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="CastErrorPosition2Position"/>
+        </DataflowConfiguration>
+    </Pattern>
     
     <!-- Attribute declarations -->
     

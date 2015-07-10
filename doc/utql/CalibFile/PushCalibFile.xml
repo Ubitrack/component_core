@@ -467,6 +467,8 @@
         </DataflowConfiguration>
     </Pattern>
 	
+	
+
 	<Pattern name="CameraIntrinsicsPushCalibReaderWriter" displayName="Calibration Push Reader/Writer (CameraIntrinsics)">
         <Description><h:p>This component writes a single measurement to a file.</h:p></Description>
 		<Input>  
@@ -499,9 +501,6 @@
             </Attribute>
         </DataflowConfiguration>
     </Pattern>
-	
-
-
     
     
     <!-- Attribute declarations -->
