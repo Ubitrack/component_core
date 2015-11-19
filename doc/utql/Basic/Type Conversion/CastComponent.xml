@@ -225,6 +225,38 @@
         </DataflowConfiguration>
     </Pattern>
     
+    <Pattern name="CastPosition2Pose" displayName="Converter (Position to Pose)">
+        <Description><h:p>The component converts Position to Pose measurements</h:p></Description>
+
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Position">
+                <Description><h:p>The input position</h:p></Description>
+                <Predicate>type=='3DPosition'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Converted Pose">
+                <Description><h:p>The converted pose</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <Constraints>
+            <TriggerGroup>
+                <Edge edge-ref="Input"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="CastPosition2Pose"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
+    
     <!-- Attribute declarations -->
     
     <GlobalNodeAttributeDeclarations>
