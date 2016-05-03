@@ -155,6 +155,13 @@ void CastComponent< Measurement::Position, Measurement::Pose >::compute( Measure
 	m_outPort.send(Measurement::Pose(t, Ubitrack::Math::Pose(Ubitrack::Math::Quaternion(), *m_inPort.get())));
 }
 
+template< >
+void CastComponent< Measurement::CameraIntrinsics, Measurement::Matrix3x3 >::compute( Measurement::Timestamp t )
+{
+	Math::Matrix< double, 3, 3 > tmpMatrix(m_inPort.get()->matrix);
+	m_outPort.send(Measurement::Matrix3x3(t, tmpMatrix));
+}
+
 UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
 	cf->registerComponent< CastComponent< Measurement::ErrorPose, Measurement::Pose > > ( "CastErrorPose2Pose" );
 	cf->registerComponent< CastComponent< Measurement::Pose, Measurement::Position > > ( "CastPose2Position" );
@@ -164,6 +171,7 @@ UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
 	cf->registerComponent< CastComponent< Measurement::Pose, Measurement::Matrix3x4 > > ( "CastPose2Matrix3x4" );
 	cf->registerComponent< CastComponent< Measurement::ErrorPosition, Measurement::Position > > ( "CastErrorPosition2Position" );
 	cf->registerComponent< CastComponent< Measurement::Position, Measurement::Pose > > ( "CastPosition2Pose" );
+	cf->registerComponent< CastComponent< Measurement::CameraIntrinsics, Measurement::Matrix3x3 > > ( "CastCameraIntrinsics2Matrix" );
 }
 
 } } // namespace Ubitrack::Components

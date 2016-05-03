@@ -256,6 +256,36 @@
         </DataflowConfiguration>
     </Pattern>
     
+    <Pattern name="CastCameraIntrinsics2Matrix" displayName="Converter (CameraIntrinsics to Matrix)">
+        <Description><h:p>The component extracts the intrinsics matrix from a CameraIntrinsics measurements</h:p></Description>
+
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="CameraIntrinsics">
+                <Description><h:p>The camera intrinsics composite</h:p></Description>
+                <Predicate>type=='3x3Matrix'</Predicate>
+            </Edge>
+        </Input>
+
+        <Output>
+            <Edge name="Output" source="A" destination="B" displayName="Converted Pose">
+                <Description><h:p>The intrinsics matrix</h:p></Description>
+                <Attribute name="type" value="3x3Matrix" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+
+        <Constraints>
+            <TriggerGroup>
+                <Edge edge-ref="Input"/>
+                <Edge edge-ref="Output"/>
+            </TriggerGroup>
+        </Constraints>
+
+        <DataflowConfiguration>
+            <UbitrackLib class="CastCameraIntrinsics2Matrix"/>
+        </DataflowConfiguration>
+    </Pattern>
     
     <!-- Attribute declarations -->
     
