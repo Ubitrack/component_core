@@ -162,7 +162,10 @@ public:
 	{ assert( false ); }
 	
 	virtual void sendFinished() {
-		assert( false );
+
+		//assert( false );
+		// @todo how to gracefully exit the player ?
+		LOG4CPP_WARN( logger, "Player reached end of recording..");
 	}
 
 	virtual void start()
@@ -355,7 +358,7 @@ public:
 			m_pLoadThread.reset( new boost::thread( boost::bind( &PlayerComponentImage::loadImages, this ) ) );
 			
 		// before starting the component let the tread do some work on loading 
-		Util::sleep( 1 );
+		Util::sleep( 300 );
 	}
 	
 	void loadImages()
@@ -428,10 +431,10 @@ public:
 
 			// Load the image
 			// assigning the NULL avoids memory leaks
-			IplImage* pIpl = NULL;
+			cv::Mat img;
 			try
 			{
-				pIpl = cvLoadImage( file.string().c_str(), CV_LOAD_IMAGE_UNCHANGED );
+				img = cv::imread( file.string(), CV_LOAD_IMAGE_UNCHANGED );
 			}
 			catch( std::exception& e )
 			{
@@ -439,35 +442,17 @@ public:
 				continue;
 			}
 			
-			if( !pIpl )
+			if( img.total() == 0 )
 			{
 				LOG4CPP_ERROR( logger, "loading image file \"" <<  file.string() << "\" failed." );
 				continue;
 			}
 
 			// convert loaded image into the required pImage class
-			boost::shared_ptr< Vision::Image > pImage( new Vision::Image( pIpl, true ) );
-			
-			{	//2015-05-26, CW: commented following block, too much unnecessary image copying&changing
-				// boost::shared_ptr< Vision::Image > pImage( new Vision::Image( pIpl->width, pIpl->height, pIpl->nChannels ) );
-				
-				// cvConvertImage( pIpl, *pImage );
-				// releasing memory
-				// cvReleaseImage(&pIpl);
-				
-				// pImage->origin = pIpl->origin;
-				
-				// 2014-05-26,CW: OpenCV's doku sais that "channelSeq" is ignored, see yourself:
-				// http://docs.opencv.org/modules/core/doc/old_basic_structures.html#char[]%20channelSeq
-				// so is this still necessary here?
-				// if( pIpl->nChannels == 3 )
-				// {
-					// pImage->channelSeq[ 0 ]='B';
-					// pImage->channelSeq[ 1 ]='G';
-					// pImage->channelSeq[ 2 ]='R';
-				// }
-			}
+			boost::shared_ptr< Vision::Image > pImage( new Vision::Image( img ) );
 
+			// @todo make imgformat configurable on image player ??
+			
 			// Building the event and packing timestamp and image into it
 			Measurement::ImageMeasurement e( static_cast< Measurement::Timestamp>( 1e6 * timeStamp), pImage );
 
