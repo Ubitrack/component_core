@@ -55,6 +55,7 @@
 #include <utDataflow/ComponentFactory.h>
 #include <utDataflow/Component.h>
 #include <utMeasurement/Measurement.h>
+#include <utUtil/TracingProvider.h>
 
 namespace Ubitrack { namespace Drivers {
 
@@ -140,6 +141,9 @@ protected:
 		packet << sendtime;
 		packet << suffix;
 
+#ifdef ENABLE_EVENT_TRACING
+		TRACEPOINT_MEASUREMENT_CREATE(getEventDomain(), m.time(), getName().c_str(), "NetworkSink")
+#endif
 		m_SendSocket->send_to( boost::asio::buffer( stream.str().c_str(), stream.str().size() ), *m_SendEndpoint );
 	}
 

@@ -52,6 +52,7 @@
 #include <utDataflow/Module.h>
 #include <utMeasurement/Measurement.h>
 #include <utMeasurement/TimestampSync.h>
+#include <utUtil/TracingProvider.h>
 
 // have a logger..
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Drivers.NetworkSource" ) );
@@ -201,6 +202,9 @@ public:
 			<< ", arrival: " << Measurement::timestampToShortString( recvtime )
 			<< ", corrected: " << Measurement::timestampToShortString( correctedTime ) );
 
+#ifdef ENABLE_EVENT_TRACING
+		TRACEPOINT_MEASUREMENT_CREATE(getEventDomain(), correctedTime, getName().c_str(), "NetworkSource")
+#endif
 		m_port.send( EventType( correctedTime, mm ) );
 	}
 
