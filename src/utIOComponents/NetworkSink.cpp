@@ -142,7 +142,7 @@ protected:
 		packet << suffix;
 
 #ifdef ENABLE_EVENT_TRACING
-		TRACEPOINT_MEASUREMENT_CREATE(getEventDomain(), m.time(), getName().c_str(), "NetworkSink")
+		TRACEPOINT_MEASUREMENT_RECEIVE(getEventDomain(), m.time(), getName().c_str(), "NetworkSink")
 #endif
 		m_SendSocket->send_to( boost::asio::buffer( stream.str().c_str(), stream.str().size() ), *m_SendEndpoint );
 	}
