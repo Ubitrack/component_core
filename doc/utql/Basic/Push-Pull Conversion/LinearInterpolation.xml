@@ -146,6 +146,41 @@
             </Attribute>
         </DataflowConfiguration>
     </Pattern>
+
+    <Pattern name="PoseListLinearInterpolation" displayName="Linear Interpolation (PoseList)">
+        <Description><h:p>The component accepts events via an push input port and answers queries for 
+        events by linear interpolating between the two of the already received events. The component contains a 
+        ring-buffer to store a number of old measurements. If the last measurements are older than the requested 
+        time, a linear extrapolation is performed. For the interpolation of rotations, the SLERP algorithm is used. 
+        <h:br/>
+        The <h:code>maxAge</h:code> attribute can be used to limit the amount of extrapolation. If the stored 
+        measurements are too old, no result is computed.
+        </h:p></Description>
+        
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Push Input">
+                <Description><h:p>Push input</h:p></Description>
+                <Predicate>type=='PoseList'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+        
+        <Output>
+            <Edge name="AB-Interpolated" source="A" destination="B" displayName="Interpolated Pull Output">
+                <Description><h:p>The interpolated pull-edge.</h:p></Description>
+                <Attribute name="type" value="PoseList" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="PoseListLinearInterpolation"/>
+            <Attribute name="maxAge" displayName="maximum event age" default="0" min="0" xsi:type="IntAttributeDeclarationType">
+                <Description><h:p>Maximum age of events in ms. The component will not return a measurement, if the last stored event is older than this.</h:p></Description>
+            </Attribute>
+        </DataflowConfiguration>
+    </Pattern>
         
     <!-- Attribute declarations -->
     

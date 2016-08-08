@@ -44,20 +44,33 @@
 namespace Ubitrack { namespace Components {
 
 UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
-	cf->registerComponent< PoseBuffer > ( "PoseBuffer" );
-	cf->registerComponent< RotationBuffer > ( "RotationBuffer" );
-	cf->registerComponent< PositionBuffer > ( "PositionBuffer" );
-	cf->registerComponent< Position2Buffer > ( "Position2Buffer" );
-	cf->registerComponent< PositionListBuffer > ( "PositionListBuffer" );
-	cf->registerComponent< PositionList2Buffer > ( "PositionList2Buffer" );
-	cf->registerComponent< RotationVelocityBuffer > ( "RotationVelocityBuffer" );
-	cf->registerComponent< SkalarBuffer > ( "SkalarBuffer" );	
-	cf->registerComponent< ErrorPoseBuffer > ( "ErrorPoseBuffer" );	
-	cf->registerComponent< ErrorPositionBuffer > ( "ErrorPositionBuffer" );	
-	cf->registerComponent< Matrix4x4Buffer > ( "Matrix4x4Buffer" );	
-	cf->registerComponent< Matrix3x4Buffer > ( "Matrix3x4Buffer" );	
-	cf->registerComponent< Matrix3x3Buffer > ( "Matrix3x3Buffer" );	
+
 	cf->registerComponent< DistanceBuffer > ( "DistanceBuffer" );	
+	cf->registerComponent< SkalarBuffer > ( "SkalarBuffer" );	
+
+	cf->registerComponent< Position2Buffer > ( "Position2Buffer" );
+	cf->registerComponent< PositionBuffer > ( "PositionBuffer" );
+	cf->registerComponent< PoseBuffer > ( "PoseBuffer" );
+
+	cf->registerComponent< ErrorPosition2Buffer > ( "ErrorPosition2Buffer" );	
+	cf->registerComponent< ErrorPositionBuffer > ( "ErrorPositionBuffer" );	
+	cf->registerComponent< ErrorPoseBuffer > ( "ErrorPoseBuffer" );	
+
+	cf->registerComponent< RotationBuffer > ( "RotationBuffer" );
+
+	cf->registerComponent< Matrix3x3Buffer > ( "Matrix3x3Buffer" );	
+	cf->registerComponent< Matrix3x4Buffer > ( "Matrix3x4Buffer" );	
+	cf->registerComponent< Matrix4x4Buffer > ( "Matrix4x4Buffer" );	
+
+	cf->registerComponent< Vector4DBuffer > ( "Vector4DBuffer" );
+
+	cf->registerComponent< PositionList2Buffer > ( "PositionList2Buffer" );
+	cf->registerComponent< PositionListBuffer > ( "PositionListBuffer" );
+	cf->registerComponent< PositionListBuffer > ( "PoseListBuffer" );
+
+	cf->registerComponent< CameraIntrinsicsBuffer > ( "CameraIntrinsicsBuffer" );
+
+	cf->registerComponent< RotationVelocityBuffer > ( "RotationVelocityBuffer" );
 	
 }
 

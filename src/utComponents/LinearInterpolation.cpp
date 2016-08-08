@@ -203,6 +203,8 @@ UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
 	cf->registerComponent< LinearInterpolation< Measurement::Rotation > > ( "RotationLinearInterpolation" );
 	cf->registerComponent< LinearInterpolation< Measurement::Position > > ( "PositionLinearInterpolation" );
 	cf->registerComponent< LinearInterpolation< Measurement::ErrorPose > > ( "ErrorPoseLinearInterpolation" );
+
+	cf->registerComponent< LinearInterpolation< Measurement::PoseList> > ( "PoseListLinearInterpolation" );
 }
 
 } } // namespace Ubitrack::Components

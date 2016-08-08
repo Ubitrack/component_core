@@ -160,20 +160,38 @@ protected:
 	log4cpp::Category& m_eventsLogger; 
 };
 
-typedef Buffer< Measurement::Pose > PoseBuffer;
-typedef Buffer< Measurement::ErrorPose > ErrorPoseBuffer;
-typedef Buffer< Measurement::ErrorPosition > ErrorPositionBuffer;
-typedef Buffer< Measurement::Rotation > RotationBuffer;
-typedef Buffer< Measurement::Position > PositionBuffer;
-typedef Buffer< Measurement::Position2D > Position2Buffer;
-typedef Buffer< Measurement::PositionList > PositionListBuffer;
-typedef Buffer< Measurement::PositionList2 > PositionList2Buffer;
-typedef Buffer< Measurement::RotationVelocity > RotationVelocityBuffer;
 typedef Buffer< Measurement::Button > SkalarBuffer;
-typedef Buffer< Measurement::Matrix4x4 > Matrix4x4Buffer;
-typedef Buffer< Measurement::Matrix3x4 > Matrix3x4Buffer;
-typedef Buffer< Measurement::Matrix3x3 > Matrix3x3Buffer;
 typedef Buffer< Measurement::Distance > DistanceBuffer;
 
+typedef Buffer< Measurement::Position2D > Position2Buffer;
+typedef Buffer< Measurement::Position > PositionBuffer;
+typedef Buffer< Measurement::Pose > PoseBuffer;
+
+typedef Buffer< Measurement::ErrorPosition2 > ErrorPosition2Buffer;
+typedef Buffer< Measurement::ErrorPosition > ErrorPositionBuffer;
+typedef Buffer< Measurement::ErrorPose > ErrorPoseBuffer;
+
+typedef Buffer< Measurement::Rotation > RotationBuffer;
+
+typedef Buffer< Measurement::Matrix3x3 > Matrix3x3Buffer;
+typedef Buffer< Measurement::Matrix3x4 > Matrix3x4Buffer;
+typedef Buffer< Measurement::Matrix4x4 > Matrix4x4Buffer;
+
+typedef Buffer< Measurement::Vector4D > Vector4DBuffer;
+
+typedef Buffer< Measurement::ButtonList > ButtonListBuffer;
+typedef Buffer< Measurement::DistanceList > DistanceListBuffer;
+
+typedef Buffer< Measurement::PositionList2 > PositionList2Buffer;
+typedef Buffer< Measurement::PositionList > PositionListBuffer;
+typedef Buffer< Measurement::PoseList > PoseListBuffer;
+
+typedef Buffer< Measurement::ErrorPositionList2 > ErrorPositionList2Buffer;
+typedef Buffer< Measurement::ErrorPositionList > ErrorPositionListBuffer;
+typedef Buffer< Measurement::ErrorPoseList > ErrorPoseListBuffer;
+
+typedef Buffer< Measurement::CameraIntrinsics > CameraIntrinsicsBuffer;
+
+typedef Buffer< Measurement::RotationVelocity > RotationVelocityBuffer;
 
 } } // namespace Ubitrack::Components
