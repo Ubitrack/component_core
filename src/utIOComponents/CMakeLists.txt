@@ -1,6 +1,13 @@
 set(the_description "The UbiTrack IOComponents")
-ut_add_component(utiocomponents DEPS utcore utdataflow utvision)
-ut_component_include_directories(${UBITRACK_CORE_DEPS_INCLUDE_DIR} ${OPENCV_INCLUDE_DIR} ${TBB_INCLUDE_DIR})
+
+if(HAVE_OPENCV)
+  ut_add_component(utiocomponents DEPS utcore utdataflow utvision)
+  ut_component_include_directories(${UBITRACK_CORE_DEPS_INCLUDE_DIR} ${OPENCV_INCLUDE_DIR} ${TBB_INCLUDE_DIR})
+else(HAVE_OPENCV)
+  ut_add_component(utiocomponents DEPS utcore utdataflow)
+  ut_component_include_directories(${UBITRACK_CORE_DEPS_INCLUDE_DIR})
+endif(HAVE_OPENCV)
+
 ut_glob_component_sources("HEADERS" "*.h" "SOURCES" "*.cpp")
 
 if(ENABLE_EXPAND_MULTICOMPONENTS)
