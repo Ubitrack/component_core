@@ -15,7 +15,7 @@
 			<Node name="Point" displayName="Correspondence"/>
 			<Edge name="CameraIntrinsics" source="ImagePlaneA" destination="ImagePlaneB" displayName="Camera Intrinsics">
             	<Description><h:p>Camera intrinsic parameters</h:p></Description>
-				<Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
+				<Predicate>type=='Intrinsics'&amp;&amp;mode=='pull'</Predicate>
             </Edge>
             <Edge name="Input" source="ImagePlaneB" destination="Point" displayName="Distorted Points">
             	<Description><h:p>list of distorted 2d points</h:p></Description>

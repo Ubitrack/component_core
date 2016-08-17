@@ -563,7 +563,7 @@
 				Attention: this component expects a camera calibration including distortion parameters and not only a matrix.</h:p></Description>
 				<!-- Attention: 3x3-matrix is only a hack for trackman
 				in fact there is a whole complete new datatype-->
-                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='push'</Predicate>
+                <Predicate>type=='Intrinsics'&amp;&amp;mode=='push'</Predicate>
             </Edge>
         </Input>
         
@@ -586,7 +586,7 @@
 				</h:p></Description>
 				<!-- Attention: 3x3-matrix is only a hack for trackman
 				in fact there is a whole complete new datatype-->
-                <Attribute name="type" value="3x3Matrix" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="type" value="Intrinsics" xsi:type="EnumAttributeReferenceType"/>
 				<Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
             </Edge>
         </Output>

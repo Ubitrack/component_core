@@ -264,7 +264,7 @@
             <Node name="B" displayName="B"/>
             <Edge name="Input" source="A" destination="B" displayName="CameraIntrinsics">
                 <Description><h:p>The camera intrinsics composite</h:p></Description>
-                <Predicate>type=='3x3Matrix'</Predicate>
+                <Predicate>type=='Intrinsics'</Predicate>
             </Edge>
         </Input>
 
