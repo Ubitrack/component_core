@@ -43,6 +43,9 @@
 #include <utDataflow/Component.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
+#include <log4cpp/Category.hh>
+
+static log4cpp::Category& logger(log4cpp::Category::getInstance("Ubitrack.Dataflow.Components.PrintSink"));
 
 namespace Ubitrack { namespace Components {
 
@@ -93,14 +96,14 @@ public:
 protected:
 	/**
 	 * Handler method for input port
-	 * Receives an event and prints it on cout.
+	 * Receives an event and prints it using Log4cpp.
 	 * @param m the received event
 	 */
 	void printFunc ( const EventType& data )
 	{
-		std::cout << "Received Measurement for "
+		LOG4CPP_INFO(logger, "Received Measurement for "
 		  << this->getName() << ": "
-		  << data << std::endl;
+		  << data);
 	}
 
 	/** Input port of the component. */
@@ -112,77 +115,83 @@ protected:
 
 template<> void PrintSink< Measurement::ErrorPosition >::printFunc( const Ubitrack::Measurement::ErrorPosition& data )
 {
-	std::cout << "Received Measurement for "
-			  << getName() << ": ";
-	std::cout << (*data).value;
-	std::cout << (*data).covariance;
-	std::cout << Measurement::timestampToShortString(data.time());
-	std::cout << std::endl;
+	LOG4CPP_INFO(logger, "Received Measurement for "
+			  << getName() << ": "
+	          << (*data).value
+	          << (*data).covariance
+	          << Measurement::timestampToShortString(data.time()));
+	          
 }
 
 template<> void PrintSink< Measurement::PositionList >::printFunc( const Ubitrack::Measurement::PositionList& data )
 {
-	std::cout << "Received Measurement for "
+	std::ostringstream tmp;
+	tmp << "Received Measurement for "
 			  << getName() << ": ";
 	for (std::vector< Math::Vector< double, 3 > >::iterator it = data->begin();
 		 it != data.get()->end(); ++it)
 	{
-	  std::cout << *it << " ";
+		tmp << *it << " ";
 	}
-	std::cout << Measurement::timestampToShortString(data.time());
-	std::cout << std::endl;
+	tmp << Measurement::timestampToShortString(data.time());
+	LOG4CPP_INFO(logger, tmp.str());
+
 }
 
 template<> void PrintSink< Measurement::PoseList >::printFunc( const Ubitrack::Measurement::PoseList& data )
 {
-	std::cout << "Received Measurement for "
+	std::ostringstream tmp;
+	tmp << "Received Measurement for "
 			  << getName() << ": ";
 	for (std::vector< Math::Pose >::iterator it = data->begin();
 		 it != data.get()->end(); ++it)
 	{
-	  std::cout << *it << " ";
+		tmp << *it << " ";
 	}
-	std::cout << Measurement::timestampToShortString(data.time());
-	std::cout << std::endl;
+	tmp << Measurement::timestampToShortString(data.time());
+	LOG4CPP_INFO(logger, tmp.str());
 }
 
 template<> void PrintSink< Measurement::DistanceList >::printFunc( const Ubitrack::Measurement::DistanceList& data )
 {
-	std::cout << "Received Measurement for "
+	std::ostringstream tmp;
+	tmp << "Received Measurement for "
 			  << getName() << ": ";
 	for (std::vector< Math::Scalar< double > >::iterator it = data->begin();
 		 it != data.get()->end(); ++it)
 	{
-	  std::cout << *it << " ";
+		tmp << *it << " ";
 	}
-	std::cout << Measurement::timestampToShortString(data.time());
-	std::cout << std::endl;
+	tmp << Measurement::timestampToShortString(data.time());
+	LOG4CPP_INFO(logger, tmp.str());
 }
 
 template<> void PrintSink< Measurement::IDList >::printFunc( const Ubitrack::Measurement::IDList& data )
 {
-	std::cout << "Received Measurement for "
+	std::ostringstream tmp;
+	tmp << "Received Measurement for "
 			  << getName() << ": ";
 	for (std::vector< Math::Scalar< unsigned long > >::iterator it = data->begin();
 		 it != data.get()->end(); ++it)
 	{
-	  std::cout << *it << " ";
+		tmp << *it << " ";
 	}
-	std::cout << Measurement::timestampToShortString(data.time());
-	std::cout << std::endl;
+	tmp << Measurement::timestampToShortString(data.time());
+	LOG4CPP_INFO(logger, tmp.str());
 }
 
 template<> void PrintSink< Measurement::PositionList2 >::printFunc( const Ubitrack::Measurement::PositionList2& data )
 {
-	std::cout << "Received Measurement for "
+	std::ostringstream tmp;
+	tmp << "Received Measurement for "
 			  << getName() << ": ";
 	for (std::vector< Math::Vector< double, 2 > >::iterator it = data->begin();
- it != data.get()->end(); ++it)
+	it != data.get()->end(); ++it)
 	{
-	  std::cout << *it << " ";
+		tmp << *it << " ";
 	}
-	std::cout << Measurement::timestampToShortString(data.time());
-	std::cout << std::endl;
+	tmp << Measurement::timestampToShortString(data.time());
+	LOG4CPP_INFO(logger, tmp.str());
 }
 
 UBITRACK_REGISTER_COMPONENT( ComponentFactory* const cf ) {
