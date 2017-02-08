@@ -31,6 +31,7 @@
 
 // Ubitrack
 #include <utUtil/OS.h>
+#include <utUtil/CalibFile.h>
 #include <utMeasurement/Measurement.h>
 #include <utMeasurement/Timestamp.h>
 #include <utDataflow/Module.h>
@@ -432,13 +433,28 @@ public:
 			// Load the image
 			// assigning the NULL avoids memory leaks
 			cv::Mat img;
+
+			
 			try
 			{
-				img = cv::imread( file.string(), CV_LOAD_IMAGE_UNCHANGED );
+				if (file.extension() == ".BoostBinary") {
+					Vision::Image tmp;
+					Util::readBinaryCalibFile(file.string(), tmp);
+					img = tmp.Mat();
+				}
+				else {
+					img = cv::imread(file.string(), CV_LOAD_IMAGE_UNCHANGED);
+				}
+				
 			}
 			catch( std::exception& e )
 			{
 				LOG4CPP_ERROR( logger, "loading image file \"" << file.string() << "\" failed: " << e.what() );
+				continue;
+			}
+			catch ( ... )
+			{
+				LOG4CPP_ERROR(logger, "loading image file \"" << file.string() << "\" failed: other reason");
 				continue;
 			}
 			
