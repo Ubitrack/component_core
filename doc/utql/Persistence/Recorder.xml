@@ -154,7 +154,7 @@
             </Edge>
         </Input>
         <DataflowConfiguration>
-            <UbitrackLib class="PoseRecorder"/>
+            <UbitrackLib class="PoseListRecorder"/>
             <Attribute name="file" displayName="Logfile" xsi:type="PathAttributeDeclarationType">
                 <Description><p xmlns="http://www.w3.org/1999/xhtml">Logfile where pose list data will be written to</p></Description>
             </Attribute>
