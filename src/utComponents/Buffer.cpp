@@ -66,7 +66,7 @@ UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
 
 	cf->registerComponent< PositionList2Buffer > ( "PositionList2Buffer" );
 	cf->registerComponent< PositionListBuffer > ( "PositionListBuffer" );
-	cf->registerComponent< PositionListBuffer > ( "PoseListBuffer" );
+	cf->registerComponent< PoseListBuffer > ( "PoseListBuffer" );
 
 	cf->registerComponent< CameraIntrinsicsBuffer > ( "CameraIntrinsicsBuffer" );
 
