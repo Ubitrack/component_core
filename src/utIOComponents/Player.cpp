@@ -464,6 +464,8 @@ public:
 				continue;
 			}
 
+			// @todo: define ImageFormatProperties here to match the decoded images.
+
 			// convert loaded image into the required pImage class
 			boost::shared_ptr< Vision::Image > pImage( new Vision::Image( img ) );
 
