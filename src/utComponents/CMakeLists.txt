@@ -52,17 +52,3 @@ foreach(fpath ${UBITRACK_SRCS})
 	  )
 
 endforeach()
-
-
-
-
-set(the_description "The UbiTrack Components")
-ut_add_component(component_core DEPS utcore utdataflow)
-ut_component_include_directories(${UBITRACK_CORE_DEPS_INCLUDE_DIR})
-ut_glob_component_sources("HEADERS" "*.h" "SOURCES" "*.cpp")
-
-if(ENABLE_EXPAND_MULTICOMPONENTS)
-    ut_create_multi_component()
-else(ENABLE_EXPAND_MULTICOMPONENTS)
-    ut_create_single_component()
-endif(ENABLE_EXPAND_MULTICOMPONENTS)
