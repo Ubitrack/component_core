@@ -7,7 +7,7 @@ foreach(fpath ${UBITRACK_SRCS})
 	GET_FILENAME_COMPONENT(fname ${fpath} NAME_WE)
 	set(UBITRACK_LIBRARY_NAME ${fname})
 
-	add_library(${UBITRACK_LIBRARY_NAME} SHARED ${UBITRACK_SRCS} ${UBITRACK_HEADERS})
+	add_library(${UBITRACK_LIBRARY_NAME} SHARED ${fpath})
 
 	target_link_libraries(${UBITRACK_LIBRARY_NAME} ${CONAN_LIBS} ${UBITRACK_EXTRA_LIBS})
 
