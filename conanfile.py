@@ -9,6 +9,7 @@ class UbitrackCoreConan(ConanFile):
     url = "https://github.com/Ubitrack/component_core.git"
     license = "GPL"
 
+    short_paths = True
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
 
