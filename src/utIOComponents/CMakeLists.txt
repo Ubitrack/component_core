@@ -11,7 +11,6 @@ foreach(fpath ${UBITRACK_SRCS})
 
 	target_link_libraries(${UBITRACK_LIBRARY_NAME} 
   		CONAN_PKG::ubitrack_core
-  		CONAN_PKG::ubitrack_vision
   		CONAN_PKG::ubitrack_dataflow
   		)
 
