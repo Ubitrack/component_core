@@ -26,3 +26,17 @@ foreach(fpath ${UBITRACK_SRCS})
 	ubitrack_install_component(${UBITRACK_LIBRARY_NAME})
 
 endforeach()
+
+
+FILE(GLOB UBITRACK_HEADERS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
+   "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+)
+foreach(hdr ${UBITRACK_HEADERS})
+  string(REGEX REPLACE "${CMAKE_BINARY_DIR}/" "" hdr2 "${hdr}")
+  GET_FILENAME_COMPONENT(fpath ${hdr2} PATH)
+  IF(fpath)
+    install(FILES ${hdr} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/utComponents/${fpath}" COMPONENT dev)
+  ELSE(fpath)
+    install(FILES ${hdr} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/utComponents" COMPONENT dev)
+  ENDIF(fpath)
+endforeach()
