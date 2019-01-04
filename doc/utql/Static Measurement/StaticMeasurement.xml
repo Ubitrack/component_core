@@ -324,6 +324,40 @@
         </DataflowConfiguration>
     </Pattern>
     
+	<Pattern name="StaticCameraIntrinsics" displayName="Static Measurement (Camera Intrinsics)">
+        <Description><h:p>The component always returns the event configured in the XML configuration on	its 
+                pull port.<h:br/>
+                Static camera intrinsic with the given intrinsic matrix, the distortion is set to 0</h:p></Description>
+        
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="AB" source="A" destination="B" displayName="Static Matrix">
+                <Description><h:p>The static measurement as pull port.</h:p></Description>
+                <Attribute name="type" value="Intrinsics" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="staticMatrix3x3" xsi:type="DoubleArrayAttributeReferenceType">
+                    <Description><h:p>Contains the 3x3 matrix as a 9-element space-separated string with
+                    row-wise linearization.</h:p></Description>
+                </Attribute>
+				<Attribute name="width" min="1" default="640" xsi:type="IntAttributeDeclarationType" displayName="image width">
+				<Description>
+					<h:p>Desired image width in pixels </h:p>
+				</Description>
+				</Attribute>
+				<Attribute name="height" min="1" default="480" xsi:type="IntAttributeDeclarationType" displayName="image height">
+					<Description>
+						<h:p>Desired image height in pixels </h:p>
+					</Description>
+				</Attribute>
+            </Edge>
+        </Output>
+        
+        <DataflowConfiguration>
+            <UbitrackLib class="StaticCameraIntrinsics"/>
+        </DataflowConfiguration>
+    </Pattern>
+	
     <!-- Attribute declarations -->
     
     <GlobalNodeAttributeDeclarations>

@@ -17,7 +17,7 @@
 
             <Edge name="Intrinsics" source="Screen" destination="ImagePlane" displayName="Intrinsics">
             	<Description><h:p>Intrinsic camera matrix</h:p></Description>
-                <Predicate>type=='Intrinsics'&amp;&amp;mode=='pull'</Predicate>
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
             </Edge>
             <Edge name="InPos1" source="Screen" destination="Object1" displayName="ReferencePosition">
             	<Description><h:p>Receives postions for the reference.</h:p></Description>

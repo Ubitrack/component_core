@@ -16,7 +16,7 @@
             <Node name="ImagePlane" displayName="Image Plane"/>
             <Edge name="Intrinsics" source="Screen" destination="ImagePlane" displayName="Intrinsics">
             	<Description><h:p>Intrinsic camera matrix</h:p></Description>
-                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
+                <Predicate>type=='Intrinsics'&amp;&amp;mode=='pull'</Predicate>
             </Edge>
             <Edge name="InRaw" source="Screen" destination="Object" displayName="Raw Data">
             	<Description><h:p>Receives unprocessed measurements from the tracker.</h:p></Description>
@@ -34,7 +34,7 @@
  				The predictor input must be connected to this port, as otherwise the data flow priorization would 
 				push the raw measurements into the predictor before the prediction error is evaluated.</h:p></Description>
                 <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
-                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
             </Edge>
         </Output>
         

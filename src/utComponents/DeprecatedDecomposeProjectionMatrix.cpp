@@ -58,7 +58,7 @@ namespace Ubitrack { namespace Components {
  *
  * @par Instances
  */
-class DecomposeProjectionMatrix
+class DeprecatedDecomposeProjectionMatrix
 	: public Dataflow::Component
 {
 public:
@@ -68,9 +68,9 @@ public:
 	 * @param sName Unique name of the component.
 	 * @param subgraph UTQL subgraph
 	 */
-	DecomposeProjectionMatrix( const std::string& sName, boost::shared_ptr< Graph::UTQLSubgraph >  )
+	DeprecatedDecomposeProjectionMatrix( const std::string& sName, boost::shared_ptr< Graph::UTQLSubgraph >  )
 		: Dataflow::Component( sName )
-		, m_inPort( "Input", *this, boost::bind( &DecomposeProjectionMatrix::receiveProjectionMatrix, this, _1 ) )
+		, m_inPort("Input", *this, boost::bind(&DeprecatedDecomposeProjectionMatrix::receiveProjectionMatrix, this, _1))
 		, m_outIntrinsic( "Intrinsic", *this )
 		, m_outExtrinsic( "Extrinsic", *this )
     {
@@ -88,12 +88,8 @@ public:
 			Algorithm::decomposeProjection( K, R, t,*p);
 			Math::Quaternion rq=Math::Quaternion(R);
 			Math::Pose aPose= Math::Pose(rq,t);
-			Math::Vector2d radialDistortion = Math::Vector2d(0, 0);
-			Math::Vector2d tangDistortion = Math::Vector2d(0, 0);
-			Math::CameraIntrinsics<double> camIntr = Math::CameraIntrinsics<double>(K, radialDistortion, tangDistortion, 0, 0)  ;
-
-			m_outIntrinsic.send(Measurement::CameraIntrinsics(p.time(), camIntr));
-			m_outExtrinsic.send(  Measurement::Pose(p.time(), aPose ) );
+		m_outIntrinsic.send(  Measurement::Matrix3x3(p.time(),K));
+		m_outExtrinsic.send(  Measurement::Pose(p.time(), aPose ) );
     }
 
 protected:
@@ -101,13 +97,13 @@ protected:
 	Dataflow::PushConsumer< Measurement::Matrix3x4 > m_inPort;
 
 	// Output ports of the component
-	Dataflow::PushSupplier<Measurement::CameraIntrinsics > m_outIntrinsic;
+	Dataflow::PushSupplier<Measurement::Matrix3x3 > m_outIntrinsic;
 	Dataflow::PushSupplier<Measurement::Pose > m_outExtrinsic;
 };
 
 
 UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
-	cf->registerComponent< DecomposeProjectionMatrix > ( "DecomposeProjectionMatrix" );
+	cf->registerComponent< DeprecatedDecomposeProjectionMatrix > ( "DeprecatedDecomposeProjectionMatrix" );
 }
 
 } } // namespace Ubitrack::Components
