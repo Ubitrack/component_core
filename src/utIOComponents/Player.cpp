@@ -412,8 +412,8 @@ public:
   		  
 		 	// check for length of timestamp to decide if timestamp is ms or ns
 			// (we just need ms here, no need to be more accurate)
-			if( timeStamp > 1e13 )
-				timeStamp = static_cast< Measurement::Timestamp >( timeStamp * 1e-06 );
+			//if( timeStamp > 1e13 )
+			//	timeStamp = static_cast< Measurement::Timestamp >( timeStamp * 1e-06 );
 			
 			boost::filesystem::path file( fileName );
 			boost::filesystem::file_status fstatus( boost::filesystem::status( file ) );
@@ -472,7 +472,7 @@ public:
 			// @todo make imgformat configurable on image player ??
 			
 			// Building the event and packing timestamp and image into it
-			Measurement::ImageMeasurement e( static_cast< Measurement::Timestamp>( 1e6 * timeStamp), pImage );
+			Measurement::ImageMeasurement e( static_cast< Measurement::Timestamp>(  timeStamp), pImage );
 
 			// Store it
 			m_events.push_back( e );

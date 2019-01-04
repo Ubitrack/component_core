@@ -59,7 +59,7 @@ namespace Ubitrack { namespace Components {
  *
  */
 template< class MT >
-class ScreenPixelError
+class DeprecatedPixelErrorPredictorEvaluation
 	: public Dataflow::Component
 {
 public:
@@ -69,67 +69,71 @@ public:
 	 * @param sName Unique name of the component.
 	 * @param subgraph UTQL subgraph
 	 */
-	ScreenPixelError( const std::string& sName, boost::shared_ptr< Graph::UTQLSubgraph >  )
+	DeprecatedPixelErrorPredictorEvaluation( const std::string& sName, boost::shared_ptr< Graph::UTQLSubgraph >  )
 		: Dataflow::Component( sName )
 		, m_nMeasurements( 0 )
 		, m_totalPosError( 0 )
-		, m_inPos1( "InPos1", *this, boost::bind( &ScreenPixelError::receivePos1, this, _1 ) )
-		, m_inPos2( "InPos2", *this )
+		, m_totalAngleError( 0 )
+		, m_inRaw("InRaw", *this, boost::bind(&DeprecatedPixelErrorPredictorEvaluation::receiveRaw, this, _1))
+		, m_inPredictor( "InPredictor", *this )
 		, m_inIntrinsics( "Intrinsics", *this )
-		, m_outPixelError( "OutPixelError", *this )
+		, m_outRaw( "OutRaw", *this )
     {
     }
 
-	void receivePos1( const MT& _pos1 )
+	void receiveRaw( const MT& raw )
 	{
 		namespace ublas = boost::numeric::ublas;
 		
 		try
 		{
-			Measurement::Matrix3x3 intrinsics( m_inIntrinsics.get( _pos1.time() )->matrix );
-			Measurement::Position _pos2( m_inPos2.get( _pos1.time() ) );
+			Measurement::Matrix3x3 intrinsics( m_inIntrinsics.get( raw.time() ) );
+			MT predicted( m_inPredictor.get( raw.time() ) );
 			
 			// pixel position
-			Math::Vector< double, 3 > pos1( ublas::prod( *intrinsics, *_pos1 ) );
-			Math::Vector< double, 3 > pos2( ublas::prod( *intrinsics, *_pos2 ) );
-			pos1 /= double( pos1( 2 ) );
-			pos2 /= double( pos2( 2 ) );
+			Math::Vector< double, 3 > posRaw( ublas::prod( *intrinsics, raw->translation() ) );
+			Math::Vector< double, 3 > posPredicted( ublas::prod( *intrinsics, predicted->translation() ) );
+			posRaw /= double( posRaw( 2 ) );
+			posPredicted /= double( posPredicted( 2 ) );
 
-			double posErr = ublas::norm_2( pos1 - pos2 );
+			double posErr = ublas::norm_2( posRaw - posPredicted );
 			m_totalPosError += posErr;
 			
+			// rotation error
+			Math::Quaternion diffQuat( predicted->rotation().negateIfCloser( raw->rotation() ) * ~raw->rotation() );
+			double angleErr = acos( fabs( diffQuat.w() ) ) * 114.59;
+			m_totalAngleError += angleErr;
 			
 			m_nMeasurements++;
 			
-			// std::cout << "Prediction error: pos=" << posErr << ", ang=" << angleErr << ", dt=" << ( pose1.time() - m_lastTime ) * 1e-9 << 
-			// 	", avgPos=" << m_totalPosError / m_nMeasurements << std::endl ;
-
-			if (m_outPixelError.isConnected()) {
-				m_outPixelError.send( Measurement::Distance( _pos1.time(), posErr ) );
-			}
-
+			std::cout << "Prediction error: pos=" << posErr << ", ang=" << angleErr << ", dt=" << ( raw.time() - m_lastTime ) * 1e-9 << 
+				", avgPos=" << m_totalPosError / m_nMeasurements << ", avgAng=" << m_totalAngleError / m_nMeasurements << std::endl ;
 		}
 		catch ( const Util::Exception& )
 		{}
 		
-		m_lastTime = _pos1.time();
+		m_lastTime = raw.time();
+		m_outRaw.send( raw );
     }
 
 protected:
 	unsigned m_nMeasurements;
 	double m_totalPosError;
+	double m_totalAngleError;
 
 	Measurement::Timestamp m_lastTime;
-	Dataflow::PushConsumer< MT > m_inPos1;
-	Dataflow::PullConsumer< MT > m_inPos2;
-	Dataflow::PullConsumer< Measurement::CameraIntrinsics > m_inIntrinsics;
-	Dataflow::PushSupplier< Measurement::Distance > m_outPixelError;
+	Dataflow::PushConsumer< MT > m_inRaw;
+	Dataflow::PullConsumer< MT > m_inPredictor;
+	Dataflow::PullConsumer< Measurement::Matrix3x3 > m_inIntrinsics;
+	Dataflow::PushSupplier< MT > m_outRaw;
 	
 };
 
 
 UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
-	cf->registerComponent< ScreenPixelError< Measurement::Position > > ( "ScreenPixelError" );
+	// Dataflow name stays the same for backwards compability
+	//cf->registerComponent< DeprecatedPixelErrorPredictorEvaluation< Measurement::ErrorPose > > ( "DeprecatedPixelErrorPredictorEvaluation" );
+	cf->registerComponent< DeprecatedPixelErrorPredictorEvaluation< Measurement::Pose > >("DeprecatedPixelErrorPredictorEvaluation");
 }
 
 } } // namespace Ubitrack::Components

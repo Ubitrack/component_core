@@ -255,12 +255,12 @@ namespace Ubitrack { namespace Components {
 	// TODO: replace with measurement serializsations, could use getAttributeData then also and implement this generic..
 	template<> void StaticMeasurement< Measurement::Vector4D >::initMeasurement( const Ubitrack::Graph::UTQLSubgraph::GraphEdgeAttributes& config )
 	{
-		if ( !config.hasAttribute( "staticVector" ) )
+		if ( !config.hasAttribute( "staticVector4" ) )
 		{
-			UBITRACK_THROW( "Static vector configuration without staticVector attribute" );
+			UBITRACK_THROW( "Static vector configuration without staticVector4 attribute" );
 		}
 
-		std::string positionChars = config.getAttribute( "staticVector" ).getText();
+		std::string positionChars = config.getAttribute( "staticVector4" ).getText();
 
 		double p[4];
 		std::istringstream positionString( positionChars );
@@ -472,6 +472,28 @@ namespace Ubitrack { namespace Components {
 
 	}
 
+	template<> void StaticMeasurement< Measurement::CameraIntrinsics >::initMeasurement(const Ubitrack::Graph::UTQLSubgraph::GraphEdgeAttributes& config)
+	{
+		if (!config.hasAttribute("staticMatrix3x3"))
+		{
+			UBITRACK_THROW("Static 3x3Matrix configuration without staticMatrix3x3 attribute");
+		}
+
+		std::string matrixChars = config.getAttribute("staticMatrix3x3").getText();
+
+		int width = static_cast<int>(config.getAttribute("width").getNumber());
+		int height = static_cast<int>(config.getAttribute("height").getNumber() );
+
+		double m[9];
+		std::istringstream matrixString(matrixChars);
+		for (int i = 0; i < 9; ++i)
+		{
+			matrixString >> m[i];
+		}
+
+		m_Data = Measurement::CameraIntrinsics(Math::CameraIntrinsics<double>(Math::Matrix< double, 3, 3 >(m), Math::Vector2d(0,0), Math::Vector2d(0,0), width, height));
+	}
+
 UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
 	cf->registerComponent< StaticMeasurement< Measurement::Matrix4x4 > > ( "StaticMatrix4x4" );
 	cf->registerComponent< StaticMeasurement< Measurement::Matrix3x4 > > ( "StaticMatrix3x4" );
@@ -487,6 +509,7 @@ UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
 	cf->registerComponent< StaticMeasurement< Measurement::PositionList2 > > ( "StaticPositionList2" );
 	cf->registerComponent< StaticMeasurement< Measurement::PositionList > > ( "StaticPositionList" );
 	cf->registerComponent< StaticMeasurement< Measurement::DistanceList > > ( "StaticDistanceList" );
+	cf->registerComponent< StaticMeasurement< Measurement::CameraIntrinsics > >("StaticCameraIntrinsics");
 }
 
 } } // namespace Ubitrack::Components

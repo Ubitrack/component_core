@@ -6,39 +6,40 @@
                       xmlns:h="http://www.w3.org/1999/xhtml"
                       xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
     
-    <Pattern name="ScreenPixelError" displayName="Pixel Error on Screen between two Positions">
-    	<Description><h:p>The error is computed in pixels on an image plane given by an intrinsic matrix.</h:p></Description>
+    <Pattern name="PixelErrorPredictorEvaluation" displayName="Pixel Error Predictor Evaluation">
+    	<Description><h:p>Evaluates the quality of a prediction by comparing raw measurements with predicted 
+    	measurements. The error is computed in pixels on an image plane given by an intrinsic matrix.</h:p></Description>
     	
         <Input>
             <Node name="Screen" displayName="Screen"/>
-            <Node name="Object1" displayName="Object1"/>
-            <Node name="Object2" displayName="Object2"/>
+            <Node name="Object" displayName="Object"/>
             <Node name="ImagePlane" displayName="Image Plane"/>
-
             <Edge name="Intrinsics" source="Screen" destination="ImagePlane" displayName="Intrinsics">
             	<Description><h:p>Intrinsic camera matrix</h:p></Description>
-                <Predicate>type=='Intrinsics'&amp;&amp;mode=='pull'</Predicate>
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
             </Edge>
-            <Edge name="InPos1" source="Screen" destination="Object1" displayName="ReferencePosition">
-            	<Description><h:p>Receives postions for the reference.</h:p></Description>
-                <Predicate>type=='3DPosition'&amp;&amp;mode=='push'</Predicate>
+            <Edge name="InRaw" source="Screen" destination="Object" displayName="Raw Data">
+            	<Description><h:p>Receives unprocessed measurements from the tracker.</h:p></Description>
+                <Predicate>type=='6D'&amp;&amp;mode=='push'</Predicate>
             </Edge>
-            <Edge name="InPos2" source="Screen" destination="Object2" displayName="ErrorPosition">
-            	<Description><h:p>Receives postions for the error pose.</h:p></Description>
-                <Predicate>type=='3DPosition'&amp;&amp;mode=='pull'</Predicate>
+            <Edge name="InPredictor" source="Screen" destination="Object" displayName="Predicted Data">
+            	<Description><h:p>Gets measurements from the predictor.</h:p></Description>
+                <Predicate>type=='6D'&amp;&amp;mode=='pull'</Predicate>
             </Edge>
         </Input>
         
         <Output>
-            <Edge name="OutPixelError" source="Object1" destination="Object2" displayName="PixelError">
-            	<Description><h:p>Output the current pixel error.</h:p></Description>
-                <Attribute name="type" value="Distance" xsi:type="EnumAttributeReferenceType"/>
-                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+            <Edge name="OutRaw" source="Screen" destination="Object" displayName="Raw Data Pass-Through">
+            	<Description><h:p>Resends the measurements from InRaw AFTER the calculation. 
+ 				The predictor input must be connected to this port, as otherwise the data flow priorization would 
+				push the raw measurements into the predictor before the prediction error is evaluated.</h:p></Description>
+                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
             </Edge>
         </Output>
         
         <DataflowConfiguration>
-            <UbitrackLib class="ScreenPixelError"/>
+            <UbitrackLib class="PixelErrorPredictorEvaluation"/>
         </DataflowConfiguration>
     </Pattern>
     

@@ -59,7 +59,7 @@ namespace Ubitrack { namespace Components {
  *
  */
 template< class MT >
-class ScreenPixelError
+class DeprecatedScreenPixelError
 	: public Dataflow::Component
 {
 public:
@@ -69,11 +69,11 @@ public:
 	 * @param sName Unique name of the component.
 	 * @param subgraph UTQL subgraph
 	 */
-	ScreenPixelError( const std::string& sName, boost::shared_ptr< Graph::UTQLSubgraph >  )
+	DeprecatedScreenPixelError( const std::string& sName, boost::shared_ptr< Graph::UTQLSubgraph >  )
 		: Dataflow::Component( sName )
 		, m_nMeasurements( 0 )
 		, m_totalPosError( 0 )
-		, m_inPos1( "InPos1", *this, boost::bind( &ScreenPixelError::receivePos1, this, _1 ) )
+		, m_inPos1( "InPos1", *this, boost::bind( &DeprecatedScreenPixelError::receivePos1, this, _1 ) )
 		, m_inPos2( "InPos2", *this )
 		, m_inIntrinsics( "Intrinsics", *this )
 		, m_outPixelError( "OutPixelError", *this )
@@ -86,7 +86,7 @@ public:
 		
 		try
 		{
-			Measurement::Matrix3x3 intrinsics( m_inIntrinsics.get( _pos1.time() )->matrix );
+			Measurement::Matrix3x3 intrinsics( m_inIntrinsics.get( _pos1.time() ) );
 			Measurement::Position _pos2( m_inPos2.get( _pos1.time() ) );
 			
 			// pixel position
@@ -122,14 +122,14 @@ protected:
 	Measurement::Timestamp m_lastTime;
 	Dataflow::PushConsumer< MT > m_inPos1;
 	Dataflow::PullConsumer< MT > m_inPos2;
-	Dataflow::PullConsumer< Measurement::CameraIntrinsics > m_inIntrinsics;
+	Dataflow::PullConsumer< Measurement::Matrix3x3 > m_inIntrinsics;
 	Dataflow::PushSupplier< Measurement::Distance > m_outPixelError;
 	
 };
 
 
 UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
-	cf->registerComponent< ScreenPixelError< Measurement::Position > > ( "ScreenPixelError" );
+	cf->registerComponent< DeprecatedScreenPixelError< Measurement::Position > > ( "DeprecatedScreenPixelError" );
 }
 
 } } // namespace Ubitrack::Components

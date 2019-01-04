@@ -6,7 +6,7 @@
                       xmlns:h="http://www.w3.org/1999/xhtml"
                       xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../../schema/utql_templates.xsd'>
     
-    <Pattern name="ScreenPixelError" displayName="Pixel Error on Screen between two Positions">
+    <Pattern name="DeprecatedScreenPixelError" displayName="(Deprecated) Pixel Error on Screen between two Positions">
     	<Description><h:p>The error is computed in pixels on an image plane given by an intrinsic matrix.</h:p></Description>
     	
         <Input>
@@ -17,7 +17,7 @@
 
             <Edge name="Intrinsics" source="Screen" destination="ImagePlane" displayName="Intrinsics">
             	<Description><h:p>Intrinsic camera matrix</h:p></Description>
-                <Predicate>type=='Intrinsics'&amp;&amp;mode=='pull'</Predicate>
+                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
             </Edge>
             <Edge name="InPos1" source="Screen" destination="Object1" displayName="ReferencePosition">
             	<Description><h:p>Receives postions for the reference.</h:p></Description>
@@ -38,7 +38,7 @@
         </Output>
         
         <DataflowConfiguration>
-            <UbitrackLib class="ScreenPixelError"/>
+            <UbitrackLib class="DeprecatedScreenPixelError"/>
         </DataflowConfiguration>
     </Pattern>
     
