@@ -45,7 +45,7 @@
 #include <utDataflow/PushSupplier.h>
 #include <utDataflow/ComponentFactory.h>
 #include <utMeasurement/Measurement.h>
-#include <utTracking/OutOfOrderKalmanFilter.h>
+#include <utTracking/OutOfOrderPoseKalmanFilter.h>
 
 // get a logger
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Ubitrack.Events.Components.PoseKalmanFilter" ) );
