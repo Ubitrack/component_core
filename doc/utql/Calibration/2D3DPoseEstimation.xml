@@ -189,62 +189,7 @@
         </DataflowConfiguration>
     </Pattern>
     
-    <Pattern name="2D3DPoseEstimation" displayName="Deprecated: 2D-3D Pose Estimation">
-        <Description>
-            <h:p> The component computes the 6D pose from corresponding 2D and 3D points. It first computes
- 			a rough initial pose which is then refined by nonlinear optimization.
-                <h:br/>
-			Currently, the component has one drawback: for the first step (the initialization), the
-			component assumes that the first 4 3D points lie on a plane, which in general is NOT the
-			case! Therefore it is currently mostly suitable for square markers...
-            </h:p>
-        </Description>
 
-        <Input>
-            <Node name="Camera" displayName="Camera"/>
-            <Node name="ImagePlane" displayName="Image Plane"/>
-            <Node name="Body" displayName="Body"/>
-            <Node name="Points" displayName="Points"/>
-            <Edge name="Intrinsics" source="Camera" destination="ImagePlane" displayName="Intrinsics">
-                <Predicate>type=='3x3Matrix'&amp;&amp;mode=='pull'</Predicate>
-            </Edge>
-            <Edge name="Input2d" source="ImagePlane" destination="Points" displayName="Input 2D">
-                <Predicate>type=='2DPositionList'</Predicate>
-            </Edge>
-            <Edge name="Input3d" source="Body" destination="Points" displayName="Input 3D">
-                <Predicate>type=='3DPositionList'</Predicate>
-            </Edge>
-        </Input>
-
-        <Output>
-            <Edge name="Output" source="Camera" destination="Body" displayName="Body Pose">
-                <Attribute name="type" value="6DError" xsi:type="EnumAttributeReferenceType"/>
-            </Edge>
-        </Output>
-
-        <Constraints>
-            <Correspondence name="pointCorrespondences" minMultiplicity="4">
-                <Edge edge-ref="Input2d"/>
-                <Edge edge-ref="Input3d"/>
-            </Correspondence>
-
-            <TriggerGroup>
-                <Edge edge-ref="Input2d"/>
-                <Edge edge-ref="Input3d"/>
-                <Edge edge-ref="Output"/>
-            </TriggerGroup>
-        </Constraints>
-
-        <DataflowConfiguration>
-            <UbitrackLib class="2D3DPoseEstimation"/>
-            <Attribute name="min2d3dCorresp" xsi:type="IntAttributeReferenceType"/>
-            <Attribute name="initPoseMethod" xsi:type="EnumAttributeReferenceType"/>
-
-            <!-- remove when expansion works... -->
-            <Attribute name="expansion" value="space" xsi:type="EnumAttributeReferenceType"/>
-        </DataflowConfiguration>
-    </Pattern>
-	
 	<Pattern name="2D3D-PoseEstimation" displayName="2D-3D Pose Estimation">
         <Description>
             <h:p> The component computes the 6D pose from corresponding 2D and 3D points. It first computes

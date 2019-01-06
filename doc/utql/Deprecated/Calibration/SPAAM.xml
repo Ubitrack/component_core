@@ -6,8 +6,7 @@
                       xmlns:h="http://www.w3.org/1999/xhtml"
                       xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../schema/utql_templates.xsd'>
     
-
-    <Pattern name="SPAAM" displayName="3x4 Matrix Estimation">
+    <Pattern name="Spaam" displayName="Deprecated: 3x4 Homogeneous Matrix Estimation (DLT)">
     	<Description><h:p>For augmented reality applications, the projective properties of cameras and display device 
     	have to be determined. In the simplest case this results in a 3x4 homogeneous matrix, which defines the 
     	transformation of 3D points from the camera coordinate system onto the image plane. Having eleven degrees 
@@ -27,18 +26,18 @@
 			    	
         <Input>
             <Node name="ImagePlane" displayName="Image Plane"/>
-            <Node name="World" displayName="World"/>
-            <Node name="Point" displayName="Correspondence"/>
-            <Edge name="Input2D" source="ImagePlane" destination="Point" displayName="2D Points">
+            <Node name="Camera" displayName="Camera"/>
+            <Node name="Feature" displayName="Feature"/>
+            <Edge name="Input2D" source="ImagePlane" destination="Feature" displayName="2D Points">
                 <Predicate>type=='2DPosition'</Predicate>
             </Edge>
-            <Edge name="Input3D" source="World" destination="Point" displayName="3D Points">
+            <Edge name="Input3D" source="Camera" destination="Feature" displayName="3D Points">
                 <Predicate>type=='3DPosition'</Predicate>
             </Edge>
         </Input>
         
         <Output>
-            <Edge name="Output" source="ImagePlane" destination="World" displayName="Resulting 3x4 Matrix">
+            <Edge name="Output" source="Camera" destination="ImagePlane" displayName="Resulting Pose">
                 <Attribute name="type" value="3x4Matrix" xsi:type="EnumAttributeReferenceType"/>
                 <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
             </Edge>
@@ -64,7 +63,7 @@
             <Attribute name="expansion" value="time" xsi:type="EnumAttributeReferenceType"/>
         </DataflowConfiguration>
     </Pattern>
-	
+
     <!-- Attribute declarations -->
     
     <GlobalNodeAttributeDeclarations>

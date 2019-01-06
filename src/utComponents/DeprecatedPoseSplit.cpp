@@ -58,7 +58,7 @@ namespace Ubitrack { namespace Components {
  *
  * @par Instances
  */
-class PoseSplitComponent
+class DeprecatedPoseSplitComponent
 	: public Dataflow::Component
 {
 public:
@@ -68,7 +68,7 @@ public:
 	 * @param sName Unique name of the component.
 	 * @param subgraph UTQL subgraph
 	 */
-	PoseSplitComponent( const std::string& sName, boost::shared_ptr< Graph::UTQLSubgraph >  )
+	DeprecatedPoseSplitComponent( const std::string& sName, boost::shared_ptr< Graph::UTQLSubgraph >  )
 		: Dataflow::Component( sName )
 		, m_inPort( "Input", *this, boost::bind( &PoseSplitComponent::receivePose, this, _1 ) )
 		, m_outRotation( "Rotation", *this )
@@ -95,7 +95,7 @@ protected:
 
 
 UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
-	cf->registerComponent< PoseSplitComponent > ( "PoseSplit" );
+	cf->registerComponent< DeprecatedPoseSplitComponent > ( "DeprecatedPoseSplit" );
 }
 
 } } // namespace Ubitrack::Components

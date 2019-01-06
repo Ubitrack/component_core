@@ -34,7 +34,7 @@
         </Output>
         
         <DataflowConfiguration>
-            <UbitrackLib class="PoseSplit"/>
+            <UbitrackLib class="DeprecatedPoseSplit"/>
         </DataflowConfiguration>
     </Pattern>
         

@@ -74,7 +74,6 @@ public:
 		, m_outIntrinsic( "Intrinsic", *this )
 		, m_outExtrinsic( "Extrinsic", *this )
     {
-		LOG4CPP_ERROR( logger, "This Component is deprecated. Please ask Adnane Jadid" );
     }
 
 	/** Method that computes the result. */
