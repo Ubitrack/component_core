@@ -70,7 +70,7 @@ public:
 	 */
 	DeprecatedPoseSplitComponent( const std::string& sName, boost::shared_ptr< Graph::UTQLSubgraph >  )
 		: Dataflow::Component( sName )
-		, m_inPort( "Input", *this, boost::bind( &PoseSplitComponent::receivePose, this, _1 ) )
+		, m_inPort( "Input", *this, boost::bind( &DeprecatedPoseSplitComponent::receivePose, this, _1 ) )
 		, m_outRotation( "Rotation", *this )
 		, m_outTranslation( "Translation", *this )
     {
