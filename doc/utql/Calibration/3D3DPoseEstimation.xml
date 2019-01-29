@@ -6,7 +6,7 @@
                       xmlns:h="http://www.w3.org/1999/xhtml"
                       xsi:schemaLocation='http://ar.in.tum.de/ubitrack/utql ../../schema/utql_templates.xsd'>
     
-    <Pattern name="3D3DPoseEstimationTime" displayName="Experimental: 3D-3D Pose Estimation aka. Absolute Orientation (time-expansion)">
+    <Pattern name="3D3DPoseEstimationTime" displayName="3D-3D Pose Estimation aka. Absolute Orientation (time-expansion)">
     	<Description><h:p>This pattern describes the the 3D-3D pose estimation, also known as the absolute orientation
     	 problem, which takes corresponding 3D location measurements of a Feature in two coordinate systems A and B. 
     	 If measurement-pairs of at least three points are available, the rotation and translation between the 
@@ -80,7 +80,7 @@
     </Pattern>
     
     
-    <Pattern name="3D3DPoseEstimationSpace" displayName="Experimental: 3D-3D Pose Estimation aka. Absolute Orientation (space-expansion)">
+    <Pattern name="3D3DPoseEstimationSpace" displayName="3D-3D Pose Estimation aka. Absolute Orientation (space-expansion)">
     	<Description><h:p>This pattern describes the the 3D-3D pose estimation, also known as the absolute orientation
     	 problem, which takes corresponding 3D location measurements of a Feature in two coordinate systems A and B. 
     	 If measurement-pairs of at least three points are available, the rotation and translation between the 

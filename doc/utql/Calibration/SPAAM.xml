@@ -22,23 +22,23 @@
 		parameters are added, but without loss of generality, these can be modelled by a single edge in the 
 		spatial relationship graph.<h:br/>
 		Another interesting example is the SPAAM algorithm for calibration of optical see-through HMDs where 
-		the user repeatedly has to align a point on the screen with a known point in the world.
+		the user repeatedly has to align a point on the screen with a known point in the Camera.
     	</h:p></Description>
 			    	
         <Input>
             <Node name="ImagePlane" displayName="Image Plane"/>
-            <Node name="World" displayName="World"/>
+            <Node name="Camera" displayName="Camera"/>
             <Node name="Point" displayName="Correspondence"/>
             <Edge name="Input2D" source="ImagePlane" destination="Point" displayName="2D Points">
                 <Predicate>type=='2DPosition'</Predicate>
             </Edge>
-            <Edge name="Input3D" source="World" destination="Point" displayName="3D Points">
+            <Edge name="Input3D" source="Camera" destination="Point" displayName="3D Points">
                 <Predicate>type=='3DPosition'</Predicate>
             </Edge>
         </Input>
         
         <Output>
-            <Edge name="Output" source="ImagePlane" destination="World" displayName="Resulting 3x4 Matrix">
+            <Edge name="Output" source="ImagePlane" destination="Camera" displayName="Resulting 3x4 Matrix">
                 <Attribute name="type" value="3x4Matrix" xsi:type="EnumAttributeReferenceType"/>
                 <Attribute name="mode" value="pull" xsi:type="EnumAttributeReferenceType"/>
             </Edge>
