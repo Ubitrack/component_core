@@ -55,7 +55,7 @@
 
 #ifdef HAVE_OPENCV
 	#include <utVision/Image.h>
-	#include <opencv/highgui.h>
+	#include <opencv2/highgui.hpp>
 #endif
 
 static log4cpp::Category& logger( log4cpp::Category::getInstance( "Drivers.Player" ) );
@@ -443,7 +443,7 @@ public:
 					img = tmp.Mat();
 				}
 				else {
-					img = cv::imread(file.string(), CV_LOAD_IMAGE_UNCHANGED);
+					img = cv::imread(file.string(), cv::IMREAD_UNCHANGED);
 				}
 				
 			}
