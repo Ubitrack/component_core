@@ -166,7 +166,8 @@ protected:
 		{
 			// the time difference is too large so the t lies out of range
 			LOG4CPP_NOTICE( eventsLogger, getName() << ": data too old, timeout is: " << m_timeout / 1000000 << ", measurement age: " << timeDiff / 1000000 << ", requested for " <<  Measurement::timestampToShortString( t ) );
-			UBITRACK_THROW( "data is too old to do extrapolation" );
+			// return the last measurement with the old timestamp
+      return EventType(it2->time(), *it2);
 		}
 
 		double h;
