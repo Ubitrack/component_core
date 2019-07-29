@@ -41,6 +41,7 @@ UBITRACK_REGISTER_COMPONENT( Dataflow::ComponentFactory* const cf ) {
     cf->registerComponent< Trigger< Measurement::Matrix3x3 > > ( "ButtonTriggerMatrix3x3" );
     cf->registerComponent< Trigger< Measurement::Matrix3x4 > > ( "ButtonTriggerMatrix3x4" );
     cf->registerComponent< Trigger< Measurement::Matrix4x4 > > ( "ButtonTriggerMatrix4x4" );
+    cf->registerComponent< Trigger< Measurement::CameraIntrinsics > > ( "ButtonTriggerCameraIntrinsics");
 }
 
 } } // namespace Ubitrack::Components
