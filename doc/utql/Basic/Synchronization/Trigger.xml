@@ -559,7 +559,7 @@
         </Output>
         
         <DataflowConfiguration>
-            <UbitrackLib class="ButtonTriggerPose"/>
+            <UbitrackLib class="ButtonTriggerCameraIntrinsics"/>
             <Attribute name="event" displayName="Button" default=" " xsi:type="StringAttributeDeclarationType">
                 <Description><h:p>The signal that triggers the gate as a single-character string.
                 Defaults to the space bar. If this attribute is left empty, all signals will trigger the gate.</h:p></Description>
