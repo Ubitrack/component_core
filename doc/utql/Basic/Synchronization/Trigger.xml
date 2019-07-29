@@ -553,7 +553,7 @@
         <Output>
             <Edge name="Output" source="A" destination="B" displayName="Triggered Push Output">
                 <Description><h:p>Output</h:p></Description>
-                <Attribute name="type" value="6D" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="type" value="Intrinsics" xsi:type="EnumAttributeReferenceType"/>
                 <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
             </Edge>
         </Output>
