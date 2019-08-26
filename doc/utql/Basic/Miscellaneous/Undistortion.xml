@@ -10,10 +10,10 @@
     	<Description><h:p>The component computes undistorted 2d image points via given intrinsic camera parameters.</h:p></Description>
     	
         <Input>
-            <Node name="ImagePlaneA" displayName="Undistorted Image Plane"/>
             <Node name="ImagePlaneB" displayName="Distorted Image Plane"/>
+            <Node name="Camera" displayName="Camera"/>
 			<Node name="Point" displayName="Correspondence"/>
-			<Edge name="CameraIntrinsics" source="ImagePlaneA" destination="ImagePlaneB" displayName="Camera Intrinsics">
+			<Edge name="CameraIntrinsics" source="Camera" destination="ImagePlaneB" displayName="Camera Intrinsics">
             	<Description><h:p>Camera intrinsic parameters</h:p></Description>
 				<Predicate>type=='Intrinsics'&amp;&amp;mode=='pull'</Predicate>
             </Edge>
@@ -24,6 +24,7 @@
         </Input>
         
         <Output>
+            <Node name="ImagePlaneA" displayName="Undistorted Image Plane"/>
 			<Edge name="Output" source="ImagePlaneA" destination="Point" displayName="Undistorted Points">
 				<Description><h:p>the undistorted points</h:p></Description>
 				<Attribute name="type" value="2DPositionList" xsi:type="EnumAttributeReferenceType"/>
