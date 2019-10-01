@@ -50,6 +50,12 @@ static log4cpp::Category& eventLogger( log4cpp::Category::getInstance( "Ubitrack
 
 namespace Ubitrack { namespace Components {
 
+enum class SamplerMode {
+    CONTINUOUS = 0,
+    ONLY_ONCE,
+    UNTIL_VALID
+};
+
 /**
  * @ingroup dataflow_components
  * Components that pulls its input at a given frequency and pushes the result
@@ -85,6 +91,8 @@ public:
 		, m_inPort( "Input", *this )
 		, m_outPort( "Output", *this )
 		, m_fFrequency( 1.0 )
+		, m_nDelayStart( 0 )
+		, m_eSamplerMode( SamplerMode::CONTINUOUS )
 		, m_nOffset( 0 )
 		, m_bStop( true )
     {
@@ -93,7 +101,23 @@ public:
 		double offset( 0 );
 		subgraph->m_DataflowAttributes.getAttributeData( "offset", offset );
 		m_nOffset = (long long int)( 1e9 * offset );
-		
+
+		double delay;
+        subgraph->m_DataflowAttributes.getAttributeData( "delayStartup", delay );
+        m_nDelayStart = (long long int)(1e6 * delay);
+
+        if ( subgraph->m_DataflowAttributes.hasAttribute( "samplerMode" ) )
+        {
+            std::string sm_text = subgraph->m_DataflowAttributes.getAttributeString( "samplerMode" );
+            if (sm_text  == "continuous") {
+                m_eSamplerMode = SamplerMode ::CONTINUOUS;
+            } else if (sm_text  == "only_once") {
+                m_eSamplerMode = SamplerMode ::ONLY_ONCE;
+            } else if (sm_text  == "until_valid") {
+                m_eSamplerMode = SamplerMode ::UNTIL_VALID;
+            }
+        }
+
 		stop();
     }
 
@@ -147,6 +171,12 @@ protected:
 	// sampling frequency
 	double m_fFrequency;
 
+	// delay startup in ms
+    long long int m_nDelayStart;
+
+	// sampler mode
+    SamplerMode m_eSamplerMode;
+
 	// offset to add to sampled timestamps
 	long long int m_nOffset;
 	
@@ -186,7 +216,15 @@ void Sampler< EventType >::threadMethod()
 		now = Measurement::now() + m_nOffset;
 		try
 		{
-			m_outPort.send( m_inPort.get( now ) );
+		    EventType m = m_inPort.get( now );
+			m_outPort.send( m );
+
+			// if mode == only once and measurement is valid, stop polling
+			if ((m_eSamplerMode == SamplerMode::UNTIL_VALID) && (!m.invalid())) {
+                m_bStop = true;
+			} else if (m_eSamplerMode == SamplerMode::ONLY_ONCE) {
+                m_bStop = true;
+			}
 		}
 		catch ( const Util::Exception& e )
 		{

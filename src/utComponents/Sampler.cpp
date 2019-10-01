@@ -41,19 +41,33 @@
 namespace Ubitrack { namespace Components {
 
 UBITRACK_REGISTER_COMPONENT( Ubitrack::Dataflow::ComponentFactory* const cf ) {
+
+    cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::Button > > ( "ButtonSampler" );
+    cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::Distance > > ( "DistanceSampler" );
+
+    cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::Position2D > > ( "Position2Sampler" );
+    cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::Position > > ( "PositionSampler" );
 	cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::Pose > > ( "PoseSampler" );
-	cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::ErrorPose > > ( "ErrorPoseSampler" );
-	cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::ErrorPosition > > ( "ErrorPositionSampler" );
-	cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::Rotation > > ( "RotationSampler" );
-	cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::Position > > ( "PositionSampler" );
-	cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::Matrix3x3 > > ( "Matrix3x3Sampler" );
-	cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::Matrix3x4 > > ( "Matrix3x4Sampler" );
-	cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::Button > > ( "ButtonSampler" );
+
+    cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::ErrorPosition2 > > ( "ErrorPosition2Sampler" );
+    cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::ErrorPosition > > ( "ErrorPositionSampler" );
+    cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::ErrorPose > > ( "ErrorPoseSampler" );
+
+    cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::Rotation > > ( "RotationSampler" );
+
+    cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::Matrix3x3 > > ( "Matrix3x3Sampler" );
+    cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::Matrix3x4 > > ( "Matrix3x4Sampler" );
+    cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::Matrix4x4 > > ( "Matrix4x4Sampler" );
+
+    cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::Vector4D > > ( "Vector4DSampler" );
+
+
 	cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::PositionList2 > > ( "PositionList2Sampler" );
 	cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::PositionList > > ( "PositionListSampler" );
 	cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::PoseList > > ( "PoseListSampler" );
-	cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::Vector4D > > ( "Vector4DSampler" );
-	
+
+    cf->registerComponent< Ubitrack::Components::Sampler< Ubitrack::Measurement::CameraIntrinsics > > ( "CameraIntrinsicsSampler" );
+
 }
 
 
