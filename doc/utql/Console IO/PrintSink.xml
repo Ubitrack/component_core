@@ -258,6 +258,24 @@
         </DataflowConfiguration>
     </Pattern>
     
+    <Pattern name="ButtonListPrintSink" displayName="Print Sink (ButtonList)">
+        <Description><h:p>This is a sink component that prints the contents of incoming events to the console.
+        </h:p></Description>
+        
+        <Input>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Input" source="A" destination="B" displayName="Printer Input ButtonList">
+                <Description><h:p>The input port</h:p></Description>
+                <Predicate>type=='ButtoList'&amp;&amp;mode=='push'</Predicate>
+            </Edge>
+        </Input>
+                
+        <DataflowConfiguration>
+            <UbitrackLib class="ButtonListPrintSink"/>
+        </DataflowConfiguration>
+    </Pattern>
+    
     <Pattern name="Matrix4x4PrintSink" displayName="Print Sink (4x4 Matrix)">
     	<Description><h:p>This is a sink component that prints the contents of incoming events to the console.
     	</h:p></Description>

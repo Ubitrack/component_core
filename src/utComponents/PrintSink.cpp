@@ -152,6 +152,20 @@ template<> void PrintSink< Measurement::PoseList >::printFunc( const Ubitrack::M
 	LOG4CPP_INFO(logger, tmp.str());
 }
 
+template<> void PrintSink< Measurement::ButtonList >::printFunc( const Ubitrack::Measurement::ButtonList& data )
+{
+	std::ostringstream tmp;
+	tmp << "Received Measurement for "
+			  << getName() << ": ";
+	for (std::vector< Math::Scalar< int > >::iterator it = data->begin();
+		 it != data.get()->end(); ++it)
+	{
+		tmp << *it << " ";
+	}
+	tmp << Measurement::timestampToShortString(data.time());
+	LOG4CPP_INFO(logger, tmp.str());
+}
+
 template<> void PrintSink< Measurement::DistanceList >::printFunc( const Ubitrack::Measurement::DistanceList& data )
 {
 	std::ostringstream tmp;
@@ -210,6 +224,7 @@ UBITRACK_REGISTER_COMPONENT( ComponentFactory* const cf ) {
 	cf->registerComponent< PrintSink< Measurement::PoseList > > ( "PoseListPrintSink" );
 	cf->registerComponent< PrintSink< Measurement::DistanceList > > ( "DistanceListPrintSink" );
 	cf->registerComponent< PrintSink< Measurement::Button > > ( "ButtonPrintSink" );
+	cf->registerComponent< PrintSink< Measurement::Button > > ( "ButtonListPrintSink" );
 	cf->registerComponent< PrintSink< Measurement::Matrix4x4 > > ( "Matrix4x4PrintSink" );
 	cf->registerComponent< PrintSink< Measurement::Matrix3x3 > > ( "Matrix3x3PrintSink" );
 	cf->registerComponent< PrintSink< Measurement::Matrix3x4 > > ( "Matrix3x4PrintSink" );
