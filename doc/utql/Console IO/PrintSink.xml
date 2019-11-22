@@ -267,7 +267,7 @@
             <Node name="B" displayName="B"/>
             <Edge name="Input" source="A" destination="B" displayName="Printer Input ButtonList">
                 <Description><h:p>The input port</h:p></Description>
-                <Predicate>type=='ButtoList'&amp;&amp;mode=='push'</Predicate>
+                <Predicate>type=='ButtonList'&amp;&amp;mode=='push'</Predicate>
             </Edge>
         </Input>
                 
