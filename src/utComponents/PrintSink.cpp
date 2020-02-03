@@ -224,7 +224,7 @@ UBITRACK_REGISTER_COMPONENT( ComponentFactory* const cf ) {
 	cf->registerComponent< PrintSink< Measurement::PoseList > > ( "PoseListPrintSink" );
 	cf->registerComponent< PrintSink< Measurement::DistanceList > > ( "DistanceListPrintSink" );
 	cf->registerComponent< PrintSink< Measurement::Button > > ( "ButtonPrintSink" );
-	cf->registerComponent< PrintSink< Measurement::Button > > ( "ButtonListPrintSink" );
+	cf->registerComponent< PrintSink< Measurement::ButtonList > > ( "ButtonListPrintSink" );
 	cf->registerComponent< PrintSink< Measurement::Matrix4x4 > > ( "Matrix4x4PrintSink" );
 	cf->registerComponent< PrintSink< Measurement::Matrix3x3 > > ( "Matrix3x3PrintSink" );
 	cf->registerComponent< PrintSink< Measurement::Matrix3x4 > > ( "Matrix3x4PrintSink" );
