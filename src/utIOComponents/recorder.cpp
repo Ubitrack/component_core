@@ -118,6 +118,8 @@ void Recorder< EventType >::eventIn( const EventType& n )
 	std::string linesep( "\n" );
 	(*m_pArchive) << linesep;
 	(*m_pArchive) << n;
+
+    m_pStream->flush();
 }
 
 
@@ -138,4 +140,6 @@ UBITRACK_REGISTER_COMPONENT( Ubitrack::Dataflow::ComponentFactory* const cf )
 	cf->registerComponent< Ubitrack::Drivers::Recorder< Ubitrack::Measurement::PoseList > > ( "PoseListRecorder" );
 	cf->registerComponent< Ubitrack::Drivers::Recorder< Ubitrack::Measurement::Matrix3x4 > > ( "Matrix3x4Recorder" );
 	cf->registerComponent< Ubitrack::Drivers::Recorder< Ubitrack::Measurement::Matrix3x3 > > ( "Matrix3x3Recorder" );
+    cf->registerComponent< Ubitrack::Drivers::Recorder< Ubitrack::Measurement::ButtonList > > ( "ButtonListRecorder" );
+    cf->registerComponent< Ubitrack::Drivers::Recorder< Ubitrack::Measurement::DistanceList > > ( "DistanceListRecorder" );
 }

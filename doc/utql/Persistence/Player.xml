@@ -336,6 +336,54 @@
             <UbitrackLib class="PlayerMatrix3x3"/>
         </DataflowConfiguration>
     </Pattern>
+
+    <Pattern name="ButtonListPlayer" displayName="Player (ButtonList)">
+        <Description>
+            <p xmlns="http://www.w3.org/1999/xhtml">Plays ButtonList data that has been recorded with ButtonListRecorder before</p>
+        </Description>
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Output" displayName="Played ButtonList" source="A" destination="B">
+                <Attribute name="type" value="ButtonList" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="offset" min="0" default="0" xsi:type="IntAttributeDeclarationType" displayName="TimeOffset"/>
+                <Attribute name="speedup" min="0.01" default="1" xsi:type="DoubleAttributeDeclarationType" displayName="Speed up factor"/>
+                <Attribute name="file" displayName="Logfile" xsi:type="PathAttributeDeclarationType">
+                    <Description>
+                        <p xmlns="http://www.w3.org/1999/xhtml">Logfile where matrix data will be read from</p>
+                    </Description>
+                </Attribute>
+            </Edge>
+        </Output>
+        <DataflowConfiguration>
+            <UbitrackLib class="PlayerButtonList"/>
+        </DataflowConfiguration>
+    </Pattern>
+
+    <Pattern name="DistanceListPlayer" displayName="Player (DistanceList)">
+        <Description>
+            <p xmlns="http://www.w3.org/1999/xhtml">Plays DistanceList data that has been recorded with DistanceListRecorder before</p>
+        </Description>
+        <Output>
+            <Node name="A" displayName="A"/>
+            <Node name="B" displayName="B"/>
+            <Edge name="Output" displayName="Played DistanceList" source="A" destination="B">
+                <Attribute name="type" value="DistanceList" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="mode" value="push" xsi:type="EnumAttributeReferenceType"/>
+                <Attribute name="offset" min="0" default="0" xsi:type="IntAttributeDeclarationType" displayName="TimeOffset"/>
+                <Attribute name="speedup" min="0.01" default="1" xsi:type="DoubleAttributeDeclarationType" displayName="Speed up factor"/>
+                <Attribute name="file" displayName="Logfile" xsi:type="PathAttributeDeclarationType">
+                    <Description>
+                        <p xmlns="http://www.w3.org/1999/xhtml">Logfile where matrix data will be read from</p>
+                    </Description>
+                </Attribute>
+            </Edge>
+        </Output>
+        <DataflowConfiguration>
+            <UbitrackLib class="PlayerDistanceList"/>
+        </DataflowConfiguration>
+    </Pattern>
     
     <!-- Attribute declarations -->
     

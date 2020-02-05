@@ -650,6 +650,10 @@ boost::shared_ptr< PlayerComponentBase > PlayerModule::createComponent( const st
 		return boost::shared_ptr< PlayerComponentBase >( new PlayerComponent< Measurement::RotationVelocity >( name, pConfig, key, pModule ) );
 	else if ( type == "PlayerMatrix3x3" )
 		return boost::shared_ptr< PlayerComponentBase >( new PlayerComponent< Measurement::Matrix3x3 >( name, pConfig, key, pModule ) );
+    else if ( type == "PlayerButtonList" )
+        return boost::shared_ptr< PlayerComponentBase >( new PlayerComponent< Measurement::ButtonList >( name, pConfig, key, pModule ) );
+    else if ( type == "PlayerDistanceList" )
+        return boost::shared_ptr< PlayerComponentBase >( new PlayerComponent< Measurement::DistanceList >( name, pConfig, key, pModule ) );
 
 	UBITRACK_THROW( "Class " + type + " not supported by player module" );
 }
@@ -672,6 +676,8 @@ UBITRACK_REGISTER_COMPONENT( Ubitrack::Dataflow::ComponentFactory* const cf ) {
 	playerComponents.push_back( "PlayerPoseList" );
 	playerComponents.push_back( "PlayerRotationVelocity" );
 	playerComponents.push_back( "PlayerMatrix3x3" );
+    playerComponents.push_back( "PlayerButtonList" );
+    playerComponents.push_back( "PlayerDistanceList" );
 #ifdef HAVE_OPENCV
 	playerComponents.push_back( "PlayerImage" );
 #endif
